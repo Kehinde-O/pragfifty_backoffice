@@ -1,0 +1,816 @@
+/* Dashboard Layout - Following Material Design 3 principles */
+.dashboard {
+  padding: 2rem;
+  max-width: 100%;
+  margin: 0 auto;
+  background-color: #FFFFFF; /* White background as per design guide */
+  min-height: 100vh;
+  color: #212121; /* Primary Text color from design guide */
+  font-family: Roboto, 'Noto Sans', sans-serif; /* Typography as per design guide */
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2.5rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid #CFD8DC; /* Border color from design guide */
+}
+
+.dashboard-header h1 {
+  font-size: 2rem; /* 32sp - Headline Large */
+  color: #1A237E; /* Primary Color */
+  margin-bottom: 0.5rem;
+  font-weight: 400; /* Regular weight as per Material Design */
+  letter-spacing: -0.025em;
+}
+
+.dashboard-header p {
+  color: #616161; /* Secondary Text color */
+  font-size: 1rem; /* 16sp - Body Medium */
+}
+
+.dashboard-controls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.control-item {
+  display: flex;
+  align-items: center;
+}
+
+.refresh-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #1A237E; /* Primary Color */
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px; /* Corner radius as per design guide */
+  color: #FFFFFF; /* White text on primary color */
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  text-transform: uppercase; /* All caps for buttons */
+  font-size: 0.875rem; /* 14sp - Label Large */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.refresh-button:hover {
+  background: #5C6BC0; /* Primary Color hover state */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.refresh-button:active {
+  transform: translateY(0);
+}
+
+.refresh-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.refresh-button .spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.date-filter {
+  display: flex;
+  align-items: center;
+  background: #F5F5F5; /* Input Field Background color */
+  padding: 0.4rem 1.2rem;
+  border-radius: 8px; /* Corner radius as per design guide */
+  border: 1px solid #CFD8DC; /* Border color from design guide */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+}
+
+.date-filter:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.05);
+  border-color: #1A237E; /* Primary color on hover */
+}
+
+.filter-icon {
+  margin-right: 0.5rem;
+  color: #616161; /* Secondary Text color */
+}
+
+.date-filter label {
+  margin-right: 0.5rem;
+  font-weight: 500;
+  color: #616161; /* Secondary Text color */
+  font-size: 0.875rem; /* 14sp - Label Large */
+}
+
+.date-filter select {
+  padding: 0.5rem;
+  border: none;
+  background: transparent;
+  font-size: 0.875rem; /* 14sp - Label Large */
+  color: #212121; /* Primary Text color */
+  font-weight: 500;
+  cursor: pointer;
+  outline: none;
+}
+
+/* Loading Indicator */
+.loading-indicator {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+  font-size: 1rem; /* 16sp - Body Medium */
+  color: #616161; /* Secondary Text color */
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(26, 35, 126, 0.1); /* Primary Color with low opacity */
+  border-radius: 50%;
+  border-top-color: #1A237E; /* Primary Color */
+  animation: spinner 1s ease-in-out infinite;
+  margin-bottom: 1.25rem;
+}
+
+@keyframes spinner {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Dashboard Sections - Following 8dp grid system */
+.dashboard-section {
+  margin-bottom: 2rem; /* 32dp - Multiple of 8 */
+  animation: fadeIn 0.6s ease-out;
+  animation-fill-mode: both;
+}
+
+.section-title {
+  font-size: 1.125rem; /* 18sp - Title Medium */
+  color: #212121; /* Primary Text color */
+  font-weight: 500; /* Medium weight as per design guide */
+  margin-bottom: 1.5rem; /* 24dp - Multiple of 8 */
+  padding-bottom: 0.5rem; /* 8dp */
+  position: relative;
+  display: inline-block;
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 4rem; /* 64dp - Multiple of 8 */
+  height: 3px;
+  background: #1A237E; /* Primary Color */
+  border-radius: 3px;
+}
+
+/* KPI Stats Cards */
+.dashboard-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  gap: 1.5rem; /* 24dp - Multiple of 8 */
+  margin-bottom: 2rem; /* 32dp - Multiple of 8 */
+}
+
+.stat-card {
+  background-color: #fff;
+  border-radius: 1rem; /* 16dp - Multiple of 8, rounded corners as per design guide */
+  padding: 1.5rem; /* 24dp - Multiple of 8 */
+  display: flex;
+  align-items: flex-start;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* Subtle shadow as per design guide */
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #CFD8DC; /* Border color from design guide */
+}
+
+.stat-card:hover {
+  transform: translateY(-4px); /* 4dp - Multiple of 4 (half of 8) */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); /* Slightly elevated on hover */
+}
+
+/* Card background accent - removed heavy gradients */
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px; /* 4dp - Half of 8 */
+  opacity: 0.9;
+}
+
+.stat-card:nth-child(1)::before {
+  background: #2E7D32; /* Success Green */
+}
+
+.stat-card:nth-child(2)::before {
+  background: #1A237E; /* Primary Color */
+}
+
+.stat-card:nth-child(3)::before {
+  background: #FFA000; /* Warning Amber */
+}
+
+.stat-card:nth-child(4)::before {
+  background: #B71C1C; /* Error Red */
+}
+
+.stat-icon {
+  width: 56px; /* 56dp - Multiple of 8 */
+  height: 56px; /* 56dp - Multiple of 8 */
+  border-radius: 16px; /* More rounded rectangle as per design guide */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 1rem; /* 16dp - Multiple of 8 */
+  font-size: 1.5rem; /* 24dp icon size */
+}
+
+.stat-icon.revenue {
+  background-color: #A5D6A7; /* Green 200 - Light background */
+  color: #2E7D32; /* Success Green */
+}
+
+.stat-icon.users {
+  background-color: #C5CAE9; /* Indigo 100 - Light background */
+  color: #1A237E; /* Primary Color */
+}
+
+.stat-icon.assessments {
+  background-color: #FFECB3; /* Amber 100 - Light background */
+  color: #FFA000; /* Warning Amber */
+}
+
+.stat-details {
+  flex: 1;
+}
+
+.stat-details h3 {
+  font-size: 0.875rem; /* 14sp - Label Large */
+  color: #616161; /* Secondary Text color */
+  margin-bottom: 0.5rem; /* 8dp */
+  font-weight: 500; /* Medium weight */
+  text-transform: uppercase; /* Similar to button style */
+}
+
+.stat-value {
+  font-size: 1.75rem; /* 28sp - Headline Medium */
+  font-weight: 400; /* Regular weight */
+  color: #212121; /* Primary Text color */
+  margin-bottom: 0.5rem; /* 8dp */
+  line-height: 1.2;
+}
+
+.stat-change {
+  font-size: 0.75rem; /* 12sp - Label Small */
+  display: flex;
+  align-items: center;
+  color: #616161; /* Secondary Text color */
+}
+
+.stat-change .positive {
+  color: #2E7D32; /* Success Green */
+  display: flex;
+  align-items: center;
+  font-weight: 500; /* Medium weight */
+  margin-right: 0.5rem; /* 8dp */
+}
+
+.stat-change .negative {
+  color: #B71C1C; /* Error Red */
+  display: flex;
+  align-items: center;
+  font-weight: 500; /* Medium weight */
+  margin-right: 0.5rem; /* 8dp */
+}
+
+.stat-change svg {
+  margin-right: 0.25rem; /* 4dp */
+  font-size: 1rem; /* 16sp */
+}
+
+.stat-change .period {
+  color: #616161; /* Secondary Text color */
+  margin-left: 0.25rem; /* 4dp */
+}
+
+.action-link {
+  display: inline-flex;
+  align-items: center;
+  color: #1A237E; /* Primary Color */
+  font-size: 0.75rem; /* 12sp - Label Small */
+  text-decoration: none;
+  font-weight: 500; /* Medium weight */
+  transition: color 0.2s ease;
+  margin-top: 0.5rem; /* 8dp */
+}
+
+.action-link:hover {
+  color: #5C6BC0; /* Primary Color - Hover state */
+  text-decoration: none;
+}
+
+.action-link svg {
+  margin-right: 0.25rem; /* 4dp */
+}
+
+.action-link:hover svg {
+  transform: translateX(2px);
+}
+
+/* Quick Actions Section */
+.quick-actions-section {
+  margin-top: 1.5rem; /* 24dp - Multiple of 8 */
+  padding: 1.5rem; /* 24dp - Multiple of 8 */
+  background-color: #FFFFFF; /* White background */
+  border-radius: 16px; /* 16dp - Rounded corners */
+  border: 1px solid #CFD8DC; /* Border color */
+}
+
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem; /* 16dp - Multiple of 8 */
+  margin-top: 1rem; /* 16dp - Multiple of 8 */
+}
+
+.quick-action-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem 1rem; /* 24dp top/bottom, 16dp left/right */
+  background-color: #F5F5F5; /* Input Field Background color */
+  border: 1px solid #CFD8DC; /* Border color */
+  border-radius: 8px; /* Corner radius */
+  transition: all 0.2s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+}
+
+.quick-action-button:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); /* Subtle elevation on hover */
+  border-color: #1A237E; /* Primary Color */
+  transform: translateY(-2px);
+}
+
+.quick-action-button.primary {
+  background-color: #1A237E; /* Primary Color */
+  color: #FFFFFF; /* White text */
+}
+
+.quick-action-button.primary:hover {
+  background-color: #5C6BC0; /* Primary Color - Hover state */
+}
+
+.quick-action-button.primary .action-icon,
+.quick-action-button.primary .action-text {
+  color: #FFFFFF; /* White text and icon */
+}
+
+.quick-action-button .action-icon {
+  font-size: 1.5rem; /* 24dp icon size */
+  margin-bottom: 0.75rem; /* 12dp - 1.5x unit */
+  color: #1A237E; /* Primary Color */
+}
+
+.quick-action-button:hover .action-icon {
+  transform: scale(1.1);
+}
+
+.quick-action-button .action-text {
+  font-weight: 500; /* Medium weight */
+  font-size: 0.875rem; /* 14sp - Label Large */
+  color: #212121; /* Primary Text color */
+  text-transform: uppercase; /* All caps for buttons */
+}
+
+/* Cards Layout */
+.analytics-container, 
+.reports-container,
+.dual-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+  gap: 1.5rem; /* 24dp - Multiple of 8 */
+  margin-top: 1rem; /* 16dp - Multiple of 8 */
+}
+
+.dashboard-card {
+  background-color: #FFFFFF; /* White background */
+  border-radius: 16px; /* 16dp - Rounded corners */
+  border: 1px solid #CFD8DC; /* Border color */
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.2s ease;
+}
+
+.dashboard-card:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); /* Subtle elevation on hover */
+  border-color: #C5CAE9; /* Indigo 100 - Light Primary Color variant */
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem; /* 16dp top/bottom, 24dp left/right */
+  border-bottom: 1px solid #CFD8DC; /* Border color */
+  background-color: #FFFFFF; /* White background */
+}
+
+.card-header h2 {
+  display: flex;
+  align-items: center;
+  font-size: 1.125rem; /* 18sp - Title Medium */
+  font-weight: 500; /* Medium weight */
+  color: #212121; /* Primary Text color */
+  margin: 0;
+}
+
+.card-header-icon {
+  margin-right: 0.75rem; /* 12dp - 1.5x unit */
+  font-size: 1.25rem; /* 20dp icon size */
+  color: #1A237E; /* Primary Color */
+}
+
+.card-header-actions {
+  display: flex;
+  gap: 0.5rem; /* 8dp */
+}
+
+.card-button {
+  width: 2rem; /* 32dp */
+  height: 2rem; /* 32dp */
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: #616161; /* Secondary Text color */
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.card-button:hover {
+  background-color: #F5F5F5; /* Input Field Background color */
+  color: #1A237E; /* Primary Color */
+}
+
+.card-content {
+  padding: 1.5rem; /* 24dp */
+  flex: 1;
+}
+
+.chart-container {
+  height: 300px;
+  overflow: hidden;
+}
+
+/* Table Styling */
+.transactions-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem; /* 14sp - Body Medium */
+}
+
+.transactions-table th {
+  text-align: left;
+  padding: 0.75rem 1rem; /* 12dp top/bottom, 16dp left/right */
+  font-weight: 500; /* Medium weight */
+  color: #212121; /* Primary Text color */
+  border-bottom: 1px solid #CFD8DC; /* Border color */
+  background-color: #F5F5F5; /* Input Field Background color */
+  position: sticky;
+  top: 0;
+}
+
+.transactions-table td {
+  padding: 0.75rem 1rem; /* 12dp top/bottom, 16dp left/right */
+  border-bottom: 1px solid #EEEEEE; /* Grey 200 */
+  color: #616161; /* Secondary Text color */
+}
+
+.transactions-table tr {
+  transition: background-color 0.2s ease;
+}
+
+.transactions-table tr:hover {
+  background-color: #FAFAFA; /* Grey 50 - Very light grey for hover */
+}
+
+.transactions-table .status {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem; /* 4dp top/bottom, 12dp left/right */
+  border-radius: 16px; /* Fully rounded for small elements */
+  font-size: 0.75rem; /* 12sp - Label Small */
+  font-weight: 500; /* Medium weight */
+}
+
+.transactions-table .status.successful {
+  background-color: #A5D6A7; /* Green 200 - Light background */
+  color: #2E7D32; /* Success Green */
+}
+
+.transactions-table .status.failed {
+  background-color: #FFCDD2; /* Red 100 - Light background */
+  color: #B71C1C; /* Error Red */
+}
+
+.transactions-table .status.pending {
+  background-color: #FFECB3; /* Amber 100 - Light background */
+  color: #FFA000; /* Warning Amber */
+}
+
+.card-footer {
+  padding: 1rem 1.5rem; /* 16dp top/bottom, 24dp left/right */
+  border-top: 1px solid #CFD8DC; /* Border color */
+  display: flex;
+  justify-content: center;
+}
+
+.view-all-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem; /* 8dp top/bottom, 16dp left/right */
+  background-color: transparent;
+  border: none;
+  color: #1A237E; /* Primary Color */
+  font-size: 0.875rem; /* 14sp - Label Large */
+  font-weight: 500; /* Medium weight */
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase; /* All caps for buttons */
+}
+
+.view-all-button:hover {
+  color: #5C6BC0; /* Primary Color - Hover state */
+  background-color: rgba(26, 35, 126, 0.05); /* Primary Color with low opacity */
+  border-radius: 8px; /* Corner radius */
+}
+
+.view-all-button svg {
+  margin-left: 0.5rem; /* 8dp */
+  transition: transform 0.2s ease;
+}
+
+.view-all-button:hover svg {
+  transform: translateX(4px);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1200px) {
+  .analytics-container,
+  .reports-container,
+  .dual-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard {
+    padding: 1rem; /* 16dp */
+  }
+  
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .dashboard-controls {
+    margin-top: 1rem; /* 16dp */
+    width: 100%;
+    flex-direction: column;
+  }
+  
+  .date-filter {
+    width: 100%;
+  }
+  
+  .dashboard-stats {
+    grid-template-columns: 1fr;
+  }
+  
+  .quick-actions {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dashboard-section:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.dashboard-section:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+.dashboard-section:nth-child(4) {
+  animation-delay: 0.3s;
+}
+
+.dashboard-section:nth-child(5) {
+  animation-delay: 0.4s;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px; /* 8dp */
+  height: 8px; /* 8dp */
+}
+
+::-webkit-scrollbar-track {
+  background: #F5F5F5; /* Input Field Background color */
+  border-radius: 4px; /* 4dp - Half of 8 */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #CFD8DC; /* Border color */
+  border-radius: 4px; /* 4dp - Half of 8 */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #B0BEC5; /* Slightly darker on hover */
+}
+
+/* Add additional styles for the dashboard title */
+.dashboard-title {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Add styles for each section type */
+.kpi-section {
+  margin-bottom: 2rem; /* 32dp */
+}
+
+.activity-section {
+  margin-bottom: 3rem; /* 48dp */
+}
+
+/* Update section spacing for better visual hierarchy */
+.dashboard-section + .dashboard-section {
+  margin-top: 2rem; /* 32dp */
+}
+
+/* Add specific styles for card types to ensure consistent heights */
+.revenue-chart-card .card-content,
+.mda-report-card .card-content,
+.bank-report-card .card-content {
+  min-height: 300px; /* Fixed height for chart containers */
+}
+
+.transactions-card .card-content,
+.assessment-card .card-content,
+.activity-card .card-content {
+  min-height: 250px; /* Fixed height for list containers */
+  max-height: 350px; /* Max height with overflow */
+  overflow-y: auto;
+}
+
+/* Improve hover states for consistent interactive elements */
+.stat-card,
+.dashboard-card,
+.quick-action-button {
+  transition: all 0.2s ease-in-out; /* Consistent transition timing */
+}
+
+/* Improve table spacing in cards */
+.transactions-table {
+  border-spacing: 0;
+}
+
+.transactions-table th:first-child,
+.transactions-table td:first-child {
+  padding-left: 1.5rem; /* 24dp */
+}
+
+.transactions-table th:last-child,
+.transactions-table td:last-child {
+  padding-right: 1.5rem; /* 24dp */
+}
+
+/* Create consistent status indicators */
+.status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem; /* 8dp */
+}
+
+.status-indicator::before {
+  content: '';
+  display: inline-block;
+  width: 8px; /* 8dp */
+  height: 8px; /* 8dp */
+  border-radius: 50%;
+}
+
+.status-indicator.success::before {
+  background-color: #2E7D32; /* Success Green */
+}
+
+.status-indicator.warning::before {
+  background-color: #FFA000; /* Warning Amber */
+}
+
+.status-indicator.error::before {
+  background-color: #B71C1C; /* Error Red */
+}
+
+/* Ensure consistent action button styling */
+.action-button {
+  background: transparent;
+  border: none;
+  color: #1A237E; /* Primary Color */
+  cursor: pointer;
+  padding: 0.25rem; /* 4dp */
+  border-radius: 4px; /* 4dp */
+  transition: all 0.2s ease;
+}
+
+.action-button:hover {
+  background-color: rgba(26, 35, 126, 0.05); /* Primary Color with low opacity */
+}
+
+/* Ensure report highlights section is visually distinct */
+.report-highlights-section {
+  position: relative;
+}
+
+/* Ensure consistent spacing in card footers */
+.card-footer .view-all-button {
+  padding: 0.75rem 1.5rem; /* 12dp top/bottom, 24dp left/right */
+}
+
+/* Additional responsive adjustments */
+@media (max-width: 768px) {
+  .dashboard-title h1 {
+    font-size: 1.5rem; /* 24sp for smaller screens */
+  }
+  
+  .dashboard-title p {
+    font-size: 0.875rem; /* 14sp for smaller screens */
+  }
+  
+  .section-title {
+    font-size: 1rem; /* 16sp for smaller screens */
+  }
+}
+
+/* Print media query for reports */
+@media print {
+  .dashboard {
+    background-color: white;
+    padding: 0;
+  }
+  
+  .dashboard-header,
+  .quick-actions-section,
+  .card-footer,
+  .card-header-actions {
+    display: none;
+  }
+  
+  .dashboard-card {
+    break-inside: avoid;
+    box-shadow: none;
+    border: 1px solid #CFD8DC; /* Subtle border for printed content */
+  }
+} 

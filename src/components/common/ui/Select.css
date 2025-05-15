@@ -1,0 +1,125 @@
+/* Select Component Styles */
+.ui-select-container {
+  margin-bottom: var(--space-4);
+}
+
+.ui-select-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-700);
+  margin-bottom: var(--space-2);
+}
+
+.ui-select-required {
+  color: var(--color-danger);
+  margin-left: var(--space-1);
+}
+
+.ui-select-wrapper {
+  position: relative;
+  display: flex;
+  width: 100%;
+  background-color: white;
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+}
+
+/* Focus states */
+.ui-select-wrapper:focus-within {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+/* Select sizes */
+.ui-select-sm {
+  height: 2rem;
+}
+
+.ui-select-md {
+  height: 2.5rem;
+}
+
+.ui-select-lg {
+  height: 3rem;
+}
+
+/* The actual select element */
+.ui-select {
+  width: 100%;
+  height: 100%;
+  padding: 0 var(--space-10) 0 var(--space-3);
+  font-size: 0.875rem;
+  color: var(--color-gray-900);
+  background-color: transparent;
+  border: none;
+  outline: none;
+  appearance: none;
+  cursor: pointer;
+}
+
+.ui-select-sm .ui-select {
+  font-size: 0.75rem;
+  padding: 0 var(--space-8) 0 var(--space-2);
+}
+
+.ui-select-lg .ui-select {
+  font-size: 1rem;
+  padding: 0 var(--space-12) 0 var(--space-4);
+}
+
+/* Arrow */
+.ui-select-arrow {
+  position: absolute;
+  top: 50%;
+  right: var(--space-3);
+  transform: translateY(-50%);
+  color: var(--color-gray-500);
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Placeholder / disabled style */
+.ui-select option[disabled] {
+  color: var(--color-gray-400);
+}
+
+/* Error state */
+.ui-select-error .ui-select-wrapper {
+  border-color: var(--color-danger);
+}
+
+.ui-select-error .ui-select-wrapper:focus-within {
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.1);
+}
+
+.ui-select-error-text {
+  margin-top: var(--space-1);
+  font-size: 0.75rem;
+  color: var(--color-danger);
+}
+
+/* Disabled state */
+.ui-select-disabled {
+  background-color: var(--color-gray-100);
+  border-color: var(--color-gray-200);
+  cursor: not-allowed;
+}
+
+.ui-select-disabled .ui-select,
+.ui-select:disabled {
+  color: var(--color-gray-500);
+  cursor: not-allowed;
+}
+
+.ui-select-disabled .ui-select-arrow {
+  color: var(--color-gray-400);
+}
+
+/* Hover state */
+.ui-select-wrapper:not(.ui-select-disabled):hover {
+  border-color: var(--color-gray-400);
+} 

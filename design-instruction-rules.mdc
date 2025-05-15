@@ -1,0 +1,295 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Design Instruction & Rules: Backoffice Tax Administration (Niger State IRS)
+
+## 1. Overview & Core Principles
+
+This document outlines the design instructions and principles for the Niger State IRS Backoffice Tax Administrative Application. It leverages Google's Material Design 3 (M3) philosophy, adapted for a professional, government context. The goal is a clean, flat, intuitive, and accessible user interface that promotes efficiency and trust. **No dark mode will be implemented.**
+
+**Technical Stack:** This project is built using **React.js** and **Vite**. Design instructions should consider this stack, allowing for the use of modern React patterns, hooks, and component-based architecture. Vite's fast development environment should also be kept in mind.
+
+**Core Material Design Principles to Adhere To:**
+
+*   **Material You (Adapted):** While dynamic color theming from user wallpaper is not applicable here, the principle of creating expressive and adaptable UIs is key. We will achieve this through a carefully selected, consistent color palette and clear visual hierarchy.
+*   **Focus on Readability & Clarity:** Information must be presented in a clear, concise, and easily scannable manner. Typography choices and layout will prioritize this.
+*   **Intuitive Interaction:** Components and navigation should behave predictably, minimizing cognitive load on users (IRS staff, Executive Chairman, Governor).
+*   **Accessibility:** The application must be usable by people with diverse abilities, adhering to WCAG AA guidelines where feasible. This includes sufficient color contrast, keyboard navigability, and screen reader compatibility.
+*   **Flat Design:** Emphasis on a clean, modern aesthetic with minimal use of heavy shadows or gradients. Elevation will be used subtly to indicate interactivity or hierarchy.
+*   **Efficiency:** The design should support users in completing their tasks quickly and accurately.
+
+**New Principles for 2025:**
+
+*   **Personalization Over Customization:** Focus on adapting the interface based on user role and common workflows rather than extensive customization options.
+*   **Ethical Design:** Ensure transparency in data presentation and avoid interfaces that might manipulate user decisions or hide important information.
+*   **Consistency Across Devices:** Maintain a consistent experience regardless of device, with responsive design that adapts seamlessly.
+*   **Meaningful Motion:** Use subtle animations to provide feedback and guide user attention, rather than for decorative purposes.
+
+## 2. Color Palette
+
+The color palette is designed to be professional, trustworthy, and visually comfortable for extended use. It avoids overly bright or distracting colors. We will use a primary color, a secondary/accent color, and a range of neutrals.
+
+*   **Primary Color:**
+    *   **Name:** Government Blue
+    *   **Hex:** `#1A237E` (A deep, authoritative blue - similar to Indigo 900 from Material Palette)
+    *   **Usage:** Main branding, primary buttons, active navigation elements, key headers.
+    *   **Tints/Shades:** Lighter and darker variations will be used for depth, backgrounds of primary sections, and hover/focus states.
+        *   `#C5CAE9` (Indigo 100) - Light backgrounds for sections related to primary actions.
+        *   `#5C6BC0` (Indigo 400) - Hover/Focus states for primary elements.
+
+*   **Secondary/Accent Color:**
+    *   **Name:** Success Green
+    *   **Hex:** `#2E7D32` (A clear, positive green - similar to Green 800 from Material Palette)
+    *   **Usage:** Positive actions (e.g., "Approve", "Submit"), success messages, indicators of positive status. Applied sparingly.
+    *   **Tints/Shades:**
+        *   `#A5D6A7` (Green 200) - Light backgrounds for success messages or highlights.
+        *   `#66BB6A` (Green 400) - Hover/Focus for secondary actions.
+
+*   **Neutral Colors:**
+    *   **Surface/Background:** `#FFFFFF` (White) - For main content areas, card backgrounds.
+    *   **Borders & Dividers:** `#CFD8DC` (Blue Grey 100) - Subtle lines to separate content.
+    *   **Text (Primary):** `#212121` (Grey 900) - For body text, labels.
+    *   **Text (Secondary):** `#616161` (Grey 700) - For helper text, less important information.
+    *   **Disabled Elements:** `#BDBDBD` (Grey 400) - For text and icons on disabled components.
+    *   **Input Field Backgrounds:** `#F5F5F5` (Grey 100) or `#ECEFF1` (Blue Grey 50) - Slightly off-white to differentiate from the main background.
+
+*   **Semantic Colors:**
+    *   **Error Red:** `#B71C1C` (Red 900) - For error messages, validation failures, critical alerts.
+        *   Background for error messages: `#FFCDD2` (Red 100)
+    *   **Warning Yellow/Amber:** `#FFA000` (Amber 700) - For warnings, non-critical alerts.
+        *   Background for warning messages: `#FFECB3` (Amber 100)
+
+**Color Application Notes:**
+*   Maintain high contrast ratios for text on backgrounds (minimum 4.5:1 for normal text, 3:1 for large text). Use a contrast checker.
+*   Colors should be applied consistently for similar actions or information types.
+*   Follow the Material Design 3 tone-based approach to color selection, ensuring a unified and harmonious appearance.
+
+## 3. Typography
+
+The typography system will use **Roboto** or **Noto Sans** (for broader language support if needed), standard Material Design typefaces, ensuring excellent readability and a clean look.
+
+*   **Font Family:** `Roboto, Noto Sans, sans-serif`
+
+*   **Type Scale (Referencing Material Design, adjust as needed for density):**
+    *   **Headline Large (h1):** 32sp, Regular
+    *   **Headline Medium (h2):** 28sp, Regular
+    *   **Headline Small (h3):** 24sp, Regular
+    *   **Title Large (Page Titles):** 22sp, Medium
+    *   **Title Medium (Card Headers, Section Titles):** 18sp, Medium
+    *   **Title Small (Sub-section Titles):** 16sp, Medium
+    *   **Body Large (Main Content Text):** 16sp, Regular
+    *   **Body Medium (Secondary Content Text):** 14sp, Regular
+    *   **Label Large (Button Text, Input Labels):** 14sp, Medium (Buttons often ALL CAPS as per MD spec)
+    *   **Label Medium (Small labels, captions):** 12sp, Medium
+    *   **Label Small (Tiny text, e.g., helper text below inputs):** 12sp, Regular
+
+*   **Line Height:** Generally 1.4x - 1.6x the font size for body text to ensure readability. Adjust for headlines and titles.
+*   **Character Spacing:** Default or slightly adjusted for larger headlines if needed.
+*   **Case:**
+    *   Buttons: ALL CAPS (for English, as per Material Design recommendations for prominence).
+    *   Headlines & Titles: Sentence case or Title Case depending on specific context and hierarchy. Prefer Sentence case for a more modern feel.
+    *   Body Text: Sentence case.
+
+**Typography Best Practices:**
+*   Maintain a clear typographic hierarchy to guide users through content.
+*   Ensure that font sizes scale properly across all devices.
+*   Use different weights (not just sizes) to create hierarchy.
+*   Allow sufficient white space around text blocks to improve readability.
+
+## 4. Iconography
+
+Material Symbols (the latest iteration of Material Icons) should be used. Prioritize filled styles for clarity in a backoffice environment, but outlined can be used if it aids visual distinction without sacrificing clarity.
+
+*   **Style:** Primarily **Filled**. Outlined or Sharp can be used if they offer better clarity for specific functions.
+*   **Size:**
+    *   Standard: 24dp.
+    *   Smaller (e.g., within chips or dense table rows): 20dp or 18dp.
+    *   Larger (e.g., for illustrative purposes or empty states): 32dp, 48dp.
+*   **Color:**
+    *   **Active/Interactive Icons:** Use Primary Text color (`#212121`) or Primary Color (`#1A237E`) if the icon itself is an interactive element (e.g., icon button).
+    *   **Decorative/Informational Icons:** Use Secondary Text color (`#616161`).
+    *   **Disabled Icons:** Use Disabled Element color (`#BDBDBD`).
+*   **Placement:** Icons should always be accompanied by text labels for clarity, especially for critical functions, unless the icon's meaning is universally understood within the application's context (e.g., a "close" X icon).
+*   **Consistency:** Use icons consistently. The same action or concept should always be represented by the same icon.
+
+**Iconography Best Practices:**
+*   Use icons to enhance comprehension, not to replace text for critical information.
+*   Test icon recognition with real users when possible.
+*   Use a consistent visual style across all icons.
+*   Ensure icons are accessible by providing appropriate alt text for screen readers.
+
+## 5. Components
+
+This section details design instructions for common UI components, adhering to Material Design 3 principles and a clean/flat aesthetic.
+
+### 5.1. Buttons
+
+*   **Types:**
+    *   **Filled (Contained):** For high-emphasis actions (e.g., "Submit", "Save", primary actions). Use Primary Color background with white or light text.
+    *   **Outlined:** For medium-emphasis actions (e.g., "Cancel", secondary actions that are still important). Transparent background, Primary Color border and text.
+    *   **Text:** For low-emphasis actions (e.g., "Learn More", actions within a card). Primary Color text, no background or border.
+    *   **Elevated:** (Use sparingly) Similar to Filled, but with a subtle shadow to indicate slight elevation.
+    *   **Tonal:** A lighter variant of the Primary Color for the background, with darker Primary Color text. Good for medium emphasis when an outlined button is too subtle but a filled one too strong.
+    *   **Floating Action Button (FAB):** (Use very sparingly, if at all, in a backoffice app) For a single, primary screen action if applicable. Use Secondary/Accent color or Primary color.
+*   **Shape:** Rounded corners. Material 3 suggests full "pill" shape for smaller buttons or more rounded rectangles. Aim for a corner radius of 8dp-12dp for standard buttons, or fully rounded for smaller/icon buttons.
+*   **Height:** Consistent height, e.g., 36dp, 40dp, or 48dp depending on density needs.
+*   **Padding:** Adequate horizontal padding (e.g., 16dp-24dp).
+*   **Text:** Label Large (14sp, Medium, ALL CAPS).
+*   **Icons in Buttons:** If used, icons should be placed before the text label, with appropriate spacing. Icon size typically 18dp or 20dp.
+
+### 5.2. Input Fields (Text Fields)
+
+*   **Types:**
+    *   **Filled:** Preferred style. Background color `#F5F5F5` (Grey 100) or `#ECEFF1` (Blue Grey 50). Subtle bottom border or full border on focus.
+    *   **Outlined:** Clear border, label "cuts" into the top of the border.
+*   **Label:** Use floating labels that move from inside the input to above it on focus/input. Label Large (14sp, Medium).
+*   **Helper Text:** Below the input, Label Small (12sp, Regular). Used for instructions or error messages.
+*   **Error State:** Border, label, and helper text change to Error Red. An error icon can be included.
+*   **Focus State:** Border and label color change to Primary Color.
+*   **Padding:** Sufficient internal padding.
+*   **Shape:** Rounded corners (e.g., 4dp-8dp).
+*   **Disabled State:** Lighter background, disabled text color, no focus indication.
+
+### 5.3. Select Elements (Dropdowns / Menus)
+
+*   Follow similar styling to Input Fields (Filled or Outlined).
+*   **Indicator:** A clear dropdown arrow icon (e.g., `arrow_drop_down`).
+*   **Menu Items (Options):**
+    *   Clear text (Body Medium or Body Large).
+    *   Adequate padding.
+    *   Visual indication of selected state (e.g., background color change to a light tint of Primary or a checkmark icon).
+    *   Hover state for discoverability.
+*   **Searchable Selects:** For long lists, include a search input within the dropdown menu.
+
+### 5.4. Cards
+
+*   **Purpose:** Group related content and actions.
+*   **Background:** White (`#FFFFFF`) or a very light tint of a neutral color if needed for visual separation from a non-white page background.
+*   **Elevation/Border:** Use a subtle border (`#CFD8DC`) OR a very subtle box-shadow to lift the card from the background. Avoid heavy shadows.
+    *   `box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);` (Example of a subtle shadow)
+*   **Shape:** Rounded corners (e.g., 8dp-16dp).
+*   **Padding:** Generous internal padding (e.g., 16dp or 24dp).
+*   **Structure:**
+    *   **Card Header (Optional):** Title Medium (18sp), potentially with an icon or avatar.
+    *   **Card Content:** Body Large/Medium.
+    *   **Card Actions (Optional):** Buttons (Text or Outlined) typically at the bottom of the card.
+
+### 5.5. Tables (Data Tables)
+
+*   **Clarity & Scannability:** Prioritize easy scanning of data.
+*   **Header Row:**
+    *   Background: Light Grey (e.g., `#F5F5F5` - Grey 100) or a light tint of Primary Color.
+    *   Text: Label Large (14sp, Medium), slightly bolder or distinct color from body rows.
+    *   Alignment: Align text according to data type (numbers right, text left).
+*   **Body Rows:**
+    *   Alternating row colors (zebra striping) can be used for readability if data is dense: White and a very light grey (e.g., `#FAFAFA` - Grey 50).
+    *   Text: Body Medium (14sp).
+    *   Vertical padding for rows: ensure content isn't cramped.
+*   **Dividers:** Subtle horizontal lines between rows (`#EEEEEE` - Grey 200 or `#CFD8DC`). Vertical dividers can be used if needed but can also add clutter; use sparingly.
+*   **Actions in Rows:** If actions are per-row (e.g., "Edit", "Delete"), use Icon Buttons for compactness, or Text Buttons if space allows. Ensure sufficient tap/click targets.
+*   **Density:** Allow for a comfortable density. If very high density is required, ensure typography and spacing are still clear.
+*   **Sorting & Filtering:** Clear visual indicators for sorted columns (e.g., up/down arrows). Filtering controls should be clearly associated with the table.
+*   **Pagination:** Clear pagination controls if the table is long.
+
+### 5.6. Options (Radio Buttons & Checkboxes)
+
+*   **Touch Target:** Ensure a minimum touch target of 48x48dp (can be achieved with padding around the visual control).
+*   **Label:** Clearly associated with the control. Label Large or Body Large.
+*   **Color:**
+    *   **Selected State:** Use Primary Color for the checkmark/radio fill.
+    *   **Unselected State:** Grey border.
+    *   **Focus State:** Visual ring/glow around the control in Primary Color.
+    *   **Disabled State:** Disabled colors.
+*   **Spacing:** Adequate spacing between options in a group.
+
+### 5.7 New Components (Material Design 3)
+
+* **Navigation Rail:** For medium-sized screens, a vertical navigation rail can provide access to top-level destinations while taking minimal horizontal space.
+* **Bottom App Bar:** For mobile views, a bottom navigation bar can provide easy access to key functions.
+* **Segmented Button:** For toggle options or view switching within a page.
+* **Chips:** For selection, filtering, or displaying small pieces of information.
+* **Bottom Sheets:** For displaying additional context or actions without leaving the current screen.
+
+## 6. Layout & Spacing
+
+*   **Grid System:** Use an 8dp grid system for consistent spacing and alignment. All padding, margins, and component sizes should be multiples of 8dp (e.g., 8dp, 16dp, 24dp, 32dp).
+*   **Responsive Design:** The layout must adapt to different screen sizes, from standard desktop monitors down to smaller tablet/laptop screens if applicable for backoffice use.
+*   **White Space (Negative Space):** Use white space generously to reduce clutter, improve focus, and create a clean, uncluttered interface.
+*   **Visual Hierarchy:** Clearly define the importance of elements using size, color, weight, and placement. Users should be able to quickly identify primary actions and information.
+
+**Layout Best Practices:**
+* **Consistent Regions:** Create consistent regions (header, sidebar, content area, footer) for predictable navigation.
+* **Content Density:** Adjust content density based on user needs and screen size, ensuring critical information is always visible.
+* **Progressive Disclosure:** Show only the most essential information first, with details accessible through user interaction.
+* **Responsive Breakpoints:** Implement breakpoints at 600dp, 904dp, and 1240dp for adapting layouts to different device sizes.
+
+## 7. Accessibility (WCAG AA Focus)
+
+*   **Color Contrast:** As mentioned, minimum 4.5:1 for normal text, 3:1 for large text and UI components.
+*   **Keyboard Navigation:** All interactive elements must be focusable and operable via keyboard.
+*   **Focus Indicators:** Clear and visible focus indicators for all interactive elements.
+*   **ARIA Attributes:** Use appropriate ARIA (Accessible Rich Internet Applications) attributes for custom components or to provide additional context for screen readers.
+*   **Alternative Text:** Provide descriptive alt text for all meaningful images and icons (unless purely decorative, then `alt=""`).
+*   **Form Labels:** All form inputs must have associated labels.
+
+**Enhanced Accessibility Guidelines:**
+* **Reduced Motion:** Provide options for users who are sensitive to motion to reduce or eliminate animations.
+* **Text Spacing:** Allow text to be resized up to 200% without loss of content or functionality.
+* **Error Identification:** Clearly identify errors in forms and provide suggestions for correction.
+* **Consistent Navigation:** Maintain consistent placement of navigation components across the application.
+* **Reading Order:** Ensure that the reading order in the DOM matches the visual order for screen reader users.
+
+## 8. Motion & Microinteractions (Subtle)
+
+*   **Purposeful Motion:** Animation and motion should be used subtly and purposefully to provide feedback, guide focus, or indicate state changes. Avoid gratuitous or distracting animations.
+*   **Feedback:** Use subtle transitions for hover states, button presses, and opening/closing of menus or dialogs.
+*   **Duration:** Keep animations short and quick (e.g., 150ms-300ms).
+
+**Motion Principles:**
+* **Responsive:** Elements should react promptly to user interaction.
+* **Natural:** Movements should feel natural, following principles of real-world physics.
+* **Intentional:** Each animation should have a clear purpose that enhances the user experience.
+* **Focused:** Motion should direct attention to important elements or changes.
+
+## 9. Personalization & Role-Based Interfaces
+
+* **User Roles:** Adapt the interface based on user roles (e.g., administrators, tax officers, auditors) to show relevant information and actions.
+* **Frequently Used Items:** Highlight or provide quick access to frequently used actions based on user behavior.
+* **Contextual Help:** Provide contextual help and guidance based on user actions and potential pain points.
+* **User Preferences:** Allow minimal but meaningful personalization of the interface (e.g., dashboard arrangement, density settings).
+
+**Personalization Guidelines:**
+* Focus on adapting the interface based on user role and behavior rather than extensive customization options.
+* Store user preferences and maintain them across sessions.
+* Provide reasonable defaults that work well for most users.
+* Use onboarding to help users understand personalization options.
+
+## 10. Data Visualization & Reporting
+
+* **Chart Types:** Use appropriate chart types for different data relationships (bar charts for comparisons, line charts for trends, pie charts for proportions).
+* **Color Usage:** Use color consistently in data visualizations, ensuring accessibility and meaningful differentiation.
+* **Legends & Labels:** Provide clear legends and labels to help users interpret data quickly.
+* **Interactivity:** Allow basic interactions with charts (hovering for details, filtering, zooming) where appropriate.
+
+**Data Visualization Best Practices:**
+* **Simplicity:** Focus on the data, not decorative elements.
+* **Accuracy:** Ensure visualizations accurately represent the underlying data.
+* **Context:** Provide context through appropriate titles, labels, and annotations.
+* **Consistency:** Use consistent scales, colors, and formats across related visualizations.
+
+## 11. Final Considerations
+
+*   **Performance:** Design choices should not negatively impact application load times or responsiveness. Optimize images and assets.
+*   **Consistency:** Maintain consistency in design patterns, component usage, and terminology throughout the application.
+*   **User Testing:** (Recommended) Test designs with actual users (if possible) to gather feedback and identify usability issues.
+*   **React Component Libraries:** Consider leveraging established React component libraries that implement Material Design (e.g., MUI - Material UI for React) to ensure consistency and accelerate development. Adherence to the principles in this guide should still be prioritized when using or customizing such libraries.
+
+**Ethical Design Considerations:**
+* **Transparency:** Be transparent about how data is displayed and what actions are available to users.
+* **Default Settings:** Choose default settings that benefit users, not just the organization.
+* **User Control:** Give users control over their data and actions whenever possible.
+* **Inclusivity:** Design for users with a wide range of abilities, backgrounds, and technical proficiency.
+
+This design guide will serve as the foundation for the UI/UX development of the Niger State IRS Backoffice Tax Administrative Application. It should be a living document, potentially updated as the project evolves.

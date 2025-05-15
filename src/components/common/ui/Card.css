@@ -1,0 +1,115 @@
+/* Card Component Styles */
+.ui-card {
+  background-color: white;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: all var(--transition-normal);
+}
+
+/* Card Header */
+.ui-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: var(--space-6) var(--space-6) var(--space-4);
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.ui-card-header-content {
+  flex: 1;
+}
+
+.ui-card-title {
+  font-size: 1.125rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-900);
+  margin: 0 0 var(--space-1) 0;
+  line-height: 1.2;
+}
+
+.ui-card-subtitle {
+  font-size: 0.875rem;
+  color: var(--color-gray-600);
+  margin-top: var(--space-1);
+}
+
+.ui-card-actions {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+/* Card Body */
+.ui-card-body {
+  padding: var(--space-6);
+  flex: 1;
+}
+
+/* When there's a header, adjust body padding */
+.ui-card-header + .ui-card-body {
+  padding-top: var(--space-2);
+}
+
+/* Card Footer */
+.ui-card-footer {
+  padding: var(--space-4) var(--space-6);
+  border-top: 1px solid var(--color-gray-200);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Variants */
+.ui-card-default {
+  background-color: white;
+  border: none;
+}
+
+.ui-card-outline {
+  background-color: white;
+  border: 1px solid var(--color-gray-200);
+}
+
+.ui-card-flat {
+  background-color: var(--color-gray-50);
+  border: none;
+}
+
+/* Elevations */
+.ui-card-elevation-none {
+  box-shadow: none;
+}
+
+.ui-card-elevation-sm {
+  box-shadow: var(--shadow-sm);
+}
+
+.ui-card-elevation-md {
+  box-shadow: var(--shadow-md);
+}
+
+.ui-card-elevation-lg {
+  box-shadow: var(--shadow-lg);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .ui-card-header {
+    padding: var(--space-4);
+  }
+  
+  .ui-card-body {
+    padding: var(--space-4);
+  }
+  
+  .ui-card-footer {
+    padding: var(--space-3) var(--space-4);
+  }
+  
+  .ui-card-header + .ui-card-body {
+    padding-top: var(--space-2);
+  }
+} 
