@@ -1,38 +1,44 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './components/LoginPage';
-import DashboardPage from './components/DashboardPage';
 import MainLayout from './layouts/MainLayout';
-import Individuals from './components/taxpayers/Individuals';
-import TaxpayerBusinesses from './components/taxpayers/TaxpayerBusinesses';
-import TaxpayerVerification from './components/taxpayers/TaxpayerVerification';
-import TaxpayerProfiling from './components/taxpayers/TaxpayerProfiling';
-import TaxpayerDetails from './components/taxpayers/TaxpayerDetails';
-import TaxpayerReturns from './components/taxpayers/TaxpayerReturns';
-import TaxReturnDetails from './components/taxpayers/TaxReturnDetails';
-import TaxReturnProcess from './components/taxpayers/TaxReturnProcess';
+import DashboardPage from './components/DashboardPage';
 import AdminUsers from './components/users/AdminUsers';
 import RolesPermissions from './components/users/RolesPermissions';
 import UserActivity from './components/users/UserActivity';
-import RevenueHeads from './components/revenue/RevenueHeads';
-import StateRevenueHeads from './components/revenue/StateRevenueHeads';
-import LgaRevenueHeads from './components/revenue/LgaRevenueHeads';
-import RevenueItems from './components/revenue/RevenueItems';
-import { 
-  AssessmentList, 
-  CreateAssessment, 
-  PendingAssessments,
-  SelfAssessmentReview,
-  ManageAssessment 
-} from './components/assessments';
-import { 
-  TCCApplicationList, 
-  TCCApplicationDetails, 
+import TaxpayerProfiling from './components/taxpayers/TaxpayerProfiling';
+import Individuals from './components/taxpayers/Individuals';
+import TaxpayerBusinesses from './components/taxpayers/TaxpayerBusinesses';
+import TaxpayerDetails from './components/taxpayers/TaxpayerDetails';
+import {
+  TCCApplicationList,
   TCCApplicationCreate,
+  TCCApplicationDetails,
   TCCApplicationProcess 
 } from './components/tcc';
-import ConsolidatedDemandNotice from './components/demand/ConsolidatedDemandNotice';
-import BulkBillGeneration from './components/billing/BulkBillGeneration';
+import ConsolidatedDemandNotice from './pages/ConsolidatedDemandNotice';
+import BulkLUCGeneration from './pages/BulkLUCGeneration';
+import {
+  TaxpayerVerification,
+} from './components/taxpayers/index.jsx';
+import {
+  TaxpayerReturns,
+  TaxReturnDetails,
+  TaxReturnProcess
+} from './components/returns/index.jsx';
+import {
+  RevenueHeads,
+  StateRevenueHeads,
+  LgaRevenueHeads,
+  RevenueItems
+} from './components/revenue/index.jsx';
+import {
+  AssessmentList,
+  CreateAssessment,
+  PendingAssessments,
+  SelfAssessmentReview,
+  ManageAssessment
+} from './components/assessments';
 import './App.css';
 
 function App() {
@@ -60,8 +66,8 @@ function App() {
           {/* Consolidated Demand Notice */}
           <Route path="consolidated-demand-notice" element={<ConsolidatedDemandNotice />} />
           
-          {/* Bulk Bill Generation */}
-          <Route path="bulk-bill-generation" element={<BulkBillGeneration />} />
+          {/* Land Use Charge Generation */}
+          <Route path="bulk-luc-generation" element={<BulkLUCGeneration />} />
           
           {/* Taxpayer Management Routes */}
           <Route path="taxpayers">

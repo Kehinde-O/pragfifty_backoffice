@@ -7,9 +7,11 @@ const StatsCard = ({
   value,
   icon,
   change,
-  changeType = 'neutral',
+  changeLabel,
+  trend = 'neutral', // 'up', 'down', or 'neutral'
   color = 'primary',
-  animationStyle = 'pulse', // pulse, fade, slide
+  animationStyle = 'fade',
+  isLoading = false,
   className = '',
   footer,
   onClick,
@@ -18,6 +20,9 @@ const StatsCard = ({
   const handleClick = () => {
     if (onClick) onClick();
   };
+
+  // Map trend to changeType for styling
+  const changeType = trend === 'up' ? 'positive' : trend === 'down' ? 'negative' : 'neutral';
 
   return (
     <div 
@@ -32,14 +37,24 @@ const StatsCard = ({
         </div>
         
         <div className="ui-stats-card-body">
-          <div className="ui-stats-card-value">{value}</div>
-          
-          {change && (
-            <div className={`ui-stats-card-change ui-stats-card-change-${changeType}`}>
-              {changeType === 'positive' && <span className="ui-stats-card-change-arrow">↑</span>}
-              {changeType === 'negative' && <span className="ui-stats-card-change-arrow">↓</span>}
-              <span className="ui-stats-card-change-value">{change}</span>
+          {isLoading ? (
+            <div className="ui-stats-card-loading">
+              <div className="ui-stats-card-skeleton-value"></div>
+              <div className="ui-stats-card-skeleton-change"></div>
             </div>
+          ) : (
+            <>
+              <div className="ui-stats-card-value">{value}</div>
+              
+              {change !== undefined && (
+                <div className={`ui-stats-card-change ui-stats-card-change-${changeType}`}>
+                  {trend === 'up' && <span className="ui-stats-card-change-arrow">↑</span>}
+                  {trend === 'down' && <span className="ui-stats-card-change-arrow">↓</span>}
+                  <span className="ui-stats-card-change-value">{Math.abs(change)}%</span>
+                  {changeLabel && <span className="ui-stats-card-change-label">{changeLabel}</span>}
+                </div>
+              )}
+            </>
           )}
         </div>
         
@@ -56,9 +71,11 @@ StatsCard.propTypes = {
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.node]).isRequired,
   icon: PropTypes.node,
   change: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  changeType: PropTypes.oneOf(['positive', 'negative', 'neutral']),
+  changeLabel: PropTypes.string,
+  trend: PropTypes.oneOf(['up', 'down', 'neutral']),
   color: PropTypes.oneOf(['primary', 'secondary', 'success', 'warning', 'danger', 'info']),
   animationStyle: PropTypes.oneOf(['pulse', 'fade', 'slide', 'none']),
+  isLoading: PropTypes.bool,
   className: PropTypes.string,
   footer: PropTypes.node,
   onClick: PropTypes.func,

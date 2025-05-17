@@ -28,6 +28,35 @@ function Sidebar({ open }) {
     return location.pathname === path;
   };
 
+  // Check if a path is part of the current route (for highlighting parent menu items)
+  const isPartOfRoute = (path) => {
+    return location.pathname.startsWith(path);
+  };
+
+  // Check if any submenu item is active to highlight the parent
+  const isSubmenuActive = (section) => {
+    switch(section) {
+      case 'users':
+        return isPartOfRoute('/dashboard/admins') || 
+               isPartOfRoute('/dashboard/roles') || 
+               isPartOfRoute('/dashboard/user-activity');
+      case 'taxpayers':
+        return isPartOfRoute('/dashboard/taxpayers/');
+      case 'revenue':
+        return isPartOfRoute('/dashboard/revenue-heads/');
+      case 'assessments':
+        return isPartOfRoute('/dashboard/assessments/');
+      case 'transactions':
+        return isPartOfRoute('/dashboard/transactions/');
+      case 'reports':
+        return isPartOfRoute('/dashboard/reports/');
+      case 'settings':
+        return isPartOfRoute('/dashboard/settings/');
+      default:
+        return false;
+    }
+  };
+
   return (
     <aside className={`sidebar ${open ? 'open' : 'collapsed'}`}>
       <div className="sidebar-header">
@@ -56,7 +85,7 @@ function Sidebar({ open }) {
 
           {/* TCC Application - New main menu item */}
           <li className="menu-item">
-            <Link to="/dashboard/tcc-application" className={`menu-link ${isActive('/dashboard/tcc-application') ? 'active' : ''}`}>
+            <Link to="/dashboard/tcc-application" className={`menu-link ${isPartOfRoute('/dashboard/tcc-application') ? 'active' : ''}`}>
               <span className="menu-icon">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
@@ -75,19 +104,21 @@ function Sidebar({ open }) {
             <Link to="/dashboard/consolidated-demand-notice" className={`menu-link ${isActive('/dashboard/consolidated-demand-notice') ? 'active' : ''}`}>
               <span className="menu-icon">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                  <line x1="16" y1="2" x2="16" y2="6"></line>
-                  <line x1="8" y1="2" x2="8" y2="6"></line>
-                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                  <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                  <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                  <path d="M12 11h4"></path>
+                  <path d="M12 16h4"></path>
+                  <path d="M8 11h.01"></path>
+                  <path d="M8 16h.01"></path>
                 </svg>
               </span>
-              {open && <span className="menu-text">Demand Notice</span>}
+              {open && <span className="menu-text">CDN Consolidated Demand Notice</span>}
             </Link>
           </li>
 
           {/* Bulk Bill Generation - New main menu item */}
           <li className="menu-item">
-            <Link to="/dashboard/bulk-bill-generation" className={`menu-link ${isActive('/dashboard/bulk-bill-generation') ? 'active' : ''}`}>
+            <Link to="/dashboard/bulk-luc-generation" className={`menu-link ${isActive('/dashboard/bulk-luc-generation') ? 'active' : ''}`}>
               <span className="menu-icon">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
@@ -95,14 +126,14 @@ function Sidebar({ open }) {
                   <line x1="12" y1="22.08" x2="12" y2="12"></line>
                 </svg>
               </span>
-              {open && <span className="menu-text">Bulk Bill Generation</span>}
+              {open && <span className="menu-text">Land Use Charge (LUC) Generation</span>}
             </Link>
           </li>
 
           {/* User Management */}
-          <li className="menu-section">
+          <li className={`menu-section ${isSubmenuActive('users') ? 'active-section' : ''}`}>
             <button
-              className="section-toggle"
+              className={`section-toggle ${isSubmenuActive('users') ? 'active' : ''}`}
               onClick={() => toggleSection('users')}
               aria-expanded={expandedSections.users}
             >
@@ -135,9 +166,9 @@ function Sidebar({ open }) {
           </li>
 
           {/* Taxpayer Management */}
-          <li className="menu-section">
+          <li className={`menu-section ${isSubmenuActive('taxpayers') ? 'active-section' : ''}`}>
             <button
-              className="section-toggle"
+              className={`section-toggle ${isSubmenuActive('taxpayers') ? 'active' : ''}`}
               onClick={() => toggleSection('taxpayers')}
               aria-expanded={expandedSections.taxpayers}
             >
@@ -184,9 +215,9 @@ function Sidebar({ open }) {
           </li>
 
           {/* Revenue Heads */}
-          <li className="menu-section">
+          <li className={`menu-section ${isSubmenuActive('revenue') ? 'active-section' : ''}`}>
             <button
-              className="section-toggle"
+              className={`section-toggle ${isSubmenuActive('revenue') ? 'active' : ''}`}
               onClick={() => toggleSection('revenue')}
               aria-expanded={expandedSections.revenue}
             >
@@ -212,15 +243,15 @@ function Sidebar({ open }) {
               <ul className="submenu">
                 <li><Link to="/dashboard/revenue-heads/state" className={isActive('/dashboard/revenue-heads/state') ? 'active' : ''}>State Revenue Heads</Link></li>
                 <li><Link to="/dashboard/revenue-heads/lga" className={isActive('/dashboard/revenue-heads/lga') ? 'active' : ''}>LGA Revenue Heads</Link></li>
-                <li><Link to="/dashboard/revenue-heads/manage" className={isActive('/dashboard/revenue-heads/manage') ? 'active' : ''}>Manage Revenue Heads</Link></li>
+                <li><Link to="/dashboard/revenue-heads/items" className={isActive('/dashboard/revenue-heads/items') ? 'active' : ''}>Revenue Items</Link></li>
               </ul>
             )}
           </li>
 
           {/* Assessments */}
-          <li className="menu-section">
+          <li className={`menu-section ${isSubmenuActive('assessments') ? 'active-section' : ''}`}>
             <button
-              className="section-toggle"
+              className={`section-toggle ${isSubmenuActive('assessments') ? 'active' : ''}`}
               onClick={() => toggleSection('assessments')}
               aria-expanded={expandedSections.assessments}
             >

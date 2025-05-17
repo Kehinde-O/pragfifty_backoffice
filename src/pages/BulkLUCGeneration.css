@@ -1,0 +1,245 @@
+/* BulkLUCGeneration Styles */
+
+.bulk-luc-container {
+  background-color: #f9fafb;
+  min-height: 100%;
+}
+
+.page-title {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+/* Custom select styling */
+.MuiSelect-multiple {
+  min-height: 56px;
+}
+
+/* Stylize the select dropdown */
+.MuiMenuItem-root {
+  padding: 10px 16px;
+  transition: background-color 0.2s;
+}
+
+.MuiMenuItem-root.Mui-selected {
+  background-color: rgba(25, 118, 210, 0.08);
+}
+
+.MuiMenuItem-root.Mui-selected:hover {
+  background-color: rgba(25, 118, 210, 0.12);
+}
+
+.MuiListSubheader-root {
+  font-weight: 600;
+  color: #374151;
+  background-color: #f9fafb;
+  line-height: 36px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+/* Tab styling */
+.MuiTabs-root {
+  background-color: #fff;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.MuiTab-root {
+  text-transform: none;
+  font-size: 0.9rem;
+  min-width: 160px;
+}
+
+.MuiTab-root.Mui-selected {
+  font-weight: 600;
+}
+
+/* Alert styling */
+.MuiAlert-root {
+  border-radius: 8px;
+}
+
+.MuiAlert-standardInfo {
+  background-color: rgba(25, 118, 210, 0.08);
+  border: 1px solid rgba(25, 118, 210, 0.12);
+}
+
+/* Typography enhancements */
+.MuiTypography-h4 {
+  color: #111827;
+  letter-spacing: -0.5px;
+}
+
+.MuiTypography-h6 {
+  color: #1f2937;
+}
+
+.MuiTypography-h3 {
+  letter-spacing: -1px;
+}
+
+/* Stats cards styling */
+.stats-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stats-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* Chip styling */
+.MuiChip-root {
+  font-weight: 500;
+}
+
+.MuiChip-outlinedPrimary {
+  border-color: rgba(25, 118, 210, 0.5);
+}
+
+.MuiChip-outlinedSuccess {
+  border-color: rgba(46, 125, 50, 0.5);
+  color: #2e7d32;
+}
+
+.MuiChip-outlinedWarning {
+  border-color: rgba(237, 108, 2, 0.5);
+  color: #ed6c02;
+}
+
+/* Form field focus states */
+.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: #1976d2;
+  border-width: 2px;
+}
+
+/* Input adornment styling */
+.MuiInputAdornment-root {
+  color: rgba(0, 0, 0, 0.54);
+}
+
+/* Button styling */
+.MuiButton-containedPrimary {
+  text-transform: none;
+  font-weight: 500;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.MuiButton-containedPrimary:hover {
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Table styling */
+.MuiTableContainer-root {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.MuiTableHead-root .MuiTableRow-root {
+  background-color: #f9fafb;
+}
+
+.MuiTableHead-root .MuiTableCell-root {
+  font-weight: 600;
+  color: #374151;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+/* Search results styling */
+.search-results-summary {
+  background-color: rgba(25, 118, 210, 0.04);
+  border: 1px solid rgba(25, 118, 210, 0.12);
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 24px;
+}
+
+/* Tooltip styling */
+.MuiTooltip-tooltip {
+  font-size: 0.75rem;
+  padding: 8px 12px;
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+/* Icon button styling */
+.MuiIconButton-root {
+  color: #1976d2;
+}
+
+.MuiIconButton-root:hover {
+  background-color: rgba(25, 118, 210, 0.08);
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .bulk-luc-container {
+    padding: 1rem;
+  }
+}
+
+/* Responsive styles for smaller screens */
+@media (max-width: 768px) {
+  .MuiTab-root {
+    min-width: auto;
+    flex: 1;
+    font-size: 0.8rem;
+    padding: 12px 8px;
+  }
+  
+  .MuiTypography-h4 {
+    font-size: 1.75rem;
+  }
+  
+  .MuiTypography-h3 {
+    font-size: 2rem;
+  }
+  
+  .MuiButton-containedPrimary {
+    width: 100%;
+  }
+  
+  /* Make tables more mobile-friendly */
+  .MuiTableContainer-root {
+    overflow-x: auto;
+  }
+}
+
+/* Custom spinner for the loading state */
+.spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+  margin-right: 8px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Table row hover effect */
+.MuiTableRow-root:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+/* Dialog transitions */
+.MuiDialog-paper {
+  transition: transform 0.3s ease;
+}
+
+/* Card selection effect */
+.year-card {
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+  cursor: pointer;
+}
+
+.year-card:hover {
+  border-color: #1976d2;
+} 

@@ -1,0 +1,223 @@
+.cdn-container {
+  padding: 1.5rem;
+  background-color: #f9fafb;
+  min-height: 100%;
+}
+
+.page-title {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.cdn-tabs .nav-link {
+  color: #495057;
+  font-weight: 500;
+  padding: 0.75rem 1.25rem;
+  border: none;
+  border-bottom: 2px solid transparent;
+}
+
+.cdn-tabs .nav-link.active {
+  color: #3f51b5;
+  border-bottom: 2px solid #3f51b5;
+  background-color: transparent;
+}
+
+.search-card {
+  border: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.search-card .card-header {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.cdn-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.cdn-table thead th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #495057;
+  border-top: none;
+  padding: 0.75rem;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+}
+
+.cdn-table tbody td {
+  padding: 0.75rem;
+  vertical-align: middle;
+  border-top: 1px solid #f0f0f0;
+}
+
+.cdn-table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+/* Button styling */
+.btn-primary {
+  background-color: #3f51b5;
+  border-color: #3f51b5;
+}
+
+.btn-primary:hover, .btn-primary:focus {
+  background-color: #303f9f;
+  border-color: #303f9f;
+}
+
+.btn-secondary {
+  background-color: #f8f9fa;
+  border-color: #ced4da;
+  color: #6c757d;
+}
+
+.btn-secondary:hover, .btn-secondary:focus {
+  background-color: #e9ecef;
+  border-color: #adb5bd;
+  color: #495057;
+}
+
+.btn-danger {
+  background-color: #f44336;
+  border-color: #f44336;
+}
+
+.btn-danger:hover, .btn-danger:focus {
+  background-color: #e53935;
+  border-color: #e53935;
+}
+
+/* Form control styling */
+.form-control:focus {
+  border-color: #3f51b5;
+  box-shadow: 0 0 0 0.2rem rgba(63, 81, 181, 0.25);
+}
+
+.form-select:focus {
+  border-color: #3f51b5;
+  box-shadow: 0 0 0 0.2rem rgba(63, 81, 181, 0.25);
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .cdn-container {
+    padding: 1rem;
+  }
+  
+  .cdn-table {
+    font-size: 0.875rem;
+  }
+  
+  .cdn-table thead th {
+    font-size: 0.7rem;
+  }
+}
+
+/* Custom styles for Material UI components */
+.MuiPaper-root.search-card {
+  margin-bottom: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Table styling enhancements */
+.MuiTableContainer-root {
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.MuiTableHead-root .MuiTableRow-root {
+  background-color: #f9fafb;
+}
+
+.MuiTableHead-root .MuiTableCell-root {
+  font-weight: 600;
+  color: #374151;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.MuiTableBody-root .MuiTableRow-root:hover {
+  background-color: #f9fafb;
+}
+
+.MuiTableBody-root .MuiTableCell-root {
+  padding: 12px 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* Button styling */
+.action-button {
+  text-transform: none;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+/* Chip styling for classification and value category */
+.MuiChip-root {
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+/* Tab styling */
+.MuiTabs-root {
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.MuiTab-root {
+  text-transform: none;
+  font-weight: 600;
+  font-size: 1rem;
+  min-width: 160px;
+}
+
+.MuiTab-root.Mui-selected {
+  color: #1976d2;
+}
+
+/* Enhanced form styling */
+.MuiFormControl-root {
+  width: 100%;
+  margin-bottom: 0;
+}
+
+/* Form field focus state */
+.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: #1976d2;
+  border-width: 2px;
+}
+
+/* Loading spinner container */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 0;
+}
+
+/* Empty state styling */
+.empty-state {
+  text-align: center;
+  padding: 3rem 0;
+  color: #6b7280;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .MuiTab-root {
+    min-width: auto;
+    flex: 1;
+  }
+  
+  .MuiTableContainer-root {
+    overflow-x: auto;
+  }
+} 

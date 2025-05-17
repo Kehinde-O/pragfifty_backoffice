@@ -1,188 +1,183 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { Card, StatsCard, Button } from '../common/ui';
 import { 
-  FiArrowLeft, 
-  FiCheckCircle, 
-  FiDownload, 
-  FiClock, 
-  FiFile, 
-  FiDollarSign, 
-  FiCalendar, 
-  FiUser, 
-  FiFileText,
-  FiInfo,
-  FiActivity,
-  FiFolder,
-  FiEye,
-  FiPrinter,
-  FiMail,
-  FiAlertTriangle,
-  FiTag,
-  FiCheck,
-  FiX,
-  FiChevronRight
-} from 'react-icons/fi';
+  FaUser, 
+  FaIdCard, 
+  FaCalendarAlt, 
+  FaMoneyBillWave, 
+  FaFileAlt, 
+  FaCheckCircle, 
+  FaTimesCircle,
+  FaHistory,
+  FaArrowLeft,
+  FaPrint,
+  FaDownload,
+  FaEdit,
+  FaClock,
+  FaExclamationTriangle,
+  FaInfoCircle,
+  FaFileInvoice,
+  FaClipboardList,
+  FaRegFileAlt,
+  FaRegCalendarAlt,
+  FaRegCreditCard,
+  FaRegBuilding,
+  FaShieldAlt,
+  FaReceipt,
+  FaEye,
+  FaChevronRight,
+  FaTags,
+  FaHome,
+  FaFilePdf
+} from 'react-icons/fa';
 import './TCC.css';
 
-function TCCApplicationDetails() {
+const TCCApplicationDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [tccApplication, setTCCApplication] = useState(null);
+  const [application, setApplication] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('details');
 
-  // Mock data - replace with API call in production
   useEffect(() => {
-    const fetchTCCDetails = async () => {
-      try {
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 800));
-        
-        // Mock data
-        const mockTCC = {
-          id: id,
-          applicationNumber: `TCC-2023-00${id}`,
-          applicationDate: '2023-05-15',
-          taxpayerName: 'John Doe',
-          tin: 'TIN12345678',
-          year: '2023',
-          status: 'APPROVED',
-          tccNumber: 'TCCREG-2023-001',
-          issueDate: '2023-05-20',
-          expiryDate: '2024-05-19',
-          sourceOfIncome: 'EMPLOYMENT',
-          platformPayment: 'Y',
-          comment: 'All tax obligations have been met. TCC approved.',
-          incomeDetails: [
-            {
-              year: '2022',
-              annualIncome: 5000000,
-              assessmentTaxReceiptNo: 'RCP-2022-12345',
-              assessmentTaxAmount: 250000,
-              assessmentTaxReceiptDate: '2022-12-15',
-              outstandingTax: 0,
-              devLevyReceiptNo: 'DL-2022-54321',
-              devLevyAmount: 5000,
-              devLevyReceiptDate: '2022-12-10',
-              landUseChargeReceiptNo: 'LUC-2022-98765',
-              landUseChargeAmount: 35000,
-              landUseChargeReceiptDate: '2022-11-25',
-              previousTccNo: null,
-              previousTccIssueDate: null
-            },
-            {
-              year: '2021',
-              annualIncome: 4500000,
-              assessmentTaxReceiptNo: 'RCP-2021-67890',
-              assessmentTaxAmount: 225000,
-              assessmentTaxReceiptDate: '2021-12-18',
-              outstandingTax: 0,
-              devLevyReceiptNo: 'DL-2021-09876',
-              devLevyAmount: 5000,
-              devLevyReceiptDate: '2021-12-05',
-              landUseChargeReceiptNo: 'LUC-2021-54321',
-              landUseChargeAmount: 32000,
-              landUseChargeReceiptDate: '2021-11-20',
-              previousTccNo: null,
-              previousTccIssueDate: null
-            },
-            {
-              year: '2020',
-              annualIncome: 4200000,
-              assessmentTaxReceiptNo: 'RCP-2020-13579',
-              assessmentTaxAmount: 210000,
-              assessmentTaxReceiptDate: '2020-12-10',
-              outstandingTax: 0,
-              devLevyReceiptNo: 'DL-2020-97531',
-              devLevyAmount: 5000,
-              devLevyReceiptDate: '2020-12-02',
-              landUseChargeReceiptNo: 'LUC-2020-24680',
-              landUseChargeAmount: 28000,
-              landUseChargeReceiptDate: '2020-11-15',
-              previousTccNo: null,
-              previousTccIssueDate: null
-            }
-          ],
-          documents: [
-            {
-              id: '1',
-              documentType: 'EVIDENCE',
-              fileName: 'tax_payment_receipt.pdf',
-              fileType: 'application/pdf',
-              fileSize: 1258000,
-              uploadDate: '2023-05-12'
-            },
-            {
-              id: '2',
-              documentType: 'BANK',
-              fileName: 'bank_statement.pdf',
-              fileType: 'application/pdf',
-              fileSize: 3452000,
-              uploadDate: '2023-05-12'
-            },
-            {
-              id: '3',
-              documentType: 'REGISTRATION',
-              fileName: 'id_card.jpg',
-              fileType: 'image/jpeg',
-              fileSize: 845000,
-              uploadDate: '2023-05-11'
-            }
-          ],
-          timeline: [
-            {
-              action: 'TCC Application Created',
-              date: '2023-05-11T09:23:15',
-              actor: 'John Doe',
-              actorRole: 'Taxpayer'
-            },
-            {
-              action: 'TCC Application Submitted',
-              date: '2023-05-12T14:05:32',
-              actor: 'John Doe',
-              actorRole: 'Taxpayer'
-            },
-            {
-              action: 'TCC Application Under Review',
-              date: '2023-05-15T10:15:20',
-              actor: 'Sarah Johnson',
-              actorRole: 'Tax Officer'
-            },
-            {
-              action: 'TCC Approved',
-              date: '2023-05-20T11:30:45',
-              actor: 'James Wilson',
-              actorRole: 'Tax Manager'
-            }
-          ]
-        };
-        
-        setTCCApplication(mockTCC);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching TCC details:', error);
-        setLoading(false);
-      }
-    };
-
-    fetchTCCDetails();
+    fetchApplicationDetails();
   }, [id]);
 
-  // Handle back button
-  const handleBack = () => {
+  // Mock data fetch
+  const fetchApplicationDetails = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      // Mock data for a single TCC application
+      const mockData = {
+        id: id,
+        applicationNumber: 'TCC-2023-001',
+        applicationDate: '2023-05-15',
+        taxpayerName: 'John Doe',
+        tin: 'TIN12345678',
+        email: 'john.doe@example.com',
+        phone: '+234 801 234 5678',
+        year: '2023',
+        status: 'APPROVED',
+        tccNumber: 'TCCREG-2023-001',
+        issueDate: '2023-05-20',
+        expiryDate: '2024-05-19',
+        sourceOfIncome: 'EMPLOYMENT',
+        platformPayment: 'Y',
+        comment: 'Application approved after verification of all documents and tax payments.',
+        incomeDetails: [
+          {
+            year: '2022',
+            annualIncome: 5000000,
+            taxAmount: 425000,
+            taxReceiptNo: 'PAYE-2022-1234',
+            taxReceiptDate: '2022-12-15',
+            outstandingTax: 0
+          },
+          {
+            year: '2021',
+            annualIncome: 4500000,
+            taxAmount: 375000,
+            taxReceiptNo: 'PAYE-2021-5678',
+            taxReceiptDate: '2021-12-10',
+            outstandingTax: 0
+          },
+          {
+            year: '2020',
+            annualIncome: 4000000,
+            taxAmount: 325000,
+            taxReceiptNo: 'PAYE-2020-9012',
+            taxReceiptDate: '2020-12-18',
+            outstandingTax: 0
+          }
+        ],
+        documents: [
+          {
+            id: '1',
+            name: 'Tax Payment Receipt 2022',
+            type: 'PAYMENT',
+            fileType: 'PDF',
+            uploadDate: '2023-05-10'
+          },
+          {
+            id: '2',
+            name: 'Tax Payment Receipt 2021',
+            type: 'PAYMENT',
+            fileType: 'PDF',
+            uploadDate: '2023-05-10'
+          },
+          {
+            id: '3',
+            name: 'Tax Payment Receipt 2020',
+            type: 'PAYMENT',
+            fileType: 'PDF',
+            uploadDate: '2023-05-10'
+          },
+          {
+            id: '4',
+            name: 'Passport Photograph',
+            type: 'IDENTITY',
+            fileType: 'JPEG',
+            uploadDate: '2023-05-10'
+          }
+        ],
+        timeline: [
+          {
+            date: '2023-05-20',
+            status: 'APPROVED',
+            comment: 'Application approved and TCC issued',
+            actor: 'Fatima Ibrahim (Tax Officer)'
+          },
+          {
+            date: '2023-05-18',
+            status: 'UNDER_REVIEW',
+            comment: 'Document verification completed',
+            actor: 'Fatima Ibrahim (Tax Officer)'
+          },
+          {
+            date: '2023-05-16',
+            status: 'UNDER_REVIEW',
+            comment: 'Application assigned for review',
+            actor: 'System'
+          },
+          {
+            date: '2023-05-15',
+            status: 'SUBMITTED',
+            comment: 'Application submitted',
+            actor: 'John Doe (Taxpayer)'
+          }
+        ]
+      };
+      
+      setApplication(mockData);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching TCC application details:', error);
+      setError('Failed to load application details. Please try again.');
+      setLoading(false);
+    }
+  };
+
+  // Navigate back to list
+  const handleBackToList = () => {
     navigate('/dashboard/tcc-application');
   };
 
-  // Handle process TCC
-  const handleProcessTCC = () => {
+  // Navigate to process page
+  const handleProcess = () => {
     navigate(`/dashboard/tcc-application/${id}/process`);
   };
 
-  // Format date for display
+  // Format date
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-GB', {
+    return date.toLocaleDateString('en-NG', {
       day: '2-digit',
       month: 'short',
       year: 'numeric'
@@ -193,484 +188,559 @@ function TCCApplicationDetails() {
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-NG', {
       style: 'currency',
-      currency: 'NGN'
+      currency: 'NGN',
+      maximumFractionDigits: 0
     }).format(amount);
   };
 
-  // Format datetime for timeline
-  const formatDateTime = (dateTimeString) => {
-    if (!dateTimeString) return 'N/A';
-    const date = new Date(dateTimeString);
-    return date.toLocaleString('en-GB', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true
-    });
-  };
-
-  // Format file size
-  const formatFileSize = (bytes) => {
-    if (bytes < 1024) return bytes + ' bytes';
-    else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
-    else return (bytes / 1048576).toFixed(1) + ' MB';
-  };
-
   // Get source of income label
-  const getSourceOfIncomeLabel = (source) => {
-    switch (source) {
-      case 'TRADE':
-        return 'Trade/Business';
-      case 'PROFESSION':
-        return 'Professional Practice';
-      case 'VOCATION':
-        return 'Vocation';
-      case 'EMPLOYMENT':
-        return 'Employment';
-      case 'RENT':
-        return 'Rental Income';
-      case 'DIVIDEND':
-        return 'Dividend/Interest';
-      default:
-        return 'Other';
-    }
+  const getSourceOfIncomeLabel = (sourceCode) => {
+    const sources = {
+      'EMPLOYMENT': 'Employment',
+      'TRADE': 'Trade/Business',
+      'PROFESSION': 'Professional Practice',
+      'VOCATION': 'Vocation',
+      'INVESTMENT': 'Investment'
+    };
+    
+    return sources[sourceCode] || sourceCode;
   };
 
   // Status badge component
   const StatusBadge = ({ status }) => {
-    let statusClass = "";
-    let icon = null;
-    let label = "";
-
+    let badgeClass = 'status-badge ';
+    
     switch (status) {
       case 'APPROVED':
-        statusClass = "status-approved";
-        icon = <FiCheck />;
-        label = "Approved";
+        badgeClass += 'badge-approved';
         break;
       case 'REJECTED':
-        statusClass = "status-rejected";
-        icon = <FiX />;
-        label = "Rejected";
+        badgeClass += 'badge-rejected';
         break;
       case 'UNDER_REVIEW':
-        statusClass = "status-review";
-        icon = <FiClock />;
-        label = "Under Review";
+        badgeClass += 'badge-pending';
         break;
       case 'SUBMITTED':
-        statusClass = "status-submitted";
-        icon = <FiFileText />;
-        label = "Submitted";
+        badgeClass += 'badge-info';
         break;
       default:
-        statusClass = "status-draft";
-        icon = <FiFile />;
-        label = "Draft";
+        badgeClass += 'badge-default';
     }
-
-    return (
-      <div className={`status-badge ${statusClass}`}>
-        {icon} {label}
-      </div>
-    );
-  };
-
-  // Render action buttons
-  const renderActionButtons = () => {
-    if (!tccApplication) return null;
     
-    return (
-      <div className="details-action-buttons">
-        {tccApplication.status !== 'APPROVED' && tccApplication.status !== 'REJECTED' && (
-          <button className="process-button" onClick={handleProcessTCC}>
-            <FiCheckCircle />
-            Process Application
-          </button>
-        )}
-        
-        {tccApplication.status === 'APPROVED' && (
-          <div className="action-button-group">
-            <button className="primary-button">
-              <FiDownload />
-              Download TCC
-            </button>
-            <button className="secondary-button">
-              <FiPrinter />
-              Print
-            </button>
-            <button className="secondary-button">
-              <FiMail />
-              Email to Taxpayer
-            </button>
-          </div>
-        )}
-        
-        {tccApplication.status === 'REJECTED' && (
-          <div className="rejection-notice">
-            <FiAlertTriangle />
-            <span>This application was rejected. View comments for details.</span>
-          </div>
-        )}
-      </div>
-    );
+    // Format status for display
+    const formattedStatus = status.replace(/_/g, ' ').toLowerCase()
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+    
+    return <span className={badgeClass}>{formattedStatus}</span>;
   };
 
-  // Render details tab
-  const renderDetailsTab = () => {
-    return (
-      <div className="details-tab-content">
-        <div className="status-card">
-          <div className="status-info">
-            <div className="status-badge-wrapper">
-              <StatusBadge status={tccApplication.status} />
-            </div>
-            <div className="reference-info">
-              <div className="info-item">
-                <span className="info-label"><FiTag /> Reference:</span>
-                <span className="info-value">{tccApplication.applicationNumber}</span>
-              </div>
-              {tccApplication.status === 'APPROVED' && (
-                <div className="info-item">
-                  <span className="info-label"><FiFileText /> TCC Number:</span>
-                  <span className="info-value">{tccApplication.tccNumber}</span>
-                </div>
-              )}
-            </div>
-          </div>
-          {renderActionButtons()}
-        </div>
-        
-        <div className="details-grid-container">
-          <div className="details-card">
-            <div className="card-header">
-              <div className="header-icon">
-                <FiUser />
-              </div>
-              <h3>Taxpayer Information</h3>
-            </div>
-            <div className="card-content">
-              <div className="details-grid">
-                <div className="detail-item">
-                  <span className="detail-label">Taxpayer Name</span>
-                  <span className="detail-value">{tccApplication.taxpayerName}</span>
-                </div>
-                <div className="detail-item">
-                  <span className="detail-label">TIN</span>
-                  <span className="detail-value">{tccApplication.tin}</span>
-                </div>
-                <div className="detail-item">
-                  <span className="detail-label">Source of Income</span>
-                  <span className="detail-value">{getSourceOfIncomeLabel(tccApplication.sourceOfIncome)}</span>
-                </div>
-                <div className="detail-item">
-                  <span className="detail-label">Tax Year</span>
-                  <span className="detail-value">{tccApplication.year}</span>
-                </div>
-                <div className="detail-item">
-                  <span className="detail-label">Platform Payment</span>
-                  <span className="detail-value">{tccApplication.platformPayment === 'Y' ? 'Yes' : 'No'}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <div className="details-card">
-            <div className="card-header">
-              <div className="header-icon">
-                <FiFileText />
-              </div>
-              <h3>TCC Information</h3>
-            </div>
-            <div className="card-content">
-              <div className="details-grid">
-                <div className="detail-item">
-                  <span className="detail-label">Application Date</span>
-                  <span className="detail-value">{formatDate(tccApplication.applicationDate)}</span>
-                </div>
-                {tccApplication.status === 'APPROVED' && (
-                  <>
-                    <div className="detail-item">
-                      <span className="detail-label">Issue Date</span>
-                      <span className="detail-value">{formatDate(tccApplication.issueDate)}</span>
-                    </div>
-                    <div className="detail-item">
-                      <span className="detail-label">Expiry Date</span>
-                      <span className="detail-value">{formatDate(tccApplication.expiryDate)}</span>
-                    </div>
-                  </>
-                )}
-              </div>
-              
-              {tccApplication.comment && (
-                <div className="comment-section">
-                  <div className="comment-header">
-                    <FiInfo />
-                    <h4>Official Comments</h4>
-                  </div>
-                  <p>{tccApplication.comment}</p>
-                </div>
-              )}
-            </div>
+  // Render loading skeleton
+  const renderSkeleton = () => (
+    <div className="tcc-application-container">
+      <div className="page-header skeleton">
+        <div className="page-title-section skeleton">
+          <div className="skeleton-button"></div>
+          <div>
+            <div className="skeleton-title"></div>
+            <div className="skeleton-subtitle"></div>
           </div>
         </div>
       </div>
-    );
-  };
-
-  // Render income tab
-  const renderIncomeTab = () => {
-    return (
-      <div className="income-tab-content">
-        <div className="details-card">
-          <div className="card-header">
-            <div className="header-icon">
-              <FiDollarSign />
-            </div>
-            <h3>Income & Tax Details</h3>
-          </div>
-          <div className="card-content">
-            <div className="responsive-table-container">
-              <table className="income-table">
-                <thead>
-                  <tr>
-                    <th>Year</th>
-                    <th>Annual Income</th>
-                    <th>Assessment Tax</th>
-                    <th>Dev. Levy</th>
-                    <th>Land Use Charge</th>
-                    <th>Outstanding</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {tccApplication.incomeDetails.map((income, index) => (
-                    <tr key={index}>
-                      <td>{income.year}</td>
-                      <td>{formatCurrency(income.annualIncome)}</td>
-                      <td>{formatCurrency(income.assessmentTaxAmount)}</td>
-                      <td>{formatCurrency(income.devLevyAmount)}</td>
-                      <td>{formatCurrency(income.landUseChargeAmount)}</td>
-                      <td>
-                        <span className={income.outstandingTax > 0 ? 'highlight-outstanding' : ''}>
-                          {formatCurrency(income.outstandingTax)}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            
-            <div className="income-summary">
-              <h4>Income Summary</h4>
-              <div className="summary-stats">
-                <div className="stat-item">
-                  <span className="stat-label">Total Income</span>
-                  <span className="stat-value">{
-                    formatCurrency(tccApplication.incomeDetails.reduce((sum, income) => sum + income.annualIncome, 0))
-                  }</span>
-                </div>
-                <div className="stat-item">
-                  <span className="stat-label">Total Tax</span>
-                  <span className="stat-value">{
-                    formatCurrency(tccApplication.incomeDetails.reduce((sum, income) => 
-                      sum + income.assessmentTaxAmount + income.devLevyAmount + income.landUseChargeAmount, 0))
-                  }</span>
-                </div>
-                <div className="stat-item">
-                  <span className="stat-label">Outstanding</span>
-                  <span className="stat-value highlight-outstanding">{
-                    formatCurrency(tccApplication.incomeDetails.reduce((sum, income) => sum + income.outstandingTax, 0))
-                  }</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+      
+      <div className="status-info-bar skeleton">
+        <div className="skeleton-status-item"></div>
+        <div className="skeleton-status-item"></div>
+        <div className="skeleton-status-item"></div>
       </div>
-    );
-  };
-
-  // Render documents tab
-  const renderDocumentsTab = () => {
-    return (
-      <div className="documents-tab-content">
-        <div className="details-card">
-          <div className="card-header">
-            <div className="header-icon">
-              <FiFolder />
-            </div>
-            <h3>Submitted Documents</h3>
-          </div>
-          <div className="card-content">
-            <div className="documents-grid">
-              {tccApplication.documents.map((doc, index) => (
-                                  <div className="document-card" key={index}>
-                   <div className="document-icon">
-                     {doc.type === 'pdf' ? <FiFile /> : <FiFile />}
-                   </div>
-                   <div className="document-info">
-                     <h4>{doc.fileName}</h4>
-                     <span className="document-type">{doc.type.toUpperCase()}</span>
-                     <div className="document-meta">
-                       <span>{formatFileSize(doc.fileSize)}</span>
-                       <span>{formatDate(doc.uploadDate)}</span>
-                     </div>
-                   </div>
-                  <div className="document-actions">
-                    <button className="icon-button view">
-                      <FiEye />
-                    </button>
-                    <button className="icon-button">
-                      <FiDownload />
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+      
+      <div className="detail-tabs skeleton">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="skeleton-tab"></div>
+        ))}
       </div>
-    );
-  };
-
-  // Render timeline tab
-  const renderTimelineTab = () => {
-    return (
-      <div className="timeline-tab-content">
-        <div className="details-card">
-          <div className="card-header">
-            <div className="header-icon">
-              <FiActivity />
+      
+      <Card>
+        <div className="skeleton-card-title"></div>
+        <div className="detail-grid">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="detail-item skeleton">
+              <div className="skeleton-label"></div>
+              <div className="skeleton-value"></div>
             </div>
-            <h3>Application Timeline</h3>
-          </div>
-          <div className="card-content">
-            <div className="timeline">
-              {tccApplication.timeline.map((item, index) => (
-                <div className="timeline-item" key={index}>
-                  <div className="timeline-marker"></div>
-                  <div className="timeline-content">
-                    <h4>{item.action}</h4>
-                    <div className="timeline-details">
-                      <p>
-                        <span className="timeline-date">{formatDateTime(item.date)}</span> • 
-                        <span className="timeline-actor">{item.actor}</span> • 
-                        <span className="timeline-role">{item.actorRole}</span>
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          ))}
         </div>
-      </div>
-    );
-  };
+      </Card>
+    </div>
+  );
 
-  // Loading state
   if (loading) {
+    return renderSkeleton();
+  }
+
+  if (error) {
     return (
-      <div className="content-container">
-        <div className="loading-container">
-          <div className="loading-spinner"></div>
-          <p>Loading TCC Application Details...</p>
+      <div className="tcc-application-container">
+        <div className="error-state">
+          <FaExclamationTriangle className="error-icon" />
+          <h2>Error Loading Application</h2>
+          <p>{error}</p>
+          <div className="error-actions">
+            <Button variant="outline" onClick={fetchApplicationDetails}>
+              Retry
+            </Button>
+            <Button variant="primary" onClick={handleBackToList}>
+              Back to Applications
+            </Button>
+          </div>
         </div>
       </div>
     );
   }
 
-  // Handle case where TCC application not found
-  if (!tccApplication) {
+  if (!application) {
     return (
-      <div className="content-container">
-        <div className="error-container">
-          <FiAlertTriangle className="error-icon" />
-          <h2>TCC Application Not Found</h2>
-          <p>We couldn't find the TCC application you're looking for.</p>
-          <button className="primary-button" onClick={handleBack}>
-            <FiArrowLeft /> Back to TCC Applications
-          </button>
+      <div className="tcc-application-container">
+        <div className="error-state">
+          <FaTimesCircle className="error-icon" />
+          <h2>Application Not Found</h2>
+          <p>The requested TCC application could not be found.</p>
+          <Button variant="primary" onClick={handleBackToList}>
+            Back to Applications
+          </Button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="tcc-application-details-container">
-      <div className="details-header">
-        <button className="back-button" onClick={handleBack}>
-          <FiArrowLeft />
-          <span>Back to TCC Applications</span>
-        </button>
-        
-        <div className="page-title">
-          <h1>TCC Application Details</h1>
-          <div className="breadcrumb">
-            <span>TCC</span> 
-            <FiChevronRight /> 
-            <span>Applications</span> 
-            <FiChevronRight /> 
-            <span className="current">{tccApplication.applicationNumber}</span>
+    <div className="tcc-application-container">
+      {/* Enhanced page header with improved breadcrumbs */}
+      <div className="tcc-details-header">
+        <div className="tcc-header-left">
+          <button 
+            className="tcc-back-button" 
+            onClick={handleBackToList}
+            aria-label="Back to applications list"
+          >
+            <FaArrowLeft />
+          </button>
+          <div className="tcc-breadcrumb">
+            <span className="breadcrumb-item"><FaHome /> Dashboard</span>
+            <FaChevronRight className="breadcrumb-separator" />
+            <span className="breadcrumb-item">TCC Applications</span>
+            <FaChevronRight className="breadcrumb-separator" />
+            <span className="breadcrumb-item current">{application.applicationNumber}</span>
           </div>
         </div>
         
-        <div className="application-meta">
-          <div className="meta-item">
-            <FiCalendar className="meta-icon" />
-            <span>Applied: {formatDate(tccApplication.applicationDate)}</span>
+        <div className="tcc-action-buttons">
+          {application.status === 'APPROVED' && (
+            <>
+              <Button 
+                variant="outline" 
+                size="md" 
+                leadingIcon={<FaPrint />}
+                title="Print Tax Clearance Certificate"
+              >
+                Print TCC
+              </Button>
+              <Button 
+                variant="outline" 
+                size="md" 
+                leadingIcon={<FaDownload />}
+                title="Download Tax Clearance Certificate"
+              >
+                Download
+              </Button>
+            </>
+          )}
+          
+          {(application.status === 'SUBMITTED' || application.status === 'UNDER_REVIEW') && (
+            <Button 
+              variant="primary" 
+              size="md" 
+              onClick={handleProcess}
+              leadingIcon={<FaEdit />}
+              title="Process this application"
+            >
+              Process Application
+            </Button>
+          )}
+        </div>
+      </div>
+
+      {/* Enhanced title section with application metadata */}
+      <div className="tcc-page-title-section">
+        <h1 className="tcc-title">
+          TCC Application Details
+        </h1>
+        <div className="tcc-application-meta">
+          <div className="tcc-meta-item">
+            <FaTags className="tcc-meta-icon" />
+            <span className="tcc-meta-label">Reference:</span>
+            <span className="tcc-meta-value">{application.applicationNumber}</span>
           </div>
-          <div className="meta-item">
-            <FiUser className="meta-icon" />
-            <span>{tccApplication.taxpayerName}</span>
+          {application.status === 'APPROVED' && (
+            <div className="tcc-meta-item">
+              <FaFilePdf className="tcc-meta-icon" />
+              <span className="tcc-meta-label">TCC Number:</span>
+              <span className="tcc-meta-value">{application.tccNumber}</span>
+            </div>
+          )}
+          <div className="tcc-meta-item">
+            <FaCalendarAlt className="tcc-meta-icon" />
+            <span className="tcc-meta-label">Submitted:</span>
+            <span className="tcc-meta-value">{formatDate(application.applicationDate)}</span>
+          </div>
+          <div className="tcc-meta-item">
+            <FaUser className="tcc-meta-icon" />
+            <span className="tcc-meta-value">{application.taxpayerName}</span>
           </div>
         </div>
       </div>
-      
-      <div className="tabs-container">
-        <div className="tabs">
-          <button 
-            className={`tab-button ${activeTab === 'details' ? 'active' : ''}`}
-            onClick={() => setActiveTab('details')}
-          >
-            <FiInfo />
-            <span>Details</span>
-          </button>
-          <button 
-            className={`tab-button ${activeTab === 'income' ? 'active' : ''}`}
-            onClick={() => setActiveTab('income')}
-          >
-            <FiDollarSign />
-            <span>Income Information</span>
-          </button>
-          <button 
-            className={`tab-button ${activeTab === 'documents' ? 'active' : ''}`}
-            onClick={() => setActiveTab('documents')}
-          >
-            <FiFolder />
-            <span>Documents</span>
-          </button>
-          <button 
-            className={`tab-button ${activeTab === 'timeline' ? 'active' : ''}`}
-            onClick={() => setActiveTab('timeline')}
-          >
-            <FiActivity />
-            <span>Timeline</span>
-          </button>
+
+      {/* Enhanced Status Summary Cards - inspired by dashboard stats */}
+      <div className="tcc-status-summary">
+        <div className={`tcc-status-card ${application.status === 'APPROVED' ? 'success' : 
+                                         application.status === 'REJECTED' ? 'danger' : 
+                                         application.status === 'UNDER_REVIEW' ? 'warning' : 'primary'}`}>
+          <div className="tcc-status-icon">
+            {application.status === 'APPROVED' && <FaCheckCircle />}
+            {application.status === 'REJECTED' && <FaTimesCircle />}
+            {application.status === 'UNDER_REVIEW' && <FaClock />}
+            {application.status === 'SUBMITTED' && <FaRegFileAlt />}
+          </div>
+          <div className="tcc-status-info">
+            <div className="tcc-status-label">Status</div>
+            <div className="tcc-status-value">
+              <StatusBadge status={application.status} />
+            </div>
+          </div>
         </div>
         
-        <div className="tab-content">
-          {activeTab === 'details' && renderDetailsTab()}
-          {activeTab === 'income' && renderIncomeTab()}
-          {activeTab === 'documents' && renderDocumentsTab()}
-          {activeTab === 'timeline' && renderTimelineTab()}
+        <div className="tcc-status-card primary">
+          <div className="tcc-status-icon">
+            <FaRegCalendarAlt />
+          </div>
+          <div className="tcc-status-info">
+            <div className="tcc-status-label">Application Date</div>
+            <div className="tcc-status-value">{formatDate(application.applicationDate)}</div>
+          </div>
         </div>
+        
+        {application.status === 'APPROVED' && (
+          <>
+            <div className="tcc-status-card success">
+              <div className="tcc-status-icon">
+                <FaShieldAlt />
+              </div>
+              <div className="tcc-status-info">
+                <div className="tcc-status-label">Issue Date</div>
+                <div className="tcc-status-value">{formatDate(application.issueDate)}</div>
+              </div>
+            </div>
+            
+            <div className="tcc-status-card warning">
+              <div className="tcc-status-icon">
+                <FaRegCalendarAlt />
+              </div>
+              <div className="tcc-status-info">
+                <div className="tcc-status-label">Expires On</div>
+                <div className="tcc-status-value">{formatDate(application.expiryDate)}</div>
+              </div>
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* Tab Navigation - enhanced with better styling */}
+      <div className="tcc-tabs">
+        <div 
+          className={`tcc-tab ${activeTab === 'details' ? 'active' : ''}`}
+          onClick={() => setActiveTab('details')}
+          role="tab"
+          aria-selected={activeTab === 'details'}
+          aria-controls="tab-panel-details"
+          id="tab-details"
+        >
+          <FaIdCard className="tcc-tab-icon" /> Application Details
+        </div>
+        <div 
+          className={`tcc-tab ${activeTab === 'income' ? 'active' : ''}`}
+          onClick={() => setActiveTab('income')}
+          role="tab"
+          aria-selected={activeTab === 'income'}
+          aria-controls="tab-panel-income"
+          id="tab-income"
+        >
+          <FaMoneyBillWave className="tcc-tab-icon" /> Income & Tax Details
+        </div>
+        <div 
+          className={`tcc-tab ${activeTab === 'documents' ? 'active' : ''}`}
+          onClick={() => setActiveTab('documents')}
+          role="tab"
+          aria-selected={activeTab === 'documents'}
+          aria-controls="tab-panel-documents"
+          id="tab-documents"
+        >
+          <FaFileAlt className="tcc-tab-icon" /> Documents
+        </div>
+        <div 
+          className={`tcc-tab ${activeTab === 'timeline' ? 'active' : ''}`}
+          onClick={() => setActiveTab('timeline')}
+          role="tab"
+          aria-selected={activeTab === 'timeline'}
+          aria-controls="tab-panel-timeline"
+          id="tab-timeline"
+        >
+          <FaHistory className="tcc-tab-icon" /> Timeline
+        </div>
+      </div>
+
+      {/* Content based on active tab */}
+      <div 
+        id="tab-panel-details" 
+        role="tabpanel"
+        aria-labelledby="tab-details"
+        hidden={activeTab !== 'details'}
+      >
+        {activeTab === 'details' && (
+          <div className="tcc-tab-content">
+            <div className="tcc-info-card">
+              <div className="tcc-card-header">
+                <h3 className="tcc-card-title">
+                  <FaUser className="tcc-card-icon" /> Taxpayer Information
+                </h3>
+              </div>
+              <div className="tcc-card-body">
+                <div className="tcc-detail-grid">
+                  <div className="tcc-detail-row">
+                    <div className="tcc-detail-col">
+                      <div className="tcc-form-group">
+                        <label className="tcc-form-label">FULL NAME</label>
+                        <div className="tcc-form-value">{application.taxpayerName}</div>
+                      </div>
+                    </div>
+                    
+                    <div className="tcc-detail-col">
+                      <div className="tcc-form-group">
+                        <label className="tcc-form-label">TIN</label>
+                        <div className="tcc-form-value">{application.tin}</div>
+                      </div>
+                    </div>
+                    
+                    <div className="tcc-detail-col">
+                      <div className="tcc-form-group">
+                        <label className="tcc-form-label">EMAIL</label>
+                        <div className="tcc-form-value">{application.email}</div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="tcc-detail-row">
+                    <div className="tcc-detail-col">
+                      <div className="tcc-form-group">
+                        <label className="tcc-form-label">PHONE</label>
+                        <div className="tcc-form-value">{application.phone}</div>
+                      </div>
+                    </div>
+                    
+                    <div className="tcc-detail-col">
+                      <div className="tcc-form-group">
+                        <label className="tcc-form-label">SOURCE OF INCOME</label>
+                        <div className="tcc-form-value">{getSourceOfIncomeLabel(application.sourceOfIncome)}</div>
+                      </div>
+                    </div>
+                    
+                    <div className="tcc-detail-col">
+                      <div className="tcc-form-group">
+                        <label className="tcc-form-label">YEAR</label>
+                        <div className="tcc-form-value">{application.year}</div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="tcc-detail-row">
+                    <div className="tcc-detail-col">
+                      <div className="tcc-form-group">
+                        <label className="tcc-form-label">PLATFORM PAYMENT</label>
+                        <div className="tcc-form-value">{application.platformPayment === 'Y' ? 'Yes' : 'No'}</div>
+                      </div>
+                    </div>
+                    
+                    {application.status === 'APPROVED' && (
+                      <div className="tcc-detail-col">
+                        <div className="tcc-form-group">
+                          <label className="tcc-form-label">TCC NUMBER</label>
+                          <div className="tcc-form-value highlight">{application.tccNumber}</div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {application.comment && (
+              <div className="tcc-info-card">
+                <div className="tcc-card-header">
+                  <h3 className="tcc-card-title">
+                    <FaInfoCircle className="tcc-card-icon" /> Official Comment
+                  </h3>
+                </div>
+                <div className="tcc-card-body">
+                  <div className="tcc-comment-box">
+                    <p>{application.comment}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      <div 
+        id="tab-panel-income" 
+        role="tabpanel"
+        aria-labelledby="tab-income"
+        hidden={activeTab !== 'income'}
+      >
+        {activeTab === 'income' && (
+          <div className="tcc-tab-content">
+            <h2 className="tcc-section-title">Income & Tax Details</h2>
+            
+            {application.incomeDetails.map((income, index) => (
+              <div className="tcc-tax-year-card" key={index}>
+                <div className="tcc-tax-year-header">
+                  <h3 className="tcc-tax-year-title"><FaRegCalendarAlt /> Tax Year {income.year}</h3>
+                </div>
+                <div className="tcc-tax-year-body">
+                  <div className="tcc-tax-year-summary">
+                    <div className="tcc-tax-data-item">
+                      <div className="tcc-tax-data-label">Annual Income</div>
+                      <div className="tcc-tax-data-value">{formatCurrency(income.annualIncome)}</div>
+                    </div>
+                    <div className="tcc-tax-data-item">
+                      <div className="tcc-tax-data-label">Tax Paid</div>
+                      <div className="tcc-tax-data-value highlight">{formatCurrency(income.taxAmount)}</div>
+                    </div>
+                    <div className="tcc-tax-data-item">
+                      <div className="tcc-tax-data-label">Receipt No.</div>
+                      <div className="tcc-tax-data-value">{income.taxReceiptNo}</div>
+                    </div>
+                    <div className="tcc-tax-data-item">
+                      <div className="tcc-tax-data-label">Receipt Date</div>
+                      <div className="tcc-tax-data-value">{formatDate(income.taxReceiptDate)}</div>
+                    </div>
+                    <div className="tcc-tax-data-item">
+                      <div className="tcc-tax-data-label">Outstanding</div>
+                      <div className="tcc-tax-data-value">{formatCurrency(income.outstandingTax)}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+            
+            <div className="tcc-info-card">
+              <div className="tcc-card-header">
+                <h3 className="tcc-card-title">
+                  <FaReceipt className="tcc-card-icon" /> Tax Payment Summary
+                </h3>
+              </div>
+              <div className="tcc-card-body">
+                <div className="tcc-tax-data-item">
+                  <div className="tcc-tax-data-label">Total Income (3 Years)</div>
+                  <div className="tcc-tax-data-value">{formatCurrency(application.incomeDetails.reduce((sum, income) => sum + income.annualIncome, 0))}</div>
+                </div>
+                <div className="tcc-tax-data-item">
+                  <div className="tcc-tax-data-label">Total Tax Paid</div>
+                  <div className="tcc-tax-data-value highlight">{formatCurrency(application.incomeDetails.reduce((sum, income) => sum + income.taxAmount, 0))}</div>
+                </div>
+                <div className="tcc-tax-data-item">
+                  <div className="tcc-tax-data-label">Outstanding Balance</div>
+                  <div className="tcc-tax-data-value">{formatCurrency(application.incomeDetails.reduce((sum, income) => sum + income.outstandingTax, 0))}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div 
+        id="tab-panel-documents" 
+        role="tabpanel"
+        aria-labelledby="tab-documents"
+        hidden={activeTab !== 'documents'}
+      >
+        {activeTab === 'documents' && (
+          <div className="tcc-tab-content">
+            <h2 className="tcc-section-title">Supporting Documents</h2>
+            <div className="tcc-documents-grid">
+              {application.documents.map((doc, index) => (
+                <div key={index} className="tcc-document-card">
+                  <div className="tcc-card-header">
+                    <h3 className="tcc-card-title">
+                      {doc.type === 'PAYMENT' && <FaReceipt className="tcc-card-icon" />}
+                      {doc.type === 'IDENTITY' && <FaIdCard className="tcc-card-icon" />}
+                      {!['PAYMENT', 'IDENTITY'].includes(doc.type) && <FaFileAlt className="tcc-card-icon" />}
+                      {doc.type}
+                    </h3>
+                  </div>
+                  <div className="tcc-card-body">
+                    <div className="tcc-document-info">
+                      <h3 className="tcc-document-name">{doc.name}</h3>
+                      <p className="tcc-document-meta">
+                        <span><FaRegFileAlt /> {doc.fileType}</span>
+                        <span><FaRegCalendarAlt /> {formatDate(doc.uploadDate)}</span>
+                      </p>
+                    </div>
+                    <div className="tcc-document-actions">
+                      <Button variant="outline" size="sm" leadingIcon={<FaEye />}>View</Button>
+                      <Button variant="outline" size="sm" leadingIcon={<FaDownload />}>Download</Button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div 
+        id="tab-panel-timeline" 
+        role="tabpanel"
+        aria-labelledby="tab-timeline"
+        hidden={activeTab !== 'timeline'}
+      >
+        {activeTab === 'timeline' && (
+          <div className="tcc-tab-content">
+            <h2 className="tcc-section-title">Application Timeline</h2>
+            <div className="tcc-timeline">
+              {application.timeline.map((event, index) => (
+                <div key={index} className="tcc-timeline-item">
+                  <div className={`tcc-timeline-icon ${event.status.toLowerCase().replace('_', '-')}`}>
+                    {event.status === 'APPROVED' && <FaCheckCircle />}
+                    {event.status === 'REJECTED' && <FaTimesCircle />}
+                    {event.status === 'UNDER_REVIEW' && <FaClock />}
+                    {event.status === 'SUBMITTED' && <FaFileAlt />}
+                  </div>
+                  <div className="tcc-timeline-content">
+                    <div className="tcc-timeline-date">{formatDate(event.date)}</div>
+                    <h3 className="tcc-timeline-title">
+                      <StatusBadge status={event.status} /> {event.comment}
+                    </h3>
+                    <p className="tcc-timeline-actor">{event.actor}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
-}
+};
 
 export default TCCApplicationDetails; 
