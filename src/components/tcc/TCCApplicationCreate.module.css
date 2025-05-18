@@ -1,0 +1,762 @@
+/* TCCApplicationCreate.module.css */
+
+/* Main container styling */
+.applicationContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 28px;
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+/* Header section styling */
+.headerSection {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 32px;
+}
+
+.backButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: #f3f4f6;
+  border-radius: 10px;
+  border: none;
+  color: #4b5563;
+  margin-right: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.backButton:hover {
+  background-color: #e5e7eb;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+.headerContent h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.02em;
+}
+
+.headerSubtitle {
+  color: #6b7280;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+/* Step indicator styling */
+.stepIndicator {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 36px;
+  position: relative;
+  padding: 0 12px;
+}
+
+.stepIndicator::before {
+  content: '';
+  position: absolute;
+  top: 40px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #e5e7eb;
+  z-index: 1;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 20%;
+}
+
+.stepIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-color: #f3f4f6;
+  color: #6b7280;
+  font-size: 1.25rem;
+  margin-bottom: 12px;
+  border: 2px solid #e5e7eb;
+  transition: all 0.3s ease;
+}
+
+.step.active .stepIcon {
+  background-color: rgba(66, 133, 244, 0.15);
+  color: #4285F4;
+  border-color: #4285F4;
+}
+
+.step.current .stepIcon {
+  background-color: #4285F4;
+  color: white;
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(66, 133, 244, 0.3);
+}
+
+.stepLabel {
+  font-size: 0.875rem;
+  color: #6b7280;
+  font-weight: 500;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.step.current .stepLabel {
+  color: #1f2937;
+  font-weight: 600;
+}
+
+.step:hover .stepIcon {
+  transform: translateY(-3px);
+}
+
+.step.current:hover .stepIcon {
+  transform: translateY(-3px) scale(1.1);
+}
+
+/* Form styling */
+.formContainer {
+  background-color: #ffffff;
+  border-radius: 12px;
+}
+
+.formSection {
+  margin-bottom: 24px;
+  border-radius: 12px;
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.formSection.collapsed {
+  max-height: 64px;
+}
+
+.formSection.activeSection {
+  border-color: #4285F4;
+  box-shadow: 0 4px 16px rgba(66, 133, 244, 0.15);
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background-color: #f9fafb;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.sectionHeader:hover {
+  background-color: #f3f4f6;
+}
+
+.activeSection .sectionHeader {
+  background-color: rgba(66, 133, 244, 0.08);
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+}
+
+.sectionIcon {
+  margin-right: 12px;
+  color: #4285F4;
+  font-size: 1.25rem;
+}
+
+.sectionToggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+  transition: transform 0.3s ease;
+}
+
+.collapsed .sectionToggle {
+  transform: rotate(-90deg);
+}
+
+.sectionContent {
+  padding: 24px;
+  animation: fadeIn 0.3s ease;
+}
+
+/* Form fields styling */
+.formRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.formField {
+  margin-bottom: 20px;
+}
+
+.formField label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #4b5563;
+  margin-bottom: 8px;
+}
+
+.formField input,
+.formField select,
+.formField textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 0.95rem;
+  color: #1f2937;
+  transition: all 0.2s ease;
+  background-color: #ffffff;
+}
+
+.formField input:focus,
+.formField select:focus,
+.formField textarea:focus {
+  outline: none;
+  border-color: #4285F4;
+  box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.15);
+}
+
+.formField.error input,
+.formField.error select,
+.formField.error textarea {
+  border-color: #dc2626;
+  background-color: #fff5f5;
+}
+
+.errorMessage {
+  font-size: 0.8rem;
+  color: #dc2626;
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.required {
+  color: #dc2626;
+  margin-left: 4px;
+}
+
+.tooltipIcon {
+  color: #9ca3af;
+  margin-left: 8px;
+  font-size: 0.875rem;
+  cursor: help;
+  position: relative;
+}
+
+.inputWithPrefix {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.inputPrefix {
+  position: absolute;
+  left: 16px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.inputWithPrefix input {
+  padding-left: 32px;
+}
+
+/* Radio group styling */
+.radioGroup {
+  display: flex;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.radioCard {
+  display: flex;
+  flex: 1;
+  cursor: pointer;
+}
+
+.radioCard input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.radioContent {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  width: 100%;
+  transition: all 0.2s ease;
+}
+
+.radioCard:hover .radioContent {
+  border-color: #d1d5db;
+  background-color: #f9fafb;
+}
+
+.radioCard.selected .radioContent {
+  border-color: #4285F4;
+  background-color: rgba(66, 133, 244, 0.08);
+}
+
+.radioIcon {
+  font-size: 1.25rem;
+}
+
+.selected .radioIcon {
+  color: #4285F4;
+}
+
+/* Form note styling */
+.formNote {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  background-color: rgba(253, 224, 71, 0.15);
+  border-radius: 8px;
+  margin-top: 16px;
+}
+
+.noteIcon {
+  color: #f59e0b;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.formNote p {
+  margin: 0;
+  color: #78350f;
+  font-size: 0.95rem;
+}
+
+/* Tax years grid styling */
+.taxYearsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.taxYearCard {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.taxYearCard:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transform: translateY(-4px);
+}
+
+.taxYearHeader {
+  background-color: #f3f4f6;
+  padding: 14px 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.taxYearTitle {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.taxYearBody {
+  padding: 20px;
+}
+
+/* Date field styling */
+.dateField {
+  position: relative;
+}
+
+.dateIcon {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6b7280;
+  pointer-events: none;
+}
+
+.dateField input {
+  padding-right: 40px;
+}
+
+/* Form action buttons styling */
+.formActions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 32px;
+  padding: 20px 0;
+  border-top: 1px solid #e5e7eb;
+}
+
+.actionButton {
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.buttonOutline {
+  background-color: #ffffff;
+  color: #4b5563;
+  border: 1px solid #d1d5db;
+}
+
+.buttonOutline:hover:not(:disabled) {
+  background-color: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.buttonOutline:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.buttonPrimary {
+  background-color: #4285F4;
+  color: #ffffff;
+  border: none;
+  box-shadow: 0 2px 6px rgba(66, 133, 244, 0.3);
+}
+
+.buttonPrimary:hover {
+  background-color: #2b6cb0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(66, 133, 244, 0.4);
+}
+
+/* Declaration box styling */
+.declarationBox {
+  margin-top: 36px;
+  padding: 24px;
+  border-radius: 12px;
+  background-color: #f3f9ff;
+  border: 1px solid #bedcff;
+}
+
+.declarationHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+  gap: 12px;
+}
+
+.declarationIcon {
+  color: #4285F4;
+  font-size: 1.25rem;
+}
+
+.declarationHeader h3 {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.declarationBox p {
+  color: #4b5563;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.declarationCheckbox {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.declarationCheckbox input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.declarationCheckbox label {
+  font-weight: 500;
+  color: #1f2937;
+  cursor: pointer;
+}
+
+/* File upload area styling */
+.fileUploadArea {
+  margin-top: 24px;
+  padding: 24px;
+  border: 2px dashed #d1d5db;
+  border-radius: 12px;
+  background-color: #f9fafb;
+  transition: all 0.2s ease;
+}
+
+.fileUploadArea:hover {
+  border-color: #4285F4;
+  background-color: rgba(66, 133, 244, 0.05);
+}
+
+.fileUploadHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+  gap: 12px;
+}
+
+.fileUploadIcon {
+  color: #4285F4;
+  font-size: 1.5rem;
+}
+
+.fileUploadTitle {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.fileUploadControls {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 16px;
+  align-items: flex-end;
+}
+
+.addButton {
+  background-color: #4285F4;
+  color: white;
+  border: none;
+  height: 48px;
+  border-radius: 8px;
+  padding: 0 16px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.addButton:hover {
+  background-color: #2b6cb0;
+  transform: translateY(-2px);
+}
+
+.fileInputLabel {
+  display: block;
+  font-size: 0.9rem;
+  color: #4b5563;
+  margin-bottom: 8px;
+}
+
+.fileInput {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background-color: white;
+}
+
+/* Document list styling */
+.documentList {
+  margin-top: 24px;
+}
+
+.documentItem {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  transition: all 0.2s ease;
+}
+
+.documentItem:hover {
+  border-color: #d1d5db;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.documentIcon {
+  color: #4285F4;
+  font-size: 1.25rem;
+  margin-right: 16px;
+}
+
+.documentInfo {
+  flex: 1;
+}
+
+.documentName {
+  font-weight: 500;
+  color: #1f2937;
+  margin: 0 0 4px 0;
+}
+
+.documentMeta {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.documentAction {
+  margin-left: 16px;
+}
+
+.removeButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  border: none;
+  background-color: #fee2e2;
+  color: #dc2626;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.removeButton:hover {
+  background-color: #dc2626;
+  color: white;
+}
+
+/* Loading spinner */
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .stepIndicator {
+    padding: 0;
+    overflow-x: auto;
+    justify-content: flex-start;
+  }
+  
+  .step {
+    min-width: 120px;
+  }
+  
+  .taxYearsGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+  
+  .fileUploadControls {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .applicationContainer {
+    padding: 20px;
+  }
+  
+  .headerSection {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .backButton {
+    margin-bottom: 16px;
+  }
+  
+  .stepIcon {
+    width: 48px;
+    height: 48px;
+    font-size: 1rem;
+  }
+  
+  .stepLabel {
+    font-size: 0.75rem;
+  }
+  
+  .sectionHeader {
+    padding: 12px 16px;
+  }
+  
+  .sectionContent {
+    padding: 16px;
+  }
+  
+  .formActions {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .actionButton {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .step {
+    min-width: 100px;
+  }
+  
+  .stepIcon {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .stepLabel {
+    font-size: 0.7rem;
+  }
+} 

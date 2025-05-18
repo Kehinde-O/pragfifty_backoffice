@@ -28,9 +28,10 @@ import {
   FaArrowLeft,
   FaChevronDown,
   FaChevronRight,
-  FaFileAlt
+  FaFileAlt,
+  FaPlus
 } from 'react-icons/fa';
-import styles from './TCC.module.css';
+import styles from './TCCApplicationCreate.module.css';
 
 // Progress steps for the application process
 const formSteps = [
@@ -44,18 +45,17 @@ const formSteps = [
 // Step progress indicator component
 const StepIndicator = ({ currentStep, steps, onChange }) => {
   return (
-    <div className={styles['step-indicator']}>
+    <div className={styles.stepIndicator}>
       {steps.map((step, index) => (
         <div 
           key={step.id}
           className={`${styles.step} ${currentStep >= index ? styles.active : ''} ${currentStep === index ? styles.current : ''}`}
           onClick={() => onChange(index)}
         >
-          <div className={styles['step-icon']}>
+          <div className={styles.stepIcon}>
             {step.icon}
           </div>
-          <div className={styles['step-label']}>{step.label}</div>
-          {index < steps.length - 1 && <div className={styles['step-connector']}></div>}
+          <div className={styles.stepLabel}>{step.label}</div>
         </div>
       ))}
     </div>
@@ -110,7 +110,7 @@ const TCCApplicationCreate = () => {
     setExpandedSections(newExpandedSections);
     
     // Scroll to top of the form
-    document.querySelector(`.${styles['tcc-form']}`).scrollIntoView({ behavior: 'smooth' });
+    document.querySelector(`.${styles.formContainer}`).scrollIntoView({ behavior: 'smooth' });
   };
   
   // Mock data for dropdowns - in a real application, these would come from API calls
@@ -296,7 +296,7 @@ const TCCApplicationCreate = () => {
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       // Scroll to the first error
-      const firstErrorElement = document.querySelector(`.${styles['error-message']}`);
+      const firstErrorElement = document.querySelector(`.${styles.errorMessage}`);
       if (firstErrorElement) {
         firstErrorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
@@ -372,20 +372,18 @@ const TCCApplicationCreate = () => {
   };
   
   return (
-    <div className={styles.tccApplicationContainer}>
-      <div className={styles.tccDetailsHeader}>
-        <div className={styles.tccHeaderLeft}>
-          <button 
-            className={styles.tccBackButton}
-            onClick={handleBackToList}
-            aria-label="Go back to TCC applications list"
-          >
-            <FaArrowLeft />
-          </button>
-          <div>
-            <h1 className={styles.tccTitle}>Create TCC Application</h1>
-            <p className={styles.tccPageSubtitle}>Apply for a new Tax Clearance Certificate for the past three years</p>
-          </div>
+    <div className={styles.applicationContainer}>
+      <div className={styles.headerSection}>
+        <button 
+          className={styles.backButton}
+          onClick={handleBackToList}
+          aria-label="Go back to TCC applications list"
+        >
+          <FaArrowLeft />
+        </button>
+        <div className={styles.headerContent}>
+          <h1>Create TCC Application</h1>
+          <p className={styles.headerSubtitle}>Apply for a new Tax Clearance Certificate for the past three years</p>
         </div>
       </div>
       
@@ -396,38 +394,38 @@ const TCCApplicationCreate = () => {
         onChange={handleStepChange} 
       />
       
-      <form className={styles['tcc-form']} onSubmit={handleSubmit}>
+      <form className={styles.formContainer} onSubmit={handleSubmit}>
         {/* Taxpayer Information Section */}
-        <div className={`${styles['tcc-form-section']} ${!expandedSections.taxpayerInfo ? styles.collapsed : ''} ${activeStep === 0 ? styles['active-section'] : ''}`}>
-          <div className={styles['section-header']} onClick={() => toggleSection('taxpayerInfo')}>
-            <h2 className={styles['tcc-form-section-title']}>
-              <FaIdCard className={styles['section-icon']} />
+        <div className={`${styles.formSection} ${!expandedSections.taxpayerInfo ? styles.collapsed : ''} ${activeStep === 0 ? styles.activeSection : ''}`}>
+          <div className={styles.sectionHeader} onClick={() => toggleSection('taxpayerInfo')}>
+            <h2 className={styles.sectionTitle}>
+              <FaIdCard className={styles.sectionIcon} />
               Taxpayer Information
             </h2>
-            <div className={styles['section-toggle']}>
+            <div className={styles.sectionToggle}>
               {expandedSections.taxpayerInfo ? <FaChevronDown /> : <FaChevronRight />}
             </div>
           </div>
           
           {expandedSections.taxpayerInfo && (
-            <div className={styles['section-content']}>
-              <div className={styles['tcc-form-row']}>
-                <div className={styles['tcc-form-field']}>
+            <div className={styles.sectionContent}>
+              <div className={styles.formRow}>
+                <div className={styles.formField}>
                   <label>Taxpayer Identification Number (TIN)</label>
                   <input
                     type="text"
                     value={formData.taxpayerInfo.tin}
                     readOnly
-                    className={styles['read-only']}
+                    className={styles.readOnly}
                   />
                 </div>
-                <div className={styles['tcc-form-field']}>
+                <div className={styles.formField}>
                   <label>Taxpayer Name</label>
                   <input
                     type="text"
                     value={formData.taxpayerInfo.name}
                     readOnly
-                    className={styles['read-only']}
+                    className={styles.readOnly}
                   />
                 </div>
               </div>
@@ -436,24 +434,24 @@ const TCCApplicationCreate = () => {
         </div>
         
         {/* Source of Income */}
-        <div className={`${styles['tcc-form-section']} ${!expandedSections.sourceOfIncome ? styles.collapsed : ''} ${activeStep === 1 ? styles['active-section'] : ''}`}>
-          <div className={styles['section-header']} onClick={() => toggleSection('sourceOfIncome')}>
-            <h2 className={styles['tcc-form-section-title']}>
-              <FaMoneyBillWave className={styles['section-icon']} />
+        <div className={`${styles.formSection} ${!expandedSections.sourceOfIncome ? styles.collapsed : ''} ${activeStep === 1 ? styles.activeSection : ''}`}>
+          <div className={styles.sectionHeader} onClick={() => toggleSection('sourceOfIncome')}>
+            <h2 className={styles.sectionTitle}>
+              <FaMoneyBillWave className={styles.sectionIcon} />
               Source of Income
             </h2>
-            <div className={styles['section-toggle']}>
+            <div className={styles.sectionToggle}>
               {expandedSections.sourceOfIncome ? <FaChevronDown /> : <FaChevronRight />}
             </div>
           </div>
           
           {expandedSections.sourceOfIncome && (
-            <div className={styles['section-content']}>
-              <div className={styles['tcc-form-row']}>
-                <div className={`${styles['tcc-form-field']} ${hasError('sourceOfIncome') ? styles.error : ''}`}>
+            <div className={styles.sectionContent}>
+              <div className={styles.formRow}>
+                <div className={`${styles.formField} ${hasError('sourceOfIncome') ? styles.error : ''}`}>
                   <label>
                     Source of Income <span className={styles.required}>*</span>
-                    <span className={styles['tooltip-icon']}>
+                    <span className={styles.tooltipIcon}>
                       <FaQuestionCircle data-tooltip="Select your primary source of income" />
                     </span>
                   </label>
@@ -471,21 +469,21 @@ const TCCApplicationCreate = () => {
                     ))}
                   </Select>
                   {hasError('sourceOfIncome') && (
-                    <div className={styles['error-message']}>{errors.sourceOfIncome}</div>
+                    <div className={styles.errorMessage}>{errors.sourceOfIncome}</div>
                   )}
                 </div>
               </div>
               
-              <div className={styles['tcc-form-row']}>
-                <div className={styles['tcc-form-field']}>
-                  <label className={styles['highlight-label']}>
+              <div className={styles.formRow}>
+                <div className={styles.formField}>
+                  <label>
                     Was payment made on PragFifty?
-                    <span className={styles['tooltip-icon']}>
+                    <span className={styles.tooltipIcon}>
                       <FaQuestionCircle data-tooltip="PragFifty is the Online Revenue Assessment System" />
                     </span>
                   </label>
-                  <div className={`${styles['radio-group']} ${styles.modern}`}>
-                    <label className={`${styles['radio-card']} ${formData.paymentMethod === "Y" ? styles.selected : ''}`}>
+                  <div className={styles.radioGroup}>
+                    <label className={`${styles.radioCard} ${formData.paymentMethod === "Y" ? styles.selected : ''}`}>
                       <input
                         type="radio"
                         name="paymentMethod"
@@ -493,12 +491,12 @@ const TCCApplicationCreate = () => {
                         checked={formData.paymentMethod === "Y"}
                         onChange={handlePaymentMethodChange}
                       />
-                      <div className={styles['radio-content']}>
-                        <FaCheckCircle className={styles['radio-icon']} />
+                      <div className={styles.radioContent}>
+                        <FaCheckCircle className={styles.radioIcon} />
                         <span>Yes</span>
                       </div>
                     </label>
-                    <label className={`${styles['radio-card']} ${formData.paymentMethod === "N" ? styles.selected : ''}`}>
+                    <label className={`${styles.radioCard} ${formData.paymentMethod === "N" ? styles.selected : ''}`}>
                       <input
                         type="radio"
                         name="paymentMethod"
@@ -506,8 +504,8 @@ const TCCApplicationCreate = () => {
                         checked={formData.paymentMethod === "N"}
                         onChange={handlePaymentMethodChange}
                       />
-                      <div className={styles['radio-content']}>
-                        <FaExclamationTriangle className={styles['radio-icon']} />
+                      <div className={styles.radioContent}>
+                        <FaExclamationTriangle className={styles.radioIcon} />
                         <span>No</span>
                       </div>
                     </label>
@@ -516,8 +514,8 @@ const TCCApplicationCreate = () => {
               </div>
               
               {formData.paymentMethod === "N" && (
-                <div className={styles['form-note']}>
-                  <FaExclamationTriangle className={`${styles['note-icon']} ${styles.warning}`} />
+                <div className={styles.formNote}>
+                  <FaExclamationTriangle className={styles.noteIcon} />
                   <p>If no, kindly provide us with your evidence of payment by uploading the receipt below.</p>
                 </div>
               )}
@@ -526,38 +524,37 @@ const TCCApplicationCreate = () => {
         </div>
         
         {/* Income Details Section */}
-        <div className={`${styles['tcc-form-section']} ${!expandedSections.incomeDetails ? styles.collapsed : ''} ${activeStep === 1 ? styles['active-section'] : ''}`}>
-          <div className={styles['section-header']} onClick={() => toggleSection('incomeDetails')}>
-            <h2 className={styles['tcc-form-section-title']}>
-              <FaMoneyBillWave className={styles['section-icon']} />
+        <div className={`${styles.formSection} ${!expandedSections.incomeDetails ? styles.collapsed : ''} ${activeStep === 1 ? styles.activeSection : ''}`}>
+          <div className={styles.sectionHeader} onClick={() => toggleSection('incomeDetails')}>
+            <h2 className={styles.sectionTitle}>
+              <FaMoneyBillWave className={styles.sectionIcon} />
               Total Income
             </h2>
-            <div className={styles['section-toggle']}>
+            <div className={styles.sectionToggle}>
               {expandedSections.incomeDetails ? <FaChevronDown /> : <FaChevronRight />}
             </div>
           </div>
           
           {expandedSections.incomeDetails && (
-            <div className={styles['section-content']}>
-              <div className={styles['tccTaxYearsGrid']}>
+            <div className={styles.sectionContent}>
+              <div className={styles.taxYearsGrid}>
                 {[currentYear - 1, currentYear - 2, currentYear - 3].map((year) => (
-                  <div key={`income-${year}`} className={styles.tccTaxYearCard}>
-                    <div className={styles.tccTaxYearHeader}>
-                      <h3 className={styles.tccTaxYearTitle}>{year}</h3>
+                  <div key={`income-${year}`} className={styles.taxYearCard}>
+                    <div className={styles.taxYearHeader}>
+                      <h3 className={styles.taxYearTitle}>{year}</h3>
                     </div>
-                    <div className={styles.tccTaxYearBody}>
-                      <div className={styles['tcc-form-field']}>
+                    <div className={styles.taxYearBody}>
+                      <div className={styles.formField}>
                         <label>
                           Income <span className={styles.required}>*</span>
                         </label>
-                        <div className={styles['input-with-prefix']}>
-                          <span className={styles['input-prefix']}>₦</span>
+                        <div className={styles.inputWithPrefix}>
+                          <span className={styles.inputPrefix}>₦</span>
                           <input
                             type="text"
                             id={`income-${year}`}
                             value={formData.incomeDetails[year].income}
                             onChange={(e) => handleInputChange('incomeDetails', year, 'income', null, e)}
-                            className={styles['numeric-input']}
                             required
                           />
                         </div>
@@ -571,27 +568,27 @@ const TCCApplicationCreate = () => {
         </div>
         
         {/* Assessment Tax Paid Section */}
-        <div className={`${styles['tcc-form-section']} ${!expandedSections.assessmentTax ? styles.collapsed : ''} ${activeStep === 2 ? styles['active-section'] : ''}`}>
-          <div className={styles['section-header']} onClick={() => toggleSection('assessmentTax')}>
-            <h2 className={styles['tcc-form-section-title']}>
-              <FaReceipt className={styles['section-icon']} />
+        <div className={`${styles.formSection} ${!expandedSections.assessmentTax ? styles.collapsed : ''} ${activeStep === 2 ? styles.activeSection : ''}`}>
+          <div className={styles.sectionHeader} onClick={() => toggleSection('assessmentTax')}>
+            <h2 className={styles.sectionTitle}>
+              <FaReceipt className={styles.sectionIcon} />
               Assessment Tax Paid
             </h2>
-            <div className={styles['section-toggle']}>
+            <div className={styles.sectionToggle}>
               {expandedSections.assessmentTax ? <FaChevronDown /> : <FaChevronRight />}
             </div>
           </div>
           
           {expandedSections.assessmentTax && (
-            <div className={styles['section-content']}>
-              <div className={styles.tccTaxYearsGrid}>
+            <div className={styles.sectionContent}>
+              <div className={styles.taxYearsGrid}>
                 {[currentYear - 1, currentYear - 2, currentYear - 3].map((year) => (
-                  <div key={`assessment-${year}`} className={styles.tccTaxYearCard}>
-                    <div className={styles.tccTaxYearHeader}>
-                      <h3 className={styles.tccTaxYearTitle}>{year}</h3>
+                  <div key={`assessment-${year}`} className={styles.taxYearCard}>
+                    <div className={styles.taxYearHeader}>
+                      <h3 className={styles.taxYearTitle}>{year}</h3>
                     </div>
-                    <div className={styles.tccTaxYearBody}>
-                      <div className={`${styles['tcc-form-field']} ${hasError(`assessment_${year}_rctNo`) ? styles.error : ''}`}>
+                    <div className={styles.taxYearBody}>
+                      <div className={`${styles.formField} ${hasError(`assessment_${year}_rctNo`) ? styles.error : ''}`}>
                         <label>Receipt No.</label>
                         <input
                           type="text"
@@ -600,38 +597,37 @@ const TCCApplicationCreate = () => {
                           onChange={(e) => handleInputChange('incomeDetails', year, 'assessment', 'rctNo', e)}
                         />
                         {hasError(`assessment_${year}_rctNo`) && (
-                          <div className={styles['error-message']}>{errors[`assessment_${year}_rctNo`]}</div>
+                          <div className={styles.errorMessage}>{errors[`assessment_${year}_rctNo`]}</div>
                         )}
                       </div>
                       
-                      <div className={styles['tcc-form-field']}>
+                      <div className={styles.formField}>
                         <label>Amount <span className={styles.required}>*</span></label>
-                        <div className={styles['input-with-prefix']}>
-                          <span className={styles['input-prefix']}>₦</span>
+                        <div className={styles.inputWithPrefix}>
+                          <span className={styles.inputPrefix}>₦</span>
                           <input
                             type="text"
                             id={`tax-paid-${year}`}
                             value={formData.incomeDetails[year].assessment.amount}
                             onChange={(e) => handleInputChange('incomeDetails', year, 'assessment', 'amount', e)}
-                            className={styles['numeric-input']}
                             required
                           />
                         </div>
                       </div>
                       
-                      <div className={`${styles['tcc-form-field']} ${hasError(`assessment_${year}_rctDate`) ? styles.error : ''}`}>
+                      <div className={`${styles.formField} ${hasError(`assessment_${year}_rctDate`) ? styles.error : ''}`}>
                         <label>Receipt Date</label>
-                        <div className={styles['date-field']}>
+                        <div className={styles.dateField}>
                           <input
                             type="date"
                             id={`tax-rctdt-${year}`}
                             value={formData.incomeDetails[year].assessment.rctDate}
                             onChange={(e) => handleInputChange('incomeDetails', year, 'assessment', 'rctDate', e)}
                           />
-                          <FaCalendarAlt className={styles['date-icon']} />
+                          <FaCalendarAlt className={styles.dateIcon} />
                         </div>
                         {hasError(`assessment_${year}_rctDate`) && (
-                          <div className={styles['error-message']}>{errors[`assessment_${year}_rctDate`]}</div>
+                          <div className={styles.errorMessage}>{errors[`assessment_${year}_rctDate`]}</div>
                         )}
                       </div>
                     </div>
@@ -642,53 +638,326 @@ const TCCApplicationCreate = () => {
           )}
         </div>
         
-        {/* Navigation Buttons */}
-        <div className={styles['tccFormActions']}>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => activeStep > 0 && handleStepChange(activeStep - 1)}
-            disabled={activeStep === 0}
-            size="lg"
-          >
-            Previous
-          </Button>
+        {/* Outstanding Tax Section */}
+        <div className={`${styles['tcc-form-section']} ${!expandedSections.outstandingTax ? styles.collapsed : ''} ${activeStep === 2 ? styles['active-section'] : ''}`}>
+          <div className={styles['section-header']} onClick={() => toggleSection('outstandingTax')}>
+            <h2 className={styles['tcc-form-section-title']}>
+              <FaMoneyBillWave className={styles['section-icon']} />
+              Outstanding Tax
+            </h2>
+            <div className={styles['section-toggle']}>
+              {expandedSections.outstandingTax ? <FaChevronDown /> : <FaChevronRight />}
+            </div>
+          </div>
           
-          {activeStep < formSteps.length - 1 ? (
-            <Button
-              type="button"
-              variant="primary"
-              onClick={() => handleStepChange(activeStep + 1)}
-              size="lg"
-              className={styles.tccActionButtonPrimary}
-            >
-              Next
-            </Button>
-          ) : (
-            <Button
-              type="submit"
-              variant="primary"
-              size="lg"
-              className={styles.tccActionButtonPrimary}
-              leadingIcon={<FaCheckCircle />}
-            >
-              Submit Application
-            </Button>
+          {expandedSections.outstandingTax && (
+            <div className={styles['section-content']}>
+              <div className={styles['tccTaxYearsGrid']}>
+                {[currentYear - 1, currentYear - 2, currentYear - 3].map((year) => (
+                  <div key={`outstanding-${year}`} className={styles.tccTaxYearCard}>
+                    <div className={styles.tccTaxYearHeader}>
+                      <h3 className={styles.tccTaxYearTitle}>{year}</h3>
+                    </div>
+                    <div className={styles.tccTaxYearBody}>
+                      <div className={styles['tcc-form-field']}>
+                        <label>
+                          Outstanding Tax <span className={styles.required}>*</span>
+                        </label>
+                        <div className={styles['input-with-prefix']}>
+                          <span className={styles['input-prefix']}>₦</span>
+                          <input
+                            type="text"
+                            id={`outstanding-${year}`}
+                            value={formData.incomeDetails[year].outstanding}
+                            onChange={(e) => handleInputChange('incomeDetails', year, 'outstanding', null, e)}
+                            className={styles['numeric-input']}
+                            required
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           )}
         </div>
         
-        {/* Only show the declaration on the final step */}
+        {/* Development Levy Section */}
+        <div className={`${styles['tcc-form-section']} ${!expandedSections.developmentLevy ? styles.collapsed : ''} ${activeStep === 2 ? styles['active-section'] : ''}`}>
+          <div className={styles['section-header']} onClick={() => toggleSection('developmentLevy')}>
+            <h2 className={styles['tcc-form-section-title']}>
+              <FaMoneyBillWave className={styles['section-icon']} />
+              Development Levy
+            </h2>
+            <div className={styles['section-toggle']}>
+              {expandedSections.developmentLevy ? <FaChevronDown /> : <FaChevronRight />}
+            </div>
+          </div>
+          
+          {expandedSections.developmentLevy && (
+            <div className={styles['section-content']}>
+              <div className={styles['tccTaxYearsGrid']}>
+                {[currentYear - 1, currentYear - 2, currentYear - 3].map((year) => (
+                  <div key={`development-${year}`} className={styles.tccTaxYearCard}>
+                    <div className={styles.tccTaxYearHeader}>
+                      <h3 className={styles.tccTaxYearTitle}>{year}</h3>
+                    </div>
+                    <div className={styles.tccTaxYearBody}>
+                      <div className={styles['tcc-form-field']}>
+                        <label>
+                          Development Levy <span className={styles.required}>*</span>
+                        </label>
+                        <div className={styles['input-with-prefix']}>
+                          <span className={styles['input-prefix']}>₦</span>
+                          <input
+                            type="text"
+                            id={`development-${year}`}
+                            value={formData.developmentLevy[year].amount}
+                            onChange={(e) => handleInputChange('developmentLevy', year, 'amount', null, e)}
+                            className={styles['numeric-input']}
+                            required
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+        
+        {/* Land Use Charge Section */}
+        <div className={`${styles['tcc-form-section']} ${!expandedSections.landUseCharge ? styles.collapsed : ''} ${activeStep === 2 ? styles['active-section'] : ''}`}>
+          <div className={styles['section-header']} onClick={() => toggleSection('landUseCharge')}>
+            <h2 className={styles['tcc-form-section-title']}>
+              <FaMoneyBillWave className={styles['section-icon']} />
+              Land Use Charge
+            </h2>
+            <div className={styles['section-toggle']}>
+              {expandedSections.landUseCharge ? <FaChevronDown /> : <FaChevronRight />}
+            </div>
+          </div>
+          
+          {expandedSections.landUseCharge && (
+            <div className={styles['section-content']}>
+              <div className={styles['tccTaxYearsGrid']}>
+                {[currentYear - 1, currentYear - 2, currentYear - 3].map((year) => (
+                  <div key={`landUse-${year}`} className={styles.tccTaxYearCard}>
+                    <div className={styles.tccTaxYearHeader}>
+                      <h3 className={styles.tccTaxYearTitle}>{year}</h3>
+                    </div>
+                    <div className={styles.tccTaxYearBody}>
+                      <div className={styles['tcc-form-field']}>
+                        <label>
+                          Land Use Charge <span className={styles.required}>*</span>
+                        </label>
+                        <div className={styles['input-with-prefix']}>
+                          <span className={styles['input-prefix']}>₦</span>
+                          <input
+                            type="text"
+                            id={`landUse-${year}`}
+                            value={formData.landUseCharge[year].amount}
+                            onChange={(e) => handleInputChange('landUseCharge', year, 'amount', null, e)}
+                            className={styles['numeric-input']}
+                            required
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+        
+        {/* Previous TCC Section */}
+        <div className={`${styles['tcc-form-section']} ${!expandedSections.previousTcc ? styles.collapsed : ''} ${activeStep === 3 ? styles['active-section'] : ''}`}>
+          <div className={styles['section-header']} onClick={() => toggleSection('previousTcc')}>
+            <h2 className={styles['tcc-form-section-title']}>
+              <FaFileContract className={styles['section-icon']} />
+              Previous TCC
+            </h2>
+            <div className={styles['section-toggle']}>
+              {expandedSections.previousTcc ? <FaChevronDown /> : <FaChevronRight />}
+            </div>
+          </div>
+          
+          {expandedSections.previousTcc && (
+            <div className={styles['section-content']}>
+              <div className={styles['tccTaxYearsGrid']}>
+                {[currentYear - 1, currentYear - 2, currentYear - 3].map((year) => (
+                  <div key={`previous-${year}`} className={styles.tccTaxYearCard}>
+                    <div className={styles.tccTaxYearHeader}>
+                      <h3 className={styles.tccTaxYearTitle}>{year}</h3>
+                    </div>
+                    <div className={styles.tccTaxYearBody}>
+                      <div className={styles['tcc-form-field']}>
+                        <label>
+                          TCC Number <span className={styles.required}>*</span>
+                        </label>
+                        <input
+                          type="text"
+                          id={`tccNo-${year}`}
+                          value={formData.previousTcc[year].tccNo}
+                          onChange={(e) => handleInputChange('previousTcc', year, 'tccNo', null, e)}
+                        />
+                      </div>
+                      <div className={styles['tcc-form-field']}>
+                        <label>
+                          Issue Date <span className={styles.required}>*</span>
+                        </label>
+                        <input
+                          type="text"
+                          id={`tccDate-${year}`}
+                          value={formData.previousTcc[year].issueDate}
+                          onChange={(e) => handleInputChange('previousTcc', year, 'issueDate', null, e)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+        
+        {/* Documents Section - Assuming it's step 3 */}
+        <div className={`${styles.formSection} ${!expandedSections.supportDocuments ? styles.collapsed : ''} ${activeStep === 3 ? styles.activeSection : ''}`}>
+          <div className={styles.sectionHeader} onClick={() => toggleSection('supportDocuments')}>
+            <h2 className={styles.sectionTitle}>
+              <FaFileAlt className={styles.sectionIcon} />
+              Supporting Documents
+            </h2>
+            <div className={styles.sectionToggle}>
+              {expandedSections.supportDocuments ? <FaChevronDown /> : <FaChevronRight />}
+            </div>
+          </div>
+          
+          {expandedSections.supportDocuments && (
+            <div className={styles.sectionContent}>
+              <div className={styles.fileUploadArea}>
+                <div className={styles.fileUploadHeader}>
+                  <FaUpload className={styles.fileUploadIcon} />
+                  <h3 className={styles.fileUploadTitle}>Upload Supporting Documents</h3>
+                </div>
+                
+                <div className={styles.fileUploadControls}>
+                  <div className={styles.formField}>
+                    <label className={styles.fileInputLabel}>Document Type</label>
+                    <Select
+                      id="docType"
+                      value={selectedDocType}
+                      onChange={handleDocTypeChange}
+                    >
+                      <option value="">-- Select Document Type --</option>
+                      {documentTypes.map((type) => (
+                        <option key={type.code} value={type.code}>
+                          {type.description}
+                        </option>
+                      ))}
+                    </Select>
+                  </div>
+                  
+                  <div className={styles.formField}>
+                    <label className={styles.fileInputLabel}>File</label>
+                    <input
+                      type="file"
+                      id="supportDoc"
+                      onChange={handleFileChange}
+                      className={styles.fileInput}
+                    />
+                  </div>
+                  
+                  <button
+                    type="button"
+                    className={styles.addButton}
+                    onClick={handleAddDocument}
+                    disabled={!selectedFile || !selectedDocType}
+                  >
+                    <FaPlus />
+                    Add
+                  </button>
+                </div>
+                
+                {hasError('document') && (
+                  <div className={styles.errorMessage}>{errors.document}</div>
+                )}
+              </div>
+              
+              {formData.supportDocuments.length > 0 && (
+                <div className={styles.documentList}>
+                  {formData.supportDocuments.map((doc) => (
+                    <div key={doc.id} className={styles.documentItem}>
+                      <FaFile className={styles.documentIcon} />
+                      <div className={styles.documentInfo}>
+                        <p className={styles.documentName}>{doc.fileName}</p>
+                        <span className={styles.documentMeta}>
+                          {doc.typeName} • {formatFileSize(doc.fileSize)}
+                        </span>
+                      </div>
+                      <div className={styles.documentAction}>
+                        <button
+                          type="button"
+                          className={styles.removeButton}
+                          onClick={() => handleRemoveDocument(doc.id)}
+                          title="Remove Document"
+                        >
+                          <FaTrash />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+        
+        {/* Navigation Buttons */}
+        <div className={styles.formActions}>
+          <button
+            type="button"
+            className={`${styles.actionButton} ${styles.buttonOutline}`}
+            onClick={() => activeStep > 0 && handleStepChange(activeStep - 1)}
+            disabled={activeStep === 0}
+          >
+            Previous
+          </button>
+          
+          {activeStep < formSteps.length - 1 ? (
+            <button
+              type="button"
+              className={`${styles.actionButton} ${styles.buttonPrimary}`}
+              onClick={() => handleStepChange(activeStep + 1)}
+            >
+              Next
+            </button>
+          ) : (
+            <button
+              type="submit"
+              className={`${styles.actionButton} ${styles.buttonPrimary}`}
+            >
+              <FaCheckCircle style={{ marginRight: '8px' }} />
+              Submit Application
+            </button>
+          )}
+        </div>
+        
+        {/* Declaration Box - Only show on the final step */}
         {activeStep === formSteps.length - 1 && (
-          <div className={styles['declaration-box']}>
-            <div className={styles['declaration-header']}>
-              <FaInfoCircle className={styles['declaration-icon']} />
+          <div className={styles.declarationBox}>
+            <div className={styles.declarationHeader}>
+              <FaInfoCircle className={styles.declarationIcon} />
               <h3>Declaration</h3>
             </div>
             <p>
               I declare that the information provided in this application is true and correct to the best of my knowledge.
               I understand that providing false information may result in the rejection of my application and potential legal consequences.
             </p>
-            <div className={styles['declaration-checkbox']}>
+            <div className={styles.declarationCheckbox}>
               <input type="checkbox" id="declaration" required />
               <label htmlFor="declaration">
                 I agree to the above declaration
@@ -701,4 +970,4 @@ const TCCApplicationCreate = () => {
   );
 };
 
-export default TCCApplicationCreate; 
+export default TCCApplicationCreate;
