@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Card, Button, Alert, Select } from '../common/ui';
 import { 
@@ -29,7 +29,11 @@ import {
   FaChevronDown,
   FaChevronRight,
   FaFileAlt,
-  FaPlus
+  FaPlus,
+  FaClipboardList,
+  FaHome,
+  FaDownload,
+  FaTimes
 } from 'react-icons/fa';
 import styles from './TCCApplicationCreate.module.css';
 
@@ -45,19 +49,41 @@ const formSteps = [
 // Step progress indicator component
 const StepIndicator = ({ currentStep, steps, onChange }) => {
   return (
-    <div className={styles.stepIndicator}>
-      {steps.map((step, index) => (
-        <div 
-          key={step.id}
-          className={`${styles.step} ${currentStep >= index ? styles.active : ''} ${currentStep === index ? styles.current : ''}`}
-          onClick={() => onChange(index)}
-        >
-          <div className={styles.stepIcon}>
-            {step.icon}
+    <div className={styles.stepIndicator} role="navigation" aria-label="Application Progress">
+      {steps.map((step, index) => {
+        // Determine current status (completed, active, or inactive)
+        const isCompleted = currentStep > index;
+        const isCurrent = currentStep === index;
+        const isClickable = currentStep >= index || index === currentStep + 1;
+        
+        // Set the appropriate ARIA attributes for accessibility
+        const ariaProps = {
+          'aria-current': isCurrent ? 'step' : undefined,
+          'aria-label': `${step.label} ${isCompleted ? '(completed)' : isCurrent ? '(current)' : ''}`,
+          role: 'button',
+          tabIndex: isClickable ? 0 : -1
+        };
+        
+        return (
+          <div 
+            key={step.id}
+            className={`${styles.step} ${isCompleted ? styles.completed : ''} ${isCurrent ? styles.current : ''} ${!isClickable ? styles.disabled : ''}`}
+            onClick={() => isClickable && onChange(index)}
+            onKeyDown={(e) => isClickable && e.key === 'Enter' && onChange(index)}
+            {...ariaProps}
+          >
+            <div className={styles.stepIcon}>
+              {isCompleted ? <FaCheckCircle /> : step.icon}
+            </div>
+            <div className={styles.stepLabel}>{step.label}</div>
+            {index < steps.length - 1 && (
+              <div className={styles.stepConnector} aria-hidden="true">
+                <div className={styles.stepConnectorInner} />
+              </div>
+            )}
           </div>
-          <div className={styles.stepLabel}>{step.label}</div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 };
@@ -81,6 +107,29 @@ const TCCApplicationCreate = () => {
     previousTcc: true,
     supportDocuments: true,
   });
+  
+  // Add state for success modal
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [applicationNumber, setApplicationNumber] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [savingDraft, setSavingDraft] = useState(false);
+  const [showDraftSavedMessage, setShowDraftSavedMessage] = useState(false);
+  
+  // Check for saved draft on mount
+  useEffect(() => {
+    const savedDraft = localStorage.getItem('tccApplicationDraft');
+    if (savedDraft) {
+      try {
+        const parsedDraft = JSON.parse(savedDraft);
+        setFormData(parsedDraft);
+        // Show notification that draft was loaded
+        setShowDraftSavedMessage(true);
+        setTimeout(() => setShowDraftSavedMessage(false), 5000);
+      } catch (error) {
+        console.error('Error loading saved draft:', error);
+      }
+    }
+  }, []);
   
   // Toggle section expansion
   const toggleSection = (section) => {
@@ -303,12 +352,33 @@ const TCCApplicationCreate = () => {
       return;
     }
     
+    // Show loading state
+    setIsSubmitting(true);
+    
     // Submit the form (this would be an API call in a real application)
     console.log('Submitting TCC application:', formData);
     
-    // Show success message and navigate back (in a real app, you might show a confirmation page)
-    alert('Your TCC application has been submitted successfully! Application number: TCC-' + Date.now());
+    // Simulate API call with timeout
+    setTimeout(() => {
+      // Generate application number
+      const generatedAppNumber = 'TCC-' + Date.now();
+      setApplicationNumber(generatedAppNumber);
+      setIsSubmitting(false);
+      setShowSuccessModal(true);
+    }, 1500);
+  };
+  
+  // Handle modal close and redirect
+  const handleCloseModal = () => {
+    setShowSuccessModal(false);
     navigate('/dashboard/tcc-application');
+  };
+  
+  // Handle view details after submission
+  const handleViewDetails = () => {
+    setShowSuccessModal(false);
+    // Navigate to the details page with the application number
+    navigate(`/dashboard/tcc-application/${applicationNumber}`);
   };
   
   // Form validation
@@ -371,8 +441,127 @@ const TCCApplicationCreate = () => {
     return errors[field];
   };
   
+  // Save application draft
+  const handleSaveDraft = () => {
+    setSavingDraft(true);
+    
+    // Save to local storage (in a real app, this would save to the server)
+    try {
+      localStorage.setItem('tccApplicationDraft', JSON.stringify(formData));
+      
+      // Show success message
+      setShowDraftSavedMessage(true);
+      setTimeout(() => setShowDraftSavedMessage(false), 5000);
+    } catch (error) {
+      console.error('Error saving draft:', error);
+    } finally {
+      setSavingDraft(false);
+    }
+  };
+  
+  // Clear application draft
+  const handleClearDraft = () => {
+    if (window.confirm('Are you sure you want to clear your saved draft? This action cannot be undone.')) {
+      localStorage.removeItem('tccApplicationDraft');
+      // Reset form to initial state (you would need to define initialFormData)
+      setFormData({
+        taxpayerInfo: {
+          tin: '1234567890',
+          name: 'John Doe',
+        },
+        sourceOfIncome: '',
+        paymentMethod: 'Y',
+        incomeDetails: {
+          [currentYear - 1]: { income: '0', assessment: { rctNo: '', amount: '0', rctDate: '' }, outstanding: '0' },
+          [currentYear - 2]: { income: '0', assessment: { rctNo: '', amount: '0', rctDate: '' }, outstanding: '0' },
+          [currentYear - 3]: { income: '0', assessment: { rctNo: '', amount: '0', rctDate: '' }, outstanding: '0' }
+        },
+        developmentLevy: {
+          [currentYear - 1]: { rctNo: '', amount: '0', rctDate: '' },
+          [currentYear - 2]: { rctNo: '', amount: '0', rctDate: '' },
+          [currentYear - 3]: { rctNo: '', amount: '0', rctDate: '' }
+        },
+        landUseCharge: {
+          [currentYear - 1]: { rctNo: '', amount: '0', rctDate: '' },
+          [currentYear - 2]: { rctNo: '', amount: '0', rctDate: '' },
+          [currentYear - 3]: { rctNo: '', amount: '0', rctDate: '' }
+        },
+        previousTcc: {
+          [currentYear - 1]: { tccNo: '', issueDate: '' },
+          [currentYear - 2]: { tccNo: '', issueDate: '' },
+          [currentYear - 3]: { tccNo: '', issueDate: '' }
+        },
+        supportDocuments: []
+      });
+    }
+  };
+  
   return (
     <div className={styles.applicationContainer}>
+      {/* Draft Saved Message */}
+      {showDraftSavedMessage && (
+        <div className={styles.draftSavedMessage}>
+          <FaCheckCircle className={styles.draftSavedIcon} />
+          <span>Application draft saved successfully.</span>
+          <button 
+            onClick={() => setShowDraftSavedMessage(false)}
+            className={styles.dismissButton}
+            aria-label="Dismiss notification"
+          >
+            <FaTimes />
+          </button>
+        </div>
+      )}
+      
+      {/* Success Modal */}
+      {showSuccessModal && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modal}>
+            <div className={styles.modalHeader}>
+              <button 
+                className={styles.modalCloseButton}
+                onClick={handleCloseModal}
+                aria-label="Close modal"
+              >
+                <FaTimes />
+              </button>
+            </div>
+            <div className={styles.modalBody}>
+              <div className={styles.successIcon}>
+                <FaCheckCircle />
+              </div>
+              <h2 className={styles.modalTitle}>Application Submitted Successfully!</h2>
+              <p className={styles.modalMessage}>
+                Your Tax Clearance Certificate application has been submitted and is now under review.
+              </p>
+              <div className={styles.applicationNumberBox}>
+                <span className={styles.applicationNumberLabel}>Application Number:</span>
+                <span className={styles.applicationNumber}>{applicationNumber}</span>
+              </div>
+              <p className={styles.modalInstruction}>
+                You can track the status of your application in the TCC Applications dashboard.
+              </p>
+            </div>
+            <div className={styles.modalFooter}>
+              <button 
+                className={`${styles.modalButton} ${styles.modalButtonSecondary}`}
+                onClick={handleCloseModal}
+              >
+                <FaHome className={styles.buttonIcon} />
+                Go to Dashboard
+              </button>
+              <button 
+                className={`${styles.modalButton} ${styles.modalButtonPrimary}`}
+                onClick={handleViewDetails}
+              >
+                <FaFileAlt className={styles.buttonIcon} />
+                View Application
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className={styles.headerSection}>
         <button 
           className={styles.backButton}
@@ -384,6 +573,34 @@ const TCCApplicationCreate = () => {
         <div className={styles.headerContent}>
           <h1>Create TCC Application</h1>
           <p className={styles.headerSubtitle}>Apply for a new Tax Clearance Certificate for the past three years</p>
+        </div>
+        <div className={styles.headerActions}>
+          <button
+            type="button"
+            className={styles.draftButton}
+            onClick={handleSaveDraft}
+            disabled={savingDraft}
+          >
+            {savingDraft ? (
+              <>
+                <span className={styles.spinner} />
+                Saving...
+              </>
+            ) : (
+              <>
+                <FaRegCalendarAlt />
+                Save Draft
+              </>
+            )}
+          </button>
+          <button
+            type="button"
+            className={styles.clearDraftButton}
+            onClick={handleClearDraft}
+          >
+            <FaTrashAlt />
+            Clear Draft
+          </button>
         </div>
       </div>
       
@@ -452,7 +669,7 @@ const TCCApplicationCreate = () => {
                   <label>
                     Source of Income <span className={styles.required}>*</span>
                     <span className={styles.tooltipIcon}>
-                      <FaQuestionCircle data-tooltip="Select your primary source of income" />
+                      <FaQuestionCircle data-tooltip="Select your primary source of income for tax assessment" />
                     </span>
                   </label>
                   <Select
@@ -469,7 +686,10 @@ const TCCApplicationCreate = () => {
                     ))}
                   </Select>
                   {hasError('sourceOfIncome') && (
-                    <div className={styles.errorMessage}>{errors.sourceOfIncome}</div>
+                    <div className={styles.errorMessage}>
+                      <FaExclamationTriangle />
+                      {errors.sourceOfIncome}
+                    </div>
                   )}
                 </div>
               </div>
@@ -479,7 +699,7 @@ const TCCApplicationCreate = () => {
                   <label>
                     Was payment made on PragFifty?
                     <span className={styles.tooltipIcon}>
-                      <FaQuestionCircle data-tooltip="PragFifty is the Online Revenue Assessment System" />
+                      <FaQuestionCircle data-tooltip="Indicate if you've previously made tax payments through the PragFifty Online Revenue Assessment System" />
                     </span>
                   </label>
                   <div className={styles.radioGroup}>
@@ -516,7 +736,7 @@ const TCCApplicationCreate = () => {
               {formData.paymentMethod === "N" && (
                 <div className={styles.formNote}>
                   <FaExclamationTriangle className={styles.noteIcon} />
-                  <p>If no, kindly provide us with your evidence of payment by uploading the receipt below.</p>
+                  <p>If no, kindly provide us with your evidence of payment by uploading the receipt in the Documents section.</p>
                 </div>
               )}
             </div>
@@ -537,6 +757,11 @@ const TCCApplicationCreate = () => {
           
           {expandedSections.incomeDetails && (
             <div className={styles.sectionContent}>
+              <div className={styles.formNote}>
+                <FaInfoCircle className={styles.noteIcon} style={{ color: '#4285F4' }} />
+                <p style={{ color: '#4b5563' }}>Enter your total income for each of the last three tax years.</p>
+              </div>
+              
               <div className={styles.taxYearsGrid}>
                 {[currentYear - 1, currentYear - 2, currentYear - 3].map((year) => (
                   <div key={`income-${year}`} className={styles.taxYearCard}>
@@ -547,6 +772,9 @@ const TCCApplicationCreate = () => {
                       <div className={styles.formField}>
                         <label>
                           Income <span className={styles.required}>*</span>
+                          <span className={styles.tooltipIcon}>
+                            <FaQuestionCircle data-tooltip={`Total income for the year ${year}`} />
+                          </span>
                         </label>
                         <div className={styles.inputWithPrefix}>
                           <span className={styles.inputPrefix}>₦</span>
@@ -555,6 +783,8 @@ const TCCApplicationCreate = () => {
                             id={`income-${year}`}
                             value={formData.incomeDetails[year].income}
                             onChange={(e) => handleInputChange('incomeDetails', year, 'income', null, e)}
+                            placeholder="0.00"
+                            className={styles.numericInput}
                             required
                           />
                         </div>
@@ -595,6 +825,7 @@ const TCCApplicationCreate = () => {
                           id={`tax-rctno-${year}`}
                           value={formData.incomeDetails[year].assessment.rctNo}
                           onChange={(e) => handleInputChange('incomeDetails', year, 'assessment', 'rctNo', e)}
+                          placeholder="Enter receipt number"
                         />
                         {hasError(`assessment_${year}_rctNo`) && (
                           <div className={styles.errorMessage}>{errors[`assessment_${year}_rctNo`]}</div>
@@ -610,6 +841,7 @@ const TCCApplicationCreate = () => {
                             id={`tax-paid-${year}`}
                             value={formData.incomeDetails[year].assessment.amount}
                             onChange={(e) => handleInputChange('incomeDetails', year, 'assessment', 'amount', e)}
+                            className={styles.numericInput}
                             required
                           />
                         </div>
@@ -639,38 +871,38 @@ const TCCApplicationCreate = () => {
         </div>
         
         {/* Outstanding Tax Section */}
-        <div className={`${styles['tcc-form-section']} ${!expandedSections.outstandingTax ? styles.collapsed : ''} ${activeStep === 2 ? styles['active-section'] : ''}`}>
-          <div className={styles['section-header']} onClick={() => toggleSection('outstandingTax')}>
-            <h2 className={styles['tcc-form-section-title']}>
-              <FaMoneyBillWave className={styles['section-icon']} />
+        <div className={`${styles.formSection} ${!expandedSections.outstandingTax ? styles.collapsed : ''} ${activeStep === 2 ? styles.activeSection : ''}`}>
+          <div className={styles.sectionHeader} onClick={() => toggleSection('outstandingTax')}>
+            <h2 className={styles.sectionTitle}>
+              <FaMoneyBillWave className={styles.sectionIcon} />
               Outstanding Tax
             </h2>
-            <div className={styles['section-toggle']}>
+            <div className={styles.sectionToggle}>
               {expandedSections.outstandingTax ? <FaChevronDown /> : <FaChevronRight />}
             </div>
           </div>
           
           {expandedSections.outstandingTax && (
-            <div className={styles['section-content']}>
-              <div className={styles['tccTaxYearsGrid']}>
+            <div className={styles.sectionContent}>
+              <div className={styles.taxYearsGrid}>
                 {[currentYear - 1, currentYear - 2, currentYear - 3].map((year) => (
-                  <div key={`outstanding-${year}`} className={styles.tccTaxYearCard}>
-                    <div className={styles.tccTaxYearHeader}>
-                      <h3 className={styles.tccTaxYearTitle}>{year}</h3>
+                  <div key={`outstanding-${year}`} className={styles.taxYearCard}>
+                    <div className={styles.taxYearHeader}>
+                      <h3 className={styles.taxYearTitle}>{year}</h3>
                     </div>
-                    <div className={styles.tccTaxYearBody}>
-                      <div className={styles['tcc-form-field']}>
+                    <div className={styles.taxYearBody}>
+                      <div className={styles.formField}>
                         <label>
                           Outstanding Tax <span className={styles.required}>*</span>
                         </label>
-                        <div className={styles['input-with-prefix']}>
-                          <span className={styles['input-prefix']}>₦</span>
+                        <div className={styles.inputWithPrefix}>
+                          <span className={styles.inputPrefix}>₦</span>
                           <input
                             type="text"
                             id={`outstanding-${year}`}
                             value={formData.incomeDetails[year].outstanding}
                             onChange={(e) => handleInputChange('incomeDetails', year, 'outstanding', null, e)}
-                            className={styles['numeric-input']}
+                            className={styles.numericInput}
                             required
                           />
                         </div>
@@ -684,41 +916,72 @@ const TCCApplicationCreate = () => {
         </div>
         
         {/* Development Levy Section */}
-        <div className={`${styles['tcc-form-section']} ${!expandedSections.developmentLevy ? styles.collapsed : ''} ${activeStep === 2 ? styles['active-section'] : ''}`}>
-          <div className={styles['section-header']} onClick={() => toggleSection('developmentLevy')}>
-            <h2 className={styles['tcc-form-section-title']}>
-              <FaMoneyBillWave className={styles['section-icon']} />
+        <div className={`${styles.formSection} ${!expandedSections.developmentLevy ? styles.collapsed : ''} ${activeStep === 2 ? styles.activeSection : ''}`}>
+          <div className={styles.sectionHeader} onClick={() => toggleSection('developmentLevy')}>
+            <h2 className={styles.sectionTitle}>
+              <FaMoneyBillWave className={styles.sectionIcon} />
               Development Levy
             </h2>
-            <div className={styles['section-toggle']}>
+            <div className={styles.sectionToggle}>
               {expandedSections.developmentLevy ? <FaChevronDown /> : <FaChevronRight />}
             </div>
           </div>
           
           {expandedSections.developmentLevy && (
-            <div className={styles['section-content']}>
-              <div className={styles['tccTaxYearsGrid']}>
+            <div className={styles.sectionContent}>
+              <div className={styles.taxYearsGrid}>
                 {[currentYear - 1, currentYear - 2, currentYear - 3].map((year) => (
-                  <div key={`development-${year}`} className={styles.tccTaxYearCard}>
-                    <div className={styles.tccTaxYearHeader}>
-                      <h3 className={styles.tccTaxYearTitle}>{year}</h3>
+                  <div key={`development-${year}`} className={styles.taxYearCard}>
+                    <div className={styles.taxYearHeader}>
+                      <h3 className={styles.taxYearTitle}>{year}</h3>
                     </div>
-                    <div className={styles.tccTaxYearBody}>
-                      <div className={styles['tcc-form-field']}>
+                    <div className={styles.taxYearBody}>
+                      <div className={`${styles.formField} ${hasError(`devLevy_${year}_rctNo`) ? styles.error : ''}`}>
+                        <label>Receipt No.</label>
+                        <input
+                          type="text"
+                          id={`devLevy-rctno-${year}`}
+                          value={formData.developmentLevy[year].rctNo}
+                          onChange={(e) => handleInputChange('developmentLevy', year, 'rctNo', null, e)}
+                          placeholder="Enter receipt number"
+                        />
+                        {hasError(`devLevy_${year}_rctNo`) && (
+                          <div className={styles.errorMessage}>{errors[`devLevy_${year}_rctNo`]}</div>
+                        )}
+                      </div>
+                      
+                      <div className={styles.formField}>
                         <label>
                           Development Levy <span className={styles.required}>*</span>
                         </label>
-                        <div className={styles['input-with-prefix']}>
-                          <span className={styles['input-prefix']}>₦</span>
+                        <div className={styles.inputWithPrefix}>
+                          <span className={styles.inputPrefix}>₦</span>
                           <input
                             type="text"
                             id={`development-${year}`}
                             value={formData.developmentLevy[year].amount}
                             onChange={(e) => handleInputChange('developmentLevy', year, 'amount', null, e)}
-                            className={styles['numeric-input']}
+                            className={styles.numericInput}
+                            placeholder="0.00"
                             required
                           />
                         </div>
+                      </div>
+                      
+                      <div className={`${styles.formField} ${hasError(`devLevy_${year}_rctDate`) ? styles.error : ''}`}>
+                        <label>Receipt Date</label>
+                        <div className={styles.dateField}>
+                          <input
+                            type="date"
+                            id={`devLevy-rctdt-${year}`}
+                            value={formData.developmentLevy[year].rctDate}
+                            onChange={(e) => handleInputChange('developmentLevy', year, 'rctDate', null, e)}
+                          />
+                          <FaCalendarAlt className={styles.dateIcon} />
+                        </div>
+                        {hasError(`devLevy_${year}_rctDate`) && (
+                          <div className={styles.errorMessage}>{errors[`devLevy_${year}_rctDate`]}</div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -729,41 +992,72 @@ const TCCApplicationCreate = () => {
         </div>
         
         {/* Land Use Charge Section */}
-        <div className={`${styles['tcc-form-section']} ${!expandedSections.landUseCharge ? styles.collapsed : ''} ${activeStep === 2 ? styles['active-section'] : ''}`}>
-          <div className={styles['section-header']} onClick={() => toggleSection('landUseCharge')}>
-            <h2 className={styles['tcc-form-section-title']}>
-              <FaMoneyBillWave className={styles['section-icon']} />
+        <div className={`${styles.formSection} ${!expandedSections.landUseCharge ? styles.collapsed : ''} ${activeStep === 2 ? styles.activeSection : ''}`}>
+          <div className={styles.sectionHeader} onClick={() => toggleSection('landUseCharge')}>
+            <h2 className={styles.sectionTitle}>
+              <FaMoneyBillWave className={styles.sectionIcon} />
               Land Use Charge
             </h2>
-            <div className={styles['section-toggle']}>
+            <div className={styles.sectionToggle}>
               {expandedSections.landUseCharge ? <FaChevronDown /> : <FaChevronRight />}
             </div>
           </div>
           
           {expandedSections.landUseCharge && (
-            <div className={styles['section-content']}>
-              <div className={styles['tccTaxYearsGrid']}>
+            <div className={styles.sectionContent}>
+              <div className={styles.taxYearsGrid}>
                 {[currentYear - 1, currentYear - 2, currentYear - 3].map((year) => (
-                  <div key={`landUse-${year}`} className={styles.tccTaxYearCard}>
-                    <div className={styles.tccTaxYearHeader}>
-                      <h3 className={styles.tccTaxYearTitle}>{year}</h3>
+                  <div key={`landUse-${year}`} className={styles.taxYearCard}>
+                    <div className={styles.taxYearHeader}>
+                      <h3 className={styles.taxYearTitle}>{year}</h3>
                     </div>
-                    <div className={styles.tccTaxYearBody}>
-                      <div className={styles['tcc-form-field']}>
+                    <div className={styles.taxYearBody}>
+                      <div className={`${styles.formField} ${hasError(`luc_${year}_rctNo`) ? styles.error : ''}`}>
+                        <label>Receipt No.</label>
+                        <input
+                          type="text"
+                          id={`luc-rctno-${year}`}
+                          value={formData.landUseCharge[year].rctNo}
+                          onChange={(e) => handleInputChange('landUseCharge', year, 'rctNo', null, e)}
+                          placeholder="Enter receipt number"
+                        />
+                        {hasError(`luc_${year}_rctNo`) && (
+                          <div className={styles.errorMessage}>{errors[`luc_${year}_rctNo`]}</div>
+                        )}
+                      </div>
+                      
+                      <div className={styles.formField}>
                         <label>
                           Land Use Charge <span className={styles.required}>*</span>
                         </label>
-                        <div className={styles['input-with-prefix']}>
-                          <span className={styles['input-prefix']}>₦</span>
+                        <div className={styles.inputWithPrefix}>
+                          <span className={styles.inputPrefix}>₦</span>
                           <input
                             type="text"
                             id={`landUse-${year}`}
                             value={formData.landUseCharge[year].amount}
                             onChange={(e) => handleInputChange('landUseCharge', year, 'amount', null, e)}
-                            className={styles['numeric-input']}
+                            className={styles.numericInput}
+                            placeholder="0.00"
                             required
                           />
                         </div>
+                      </div>
+                      
+                      <div className={`${styles.formField} ${hasError(`luc_${year}_rctDate`) ? styles.error : ''}`}>
+                        <label>Receipt Date</label>
+                        <div className={styles.dateField}>
+                          <input
+                            type="date"
+                            id={`luc-rctdt-${year}`}
+                            value={formData.landUseCharge[year].rctDate}
+                            onChange={(e) => handleInputChange('landUseCharge', year, 'rctDate', null, e)}
+                          />
+                          <FaCalendarAlt className={styles.dateIcon} />
+                        </div>
+                        {hasError(`luc_${year}_rctDate`) && (
+                          <div className={styles.errorMessage}>{errors[`luc_${year}_rctDate`]}</div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -774,27 +1068,27 @@ const TCCApplicationCreate = () => {
         </div>
         
         {/* Previous TCC Section */}
-        <div className={`${styles['tcc-form-section']} ${!expandedSections.previousTcc ? styles.collapsed : ''} ${activeStep === 3 ? styles['active-section'] : ''}`}>
-          <div className={styles['section-header']} onClick={() => toggleSection('previousTcc')}>
-            <h2 className={styles['tcc-form-section-title']}>
-              <FaFileContract className={styles['section-icon']} />
+        <div className={`${styles.formSection} ${!expandedSections.previousTcc ? styles.collapsed : ''} ${activeStep === 3 ? styles.activeSection : ''}`}>
+          <div className={styles.sectionHeader} onClick={() => toggleSection('previousTcc')}>
+            <h2 className={styles.sectionTitle}>
+              <FaFileContract className={styles.sectionIcon} />
               Previous TCC
             </h2>
-            <div className={styles['section-toggle']}>
+            <div className={styles.sectionToggle}>
               {expandedSections.previousTcc ? <FaChevronDown /> : <FaChevronRight />}
             </div>
           </div>
           
           {expandedSections.previousTcc && (
-            <div className={styles['section-content']}>
-              <div className={styles['tccTaxYearsGrid']}>
+            <div className={styles.sectionContent}>
+              <div className={styles.taxYearsGrid}>
                 {[currentYear - 1, currentYear - 2, currentYear - 3].map((year) => (
-                  <div key={`previous-${year}`} className={styles.tccTaxYearCard}>
-                    <div className={styles.tccTaxYearHeader}>
-                      <h3 className={styles.tccTaxYearTitle}>{year}</h3>
+                  <div key={`previous-${year}`} className={styles.taxYearCard}>
+                    <div className={styles.taxYearHeader}>
+                      <h3 className={styles.taxYearTitle}>{year}</h3>
                     </div>
-                    <div className={styles.tccTaxYearBody}>
-                      <div className={styles['tcc-form-field']}>
+                    <div className={styles.taxYearBody}>
+                      <div className={styles.formField}>
                         <label>
                           TCC Number <span className={styles.required}>*</span>
                         </label>
@@ -803,18 +1097,25 @@ const TCCApplicationCreate = () => {
                           id={`tccNo-${year}`}
                           value={formData.previousTcc[year].tccNo}
                           onChange={(e) => handleInputChange('previousTcc', year, 'tccNo', null, e)}
+                          placeholder="Enter TCC number if applicable"
                         />
                       </div>
-                      <div className={styles['tcc-form-field']}>
+                      <div className={`${styles.formField} ${hasError(`tcc_${year}_issueDate`) ? styles.error : ''}`}>
                         <label>
                           Issue Date <span className={styles.required}>*</span>
                         </label>
-                        <input
-                          type="text"
-                          id={`tccDate-${year}`}
-                          value={formData.previousTcc[year].issueDate}
-                          onChange={(e) => handleInputChange('previousTcc', year, 'issueDate', null, e)}
-                        />
+                        <div className={styles.dateField}>
+                          <input
+                            type="date"
+                            id={`tccDate-${year}`}
+                            value={formData.previousTcc[year].issueDate}
+                            onChange={(e) => handleInputChange('previousTcc', year, 'issueDate', null, e)}
+                          />
+                          <FaCalendarAlt className={styles.dateIcon} />
+                        </div>
+                        {hasError(`tcc_${year}_issueDate`) && (
+                          <div className={styles.errorMessage}>{errors[`tcc_${year}_issueDate`]}</div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -824,7 +1125,7 @@ const TCCApplicationCreate = () => {
           )}
         </div>
         
-        {/* Documents Section - Assuming it's step 3 */}
+        {/* Documents Section */}
         <div className={`${styles.formSection} ${!expandedSections.supportDocuments ? styles.collapsed : ''} ${activeStep === 3 ? styles.activeSection : ''}`}>
           <div className={styles.sectionHeader} onClick={() => toggleSection('supportDocuments')}>
             <h2 className={styles.sectionTitle}>
@@ -838,6 +1139,11 @@ const TCCApplicationCreate = () => {
           
           {expandedSections.supportDocuments && (
             <div className={styles.sectionContent}>
+              <div className={styles.formNote} style={{ backgroundColor: 'rgba(66, 133, 244, 0.08)', marginBottom: '24px' }}>
+                <FaInfoCircle className={styles.noteIcon} style={{ color: '#4285F4' }} />
+                <p style={{ color: '#1f2937' }}>Upload relevant documents to support your TCC application. Acceptable formats include PDF, JPG, and PNG files (max 5MB each).</p>
+              </div>
+              
               <div className={styles.fileUploadArea}>
                 <div className={styles.fileUploadHeader}>
                   <FaUpload className={styles.fileUploadIcon} />
@@ -846,7 +1152,7 @@ const TCCApplicationCreate = () => {
                 
                 <div className={styles.fileUploadControls}>
                   <div className={styles.formField}>
-                    <label className={styles.fileInputLabel}>Document Type</label>
+                    <label className={styles.fileInputLabel}>Document Type <span className={styles.required}>*</span></label>
                     <Select
                       id="docType"
                       value={selectedDocType}
@@ -862,12 +1168,13 @@ const TCCApplicationCreate = () => {
                   </div>
                   
                   <div className={styles.formField}>
-                    <label className={styles.fileInputLabel}>File</label>
+                    <label className={styles.fileInputLabel}>File <span className={styles.required}>*</span></label>
                     <input
                       type="file"
                       id="supportDoc"
                       onChange={handleFileChange}
                       className={styles.fileInput}
+                      accept=".pdf,.jpg,.jpeg,.png"
                     />
                   </div>
                   
@@ -883,12 +1190,16 @@ const TCCApplicationCreate = () => {
                 </div>
                 
                 {hasError('document') && (
-                  <div className={styles.errorMessage}>{errors.document}</div>
+                  <div className={styles.errorMessage}>
+                    <FaExclamationTriangle />
+                    {errors.document}
+                  </div>
                 )}
               </div>
               
-              {formData.supportDocuments.length > 0 && (
+              {formData.supportDocuments.length > 0 ? (
                 <div className={styles.documentList}>
+                  <h4 style={{ marginBottom: '16px', fontSize: '1rem', color: '#4b5563' }}>Uploaded Documents</h4>
                   {formData.supportDocuments.map((doc) => (
                     <div key={doc.id} className={styles.documentItem}>
                       <FaFile className={styles.documentIcon} />
@@ -904,12 +1215,18 @@ const TCCApplicationCreate = () => {
                           className={styles.removeButton}
                           onClick={() => handleRemoveDocument(doc.id)}
                           title="Remove Document"
+                          aria-label="Remove Document"
                         >
                           <FaTrash />
                         </button>
                       </div>
                     </div>
                   ))}
+                </div>
+              ) : (
+                <div style={{ marginTop: '24px', textAlign: 'center', padding: '24px', backgroundColor: '#f9fafb', borderRadius: '8px', color: '#6b7280' }}>
+                  <FaFilePdf style={{ fontSize: '2rem', marginBottom: '12px', opacity: '0.5' }} />
+                  <p>No documents uploaded yet. Please add supporting documents.</p>
                 </div>
               )}
             </div>
@@ -939,31 +1256,128 @@ const TCCApplicationCreate = () => {
             <button
               type="submit"
               className={`${styles.actionButton} ${styles.buttonPrimary}`}
+              disabled={isSubmitting}
             >
-              <FaCheckCircle style={{ marginRight: '8px' }} />
-              Submit Application
+              {isSubmitting ? (
+                <>
+                  <span className={styles.spinner} style={{ marginRight: '8px' }} />
+                  Submitting...
+                </>
+              ) : (
+                <>
+                  <FaCheckCircle style={{ marginRight: '8px' }} />
+                  Submit Application
+                </>
+              )}
             </button>
           )}
         </div>
         
         {/* Declaration Box - Only show on the final step */}
         {activeStep === formSteps.length - 1 && (
-          <div className={styles.declarationBox}>
-            <div className={styles.declarationHeader}>
-              <FaInfoCircle className={styles.declarationIcon} />
-              <h3>Declaration</h3>
+          <>
+            <div className={styles.formSection}>
+              <div className={styles.sectionHeader}>
+                <h2 className={styles.sectionTitle}>
+                  <FaClipboardList className={styles.sectionIcon} />
+                  Application Summary
+                </h2>
+              </div>
+              <div className={styles.sectionContent}>
+                <div className={styles.summarySection}>
+                  <h3 className={styles.summaryHeading}>Taxpayer Information</h3>
+                  <div className={styles.summaryRow}>
+                    <div className={styles.summaryItem}>
+                      <span className={styles.summaryLabel}>TIN:</span>
+                      <span className={styles.summaryValue}>{formData.taxpayerInfo.tin}</span>
+                    </div>
+                    <div className={styles.summaryItem}>
+                      <span className={styles.summaryLabel}>Name:</span>
+                      <span className={styles.summaryValue}>{formData.taxpayerInfo.name}</span>
+                    </div>
+                  </div>
+                  
+                  <h3 className={styles.summaryHeading}>Income Details</h3>
+                  <div className={styles.summaryTable}>
+                    <div className={styles.summaryTableHeader}>
+                      <div className={styles.summaryTableCell}>Year</div>
+                      <div className={styles.summaryTableCell}>Income</div>
+                      <div className={styles.summaryTableCell}>Assessment Amount</div>
+                      <div className={styles.summaryTableCell}>Outstanding Tax</div>
+                    </div>
+                    {[currentYear - 1, currentYear - 2, currentYear - 3].map((year) => (
+                      <div key={`summary-income-${year}`} className={styles.summaryTableRow}>
+                        <div className={styles.summaryTableCell}>{year}</div>
+                        <div className={styles.summaryTableCell}>₦{parseInt(formData.incomeDetails[year].income).toLocaleString()}</div>
+                        <div className={styles.summaryTableCell}>₦{parseInt(formData.incomeDetails[year].assessment.amount).toLocaleString()}</div>
+                        <div className={styles.summaryTableCell}>₦{parseInt(formData.incomeDetails[year].outstanding).toLocaleString()}</div>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  <h3 className={styles.summaryHeading}>Development Levy & Land Use Charge</h3>
+                  <div className={styles.summaryTable}>
+                    <div className={styles.summaryTableHeader}>
+                      <div className={styles.summaryTableCell}>Year</div>
+                      <div className={styles.summaryTableCell}>Development Levy</div>
+                      <div className={styles.summaryTableCell}>Land Use Charge</div>
+                    </div>
+                    {[currentYear - 1, currentYear - 2, currentYear - 3].map((year) => (
+                      <div key={`summary-other-${year}`} className={styles.summaryTableRow}>
+                        <div className={styles.summaryTableCell}>{year}</div>
+                        <div className={styles.summaryTableCell}>₦{parseInt(formData.developmentLevy[year].amount).toLocaleString()}</div>
+                        <div className={styles.summaryTableCell}>₦{parseInt(formData.landUseCharge[year].amount).toLocaleString()}</div>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  <h3 className={styles.summaryHeading}>Supporting Documents</h3>
+                  {formData.supportDocuments.length > 0 ? (
+                    <ul className={styles.summaryDocumentList}>
+                      {formData.supportDocuments.map((doc) => (
+                        <li key={doc.id} className={styles.summaryDocumentItem}>
+                          <FaFile className={styles.summaryDocumentIcon} />
+                          <span>{doc.typeName}: {doc.fileName}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className={styles.summaryEmptyMessage}>No supporting documents uploaded.</p>
+                  )}
+                </div>
+              </div>
             </div>
-            <p>
-              I declare that the information provided in this application is true and correct to the best of my knowledge.
-              I understand that providing false information may result in the rejection of my application and potential legal consequences.
-            </p>
-            <div className={styles.declarationCheckbox}>
-              <input type="checkbox" id="declaration" required />
-              <label htmlFor="declaration">
-                I agree to the above declaration
-              </label>
+
+            <div className={styles.declarationBox}>
+              <div className={styles.declarationHeader}>
+                <FaInfoCircle className={styles.declarationIcon} />
+                <h3>Declaration</h3>
+              </div>
+              <p>
+                I declare that the information provided in this application is true and correct to the best of my knowledge.
+                I understand that providing false information may result in the rejection of my application and potential legal consequences.
+              </p>
+              <div className={styles.declarationCheckbox}>
+                <input type="checkbox" id="declaration" required />
+                <label htmlFor="declaration">
+                  I agree to the above declaration
+                </label>
+              </div>
+              
+              <div style={{ marginTop: '24px', padding: '16px', backgroundColor: 'rgba(253, 224, 71, 0.15)', borderRadius: '8px', display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                <FaExclamationTriangle style={{ color: '#f59e0b', fontSize: '1.25rem', flexShrink: 0, marginTop: '2px' }} />
+                <div>
+                  <p style={{ margin: '0 0 8px 0', fontWeight: '500', color: '#78350f' }}>Please note:</p>
+                  <ul style={{ paddingLeft: '20px', margin: '0', color: '#78350f', fontSize: '0.9rem' }}>
+                    <li>Your application will be reviewed by the tax authority.</li>
+                    <li>You may be contacted for additional information if needed.</li>
+                    <li>Once approved, your TCC will be available for download from your dashboard.</li>
+                    <li>The review process typically takes 3-5 working days.</li>
+                  </ul>
+                </div>
+              </div>
             </div>
-          </div>
+          </>
         )}
       </form>
     </div>

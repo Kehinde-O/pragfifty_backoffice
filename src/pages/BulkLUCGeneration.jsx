@@ -1,55 +1,53 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import {
   Box,
-  Paper,
   Typography,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  ListSubheader,
   Button,
-  Grid,
-  CircularProgress,
-  Alert,
-  AlertTitle,
-  Divider,
-  Chip,
-  useTheme,
-  Tab,
-  Tabs,
   TextField,
-  InputAdornment,
-  Tooltip,
   IconButton,
   Stack,
+  Chip,
+  Badge,
+  LinearProgress,
+  useTheme,
+  Tooltip,
+  Select,
+  MenuItem,
+  Divider,
+  Checkbox,
+  Alert,
+  AlertTitle,
+  CircularProgress,
+  Grid,
+  Paper,
+  Container,
+  Stepper,
+  Step,
+  StepLabel,
+  TablePagination,
+  Card,
+  CardContent,
+  InputAdornment,
+  Tabs,
+  Tab,
   Table,
-  TableBody,
-  TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
+  TableCell,
+  TableBody,
   Radio,
   RadioGroup,
   FormControlLabel,
-  Checkbox,
-  Backdrop,
-  Card,
-  CardContent,
-  CardActions,
-  TablePagination,
-  Badge,
-  LinearProgress,
-  useMediaQuery,
-  Avatar,
-  Autocomplete,
-  Container,
-  ToggleButton,
-  ToggleButtonGroup
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  FormControl,
+  InputLabel,
+  OutlinedInput,
+  ListItemText,
+  FormHelperText
 } from '@mui/material';
 import {
   Search as SearchIcon,
@@ -60,43 +58,30 @@ import {
   History as HistoryIcon,
   Help as HelpIcon,
   CalendarMonth as CalendarIcon,
-  Home as HomeIcon,
-  Edit as EditIcon,
-  Delete as DeleteIcon,
-  Add as AddIcon,
+  Check as CheckIcon,
   CheckCircle as CheckCircleIcon,
   Cancel as CancelIcon,
-  LocalPrintshop as LocalPrintshopIcon,
-  FilterList as FilterListIcon,
   Close as CloseIcon,
   Refresh as RefreshIcon,
-  SaveAlt as SaveAltIcon,
   AccountBalance as AccountBalanceIcon,
-  ViewList as ViewListIcon,
   ReceiptLong as ReceiptLongIcon,
-  ContentCopy as ContentCopyIcon,
   KeyboardArrowDown as KeyboardArrowDownIcon,
   LocationOn as LocationOnIcon,
   TrendingUp as TrendingUpIcon,
-  TrendingDown as TrendingDownIcon,
-  Payments as PaymentsIcon,
   Business as BusinessIcon,
-  Dashboard as DashboardIcon,
-  ArrowUpward as ArrowUpwardIcon,
-  ArrowDownward as ArrowDownwardIcon,
   ViewModule as ViewModuleIcon,
-  ViewColumn as ViewColumnIcon
+  ViewList as ViewListIcon,
+  NavigateNext as NavigateNextIcon,
+  Edit as EditIcon,
+  Add as AddIcon,
+  Person as PersonIcon,
+  ArrowForward as ArrowForwardIcon,
+  Description as DescriptionIcon
 } from '@mui/icons-material';
 import Swal from 'sweetalert2';
 import styles from './BulkLUCGeneration.module.css';
 
 // Constants for better code organization
-const SEARCH_TYPES = {
-  PROPERTY: "property",
-  TAXPAYER: "taxpayer",
-  ADDRESS: "address"
-};
-
 const BILL_STATUS = {
   PAID: "paid",
   UNPAID: "unpaid"
@@ -107,118 +92,324 @@ const LUC_TABS = {
   HISTORY: "history"
 };
 
-const VIEWS = {
-  GRID: "grid",
-  TABLE: "table"
+// Generation steps - SIMPLIFIED to just 2 steps
+const GENERATE_STEPS = {
+  SELECT_CRITERIA: 0,
+  GENERATE_BILLS: 1
+};
+
+// Generation modes
+const GENERATION_MODE = {
+  SINGLE: "single",
+  BULK: "bulk"
+};
+
+// Default parameters for bill generation
+const DEFAULT_PARAMS = {
+  minValue: "1000000",
+  maxValue: "100000000", 
+  rate: "0.005"  // 0.5%
 };
 
 const BulkLUCGeneration = () => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const isTablet = useMediaQuery(theme.breakpoints.down('md'));
+  
+  // Main view state
   const [activeTab, setActiveTab] = useState(LUC_TABS.SEARCH);
-  const [viewMode, setViewMode] = useState(VIEWS.GRID);
   
-  // New state to track separate view modes for each tab
-  const [historyViewMode, setHistoryViewMode] = useState(VIEWS.TABLE);
+  // Current step in the generation process - simplified to just 2 steps
+  const [activeStep, setActiveStep] = useState(GENERATE_STEPS.SELECT_CRITERIA);
   
-  // State for form inputs
-  const [formData, setFormData] = useState({
-    searchType: SEARCH_TYPES.PROPERTY,
+  // Generation mode: single or bulk
+  const [generationMode, setGenerationMode] = useState(GENERATION_MODE.BULK);
+  
+  // Single bill generation state
+  const [singleBillData, setSingleBillData] = useState({
     propertyId: "",
     taxpayerId: "",
-    address: "",
-    lga: ["all"],
-    classification: ["all"],
-    year: ["all"],
-    minValue: "",
-    maxValue: ""
+    propertyAddress: "",
+    propertyDetails: null,
+    loading: false,
+    found: false
   });
   
-  // State for single property search result
-  const [singlePropertyResult, setSinglePropertyResult] = useState(null);
-  
-  // State for bill generation dialog
-  const [billDialog, setBillDialog] = useState({
-    open: false,
-    property: null,
-    selectedYears: [],
-    amounts: {}
+  // Form data with default values - simplified with reasonable defaults
+  const [formData, setFormData] = useState({
+    lga: [],
+    classification: [],
+    year: [new Date().getFullYear().toString()], // Default to current year for clarity
+    minValue: DEFAULT_PARAMS.minValue,
+    maxValue: DEFAULT_PARAMS.maxValue,
+    rate: DEFAULT_PARAMS.rate
   });
   
-  // State for options
+  // Form validation state
+  const [formErrors, setFormErrors] = useState({});
+  
+  // Active filters tracking
+  const [activeFilters, setActiveFilters] = useState([]);
+  
+  // Generation summary data
+  const [generationSummary, setGenerationSummary] = useState({
+    propertyCount: 0,
+    totalValue: 0,
+    estimatedRevenue: 0,
+    breakdown: {}
+  });
+  
+  // Available options for selects
   const [options, setOptions] = useState({
     lgas: [],
     classifications: [],
     years: []
   });
   
-  // State for processing status
+  // Processing status
   const [processing, setProcessing] = useState(false);
   
-  // State for search results
-  const [searchResults, setSearchResults] = useState({
-    properties: [],
-    count: 0,
-    isMultiple: false
-  });
-  
-  // State for generation history
+  // Generation history
   const [generationHistory, setGenerationHistory] = useState([]);
   
-  // State for pagination in history tab
+  // Pagination in history tab
   const [historyPagination, setHistoryPagination] = useState({
     page: 0,
     rowsPerPage: 10
   });
   
-  // State for bill edit dialog
-  const [editBillDialog, setEditBillDialog] = useState({
-    open: false,
-    bill: null,
-    amount: ""
-  });
-  
-  // State for filter panel expanded status
-  const [isFilterExpanded, setIsFilterExpanded] = useState(true);
-  
-  // State for active filters
-  const [activeFilters, setActiveFilters] = useState([]);
-  
-  // New state for history filtering
-  const [historyFilters, setHistoryFilters] = useState({
-    status: "all",
-    year: "all",
-    dateFrom: "",
-    dateTo: "",
-    searchQuery: ""
-  });
-  
-  // New state for history search
+  // History search
   const [historySearch, setHistorySearch] = useState("");
   
-  // New state for dashboard stats
-  const [dashboardStats, setDashboardStats] = useState({
+  // Selected bills
+  const [selectedBills, setSelectedBills] = useState([]);
+  
+  // Dashboard stats
+  const dashboardStats = {
     totalProperties: 1258,
     totalBillsGenerated: 867,
     totalRevenue: "₦126,750,000",
     pendingBills: 342,
-    revenueGrowth: 12.5,
-    propertyGrowth: 3.8
+    collectionRate: 64,
+    recentActivity: [
+      { date: "Today", count: 24 },
+      { date: "Yesterday", count: 32 },
+      { date: "Last Week", count: 156 }
+    ]
+  };
+  
+  // Generation process state
+  const [bulkGeneration, setBulkGeneration] = useState({
+    inProgress: false,
+    progress: 0,
+    criteria: {},
+    previewData: null,
+    estimatedCount: 0,
+    batchId: ""
   });
   
-  // State for selected bills
-  const [selectedBills, setSelectedBills] = useState([]);
-  
-  // Toggle view mode
-  const handleViewModeChange = (event, newMode) => {
-    if (newMode !== null) {
-      if (activeTab === LUC_TABS.SEARCH) {
-        setViewMode(newMode);
-      } else {
-        setHistoryViewMode(newMode);
+  // Validate form before generation
+  const validateForm = () => {
+    const errors = {};
+    let isValid = true;
+    
+    // For bulk generation mode, validate selections
+    if (generationMode === GENERATION_MODE.BULK) {
+      if (formData.lga.length === 0) {
+        errors.lga = "Please select at least one LGA";
+        isValid = false;
+      }
+      
+      if (formData.classification.length === 0) {
+        errors.classification = "Please select at least one property classification";
+        isValid = false;
+      }
+      
+      if (formData.year.length === 0) {
+        errors.year = "Please select at least one year";
+        isValid = false;
+      }
+      
+      // Validate range values
+      if (!formData.minValue || isNaN(Number(formData.minValue))) {
+        errors.minValue = "Please enter a valid minimum value";
+        isValid = false;
+      }
+      
+      if (!formData.maxValue || isNaN(Number(formData.maxValue))) {
+        errors.maxValue = "Please enter a valid maximum value";
+        isValid = false;
+      }
+      
+      if (Number(formData.minValue) >= Number(formData.maxValue)) {
+        errors.maxValue = "Maximum value must be greater than minimum value";
+        isValid = false;
+      }
+      
+      if (!formData.rate || isNaN(Number(formData.rate))) {
+        errors.rate = "Please enter a valid rate";
+        isValid = false;
+      }
+    } else {
+      // Single generation mode validation
+      if (!singleBillData.propertyId) {
+        errors.propertyId = "Please enter a property ID";
+        isValid = false;
       }
     }
+    
+    setFormErrors(errors);
+    return isValid;
+  };
+  
+  // Simplified generation flow - just one function to handle the entire process
+  const handleGenerateBills = () => {
+    // Validate form first
+    if (!validateForm()) {
+      // Show error toast
+      Swal.fire({
+        icon: 'error',
+        title: 'Validation Error',
+        text: 'Please fix the errors in the form before proceeding.',
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000
+      });
+      return;
+    }
+    
+    setProcessing(true);
+    
+    // First get a preview count
+    setTimeout(() => {
+      const selectedLGAs = formData.lga.length === 0 ? options.lgas : formData.lga;
+      const selectedClassifications = formData.classification.length === 0 ? 
+        options.classifications.map(c => c.areaClassification) : formData.classification;
+      const selectedYears = formData.year.length === 0 ? 
+        options.years : formData.year;
+      
+      // Calculate estimated property count based on selections
+      const estimatedCount = Math.floor(Math.random() * 500) + 150;
+      
+      // Calculate average property value
+      const avgValue = 15000000; // Example value
+      
+      // Calculate estimated revenue using standard rate of 0.5%
+      const estimatedRevenue = avgValue * estimatedCount * parseFloat(formData.rate);
+      
+      // Create breakdown by property type
+      const breakdownData = {
+        residential: Math.floor(estimatedCount * 0.6),
+        commercial: Math.floor(estimatedCount * 0.3),
+        industrial: Math.floor(estimatedCount * 0.1)
+      };
+      
+      // Update generation summary
+      setGenerationSummary({
+        propertyCount: estimatedCount,
+        totalValue: avgValue * estimatedCount,
+        estimatedRevenue,
+        breakdown: breakdownData
+      });
+      
+      // Create batch ID
+      const batchId = `BATCH-${new Date().getFullYear()}-${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`;
+      
+      // Update bulk generation state
+      setBulkGeneration(prev => ({
+        ...prev,
+        inProgress: true,
+        previewData: {
+          count: estimatedCount,
+          lgaBreakdown: selectedLGAs.map(lga => ({
+            name: lga,
+            count: Math.floor(Math.random() * 100) + 10
+          })),
+          classBreakdown: selectedClassifications.map(cls => ({
+            name: cls,
+            count: Math.floor(Math.random() * 100) + 10
+          })),
+          yearBreakdown: selectedYears.map(year => ({
+            name: year,
+            count: Math.floor(Math.random() * 100) + 10
+          }))
+        },
+        estimatedCount,
+        criteria: {
+          lga: selectedLGAs,
+          classification: selectedClassifications,
+          year: selectedYears,
+          minValue: formData.minValue,
+          maxValue: formData.maxValue,
+          rate: formData.rate
+        },
+        batchId
+      }));
+      
+      // Begin the actual generation immediately
+      setActiveStep(GENERATE_STEPS.GENERATE_BILLS);
+      
+      // Simulate a progress timer for generation
+      let progress = 0;
+      const timer = setInterval(() => {
+        progress += Math.random() * 10;
+        
+        if (progress >= 100) {
+          clearInterval(timer);
+          progress = 100;
+          
+          // When complete, generate mock bills and add to history
+          const newBills = Array.from({ length: estimatedCount }, (_, i) => ({
+            id: `bill-${Math.floor(Math.random() * 10000)}`,
+            propertyId: `PROP${10000 + i}`,
+            taxpayerId: `TXP${20000 + i}`,
+            taxpayerName: `${['John Doe', 'Jane Smith', 'Robert Johnson', 'Alice Brown', 'David Wilson'][i % 5]}`,
+            propertyAddress: `${i + 1} ${['Main Street', 'Oak Avenue', 'Park Road', 'Beach Boulevard', 'Hill Drive'][i % 5]}, ${['Ikeja', 'Alimosho', 'Eti-Osa', 'Surulere', 'Yaba'][i % 5]}`,
+            year: `${new Date().getFullYear() - (i % 3)}`,
+            amount: (50000 + (i * 1000)),
+            amountFormatted: (50000 + (i * 1000)).toLocaleString(),
+            generatedDate: new Date().toISOString().split('T')[0],
+            status: 'unpaid',
+            classification: ['Residential', 'Commercial', 'Industrial'][i % 3],
+            lga: selectedLGAs[i % selectedLGAs.length],
+            generatedBy: 'Admin',
+            batchId
+          }));
+          
+          // Update history with new bills
+          setGenerationHistory(prevHistory => [...newBills, ...prevHistory]);
+          
+          // Show success toast
+          Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: `${estimatedCount} bills generated successfully`,
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+          });
+          
+          setBulkGeneration(prev => ({ ...prev, progress: 100, inProgress: false }));
+        } else {
+          setBulkGeneration(prev => ({ ...prev, progress }));
+        }
+      }, 300);
+      
+      setProcessing(false);
+    }, 1000);
+  };
+  
+  // Reset generation process
+  const handleReset = () => {
+    setActiveStep(GENERATE_STEPS.SELECT_CRITERIA);
+    setBulkGeneration({
+      inProgress: false,
+      progress: 0,
+      criteria: {},
+      previewData: null,
+      estimatedCount: 0,
+      batchId: ""
+    });
   };
   
   // Update active filters
@@ -253,7 +444,7 @@ const BulkLUCGeneration = () => {
   const removeActiveFilter = (name) => {
     setActiveFilters(activeFilters.filter(filter => filter.name !== name));
   };
-
+  
   // Load options data
   useEffect(() => {
     // Simulate API call to get LGAs
@@ -290,22 +481,22 @@ const BulkLUCGeneration = () => {
     
     // Load history data if on history tab
     if (activeTab === LUC_TABS.HISTORY) {
-      loadGenerationHistory();
+    loadGenerationHistory();
     }
   }, [activeTab]);
   
-  // Load generation history - modified to show individual bills instead of batches
+  // Load generation history
   const loadGenerationHistory = () => {
     // Simulate API call to get generation history
     setProcessing(true);
     
-    // Mock data for generation history - now individual bills instead of batches
+    // Mock data for generation history
     setTimeout(() => {
       const mockHistory = Array.from({ length: 25 }, (_, i) => ({
         id: `bill-${1000 + i}`,
         propertyId: `PROP${10000 + i}`,
         taxpayerId: `TXP${20000 + i}`,
-        taxpayerName: `${['John Doe', 'Jane Smith', 'Robert Johnson', 'Alice Brown', 'David Wilson'][i % 5]} ${i}`,
+        taxpayerName: `${['John Doe', 'Jane Smith', 'Robert Johnson', 'Alice Brown', 'David Wilson'][i % 5]}`,
         propertyAddress: `${i + 1} ${['Main Street', 'Oak Avenue', 'Park Road', 'Beach Boulevard', 'Hill Drive'][i % 5]}, ${['Ikeja', 'Alimosho', 'Eti-Osa', 'Surulere', 'Yaba'][i % 5]}`,
         year: `${2023 - (i % 3)}`,
         amount: (50000 + (i * 1000)).toLocaleString(),
@@ -319,347 +510,6 @@ const BulkLUCGeneration = () => {
       setGenerationHistory(mockHistory);
       setProcessing(false);
     }, 1000);
-  };
-  
-  // Handle form input changes
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: Array.isArray(value) ? value : value
-    }));
-  };
-  
-  // Handle tab change
-  const handleTabChange = (event, newValue) => {
-    setActiveTab(newValue);
-    setSearchResults({ properties: [], count: 0, isMultiple: false });
-    setSinglePropertyResult(null);
-    
-    if (newValue === LUC_TABS.HISTORY) {
-      loadGenerationHistory();
-    }
-  };
-  
-  // Handle search for properties with updated function to return multiple results
-  const handlePropertySearch = () => {
-    if (!formData.propertyId && !formData.taxpayerId && !formData.address) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Missing Search Information',
-        text: 'Please enter a property ID, taxpayer ID, or address to search'
-      });
-      return;
-    }
-    
-    setProcessing(true);
-    setSinglePropertyResult(null);
-    setSearchResults({ properties: [], count: 0, isMultiple: false });
-    
-    // Simulate API call to search for properties
-    setTimeout(() => {
-      // For demo purposes, return multiple results if address is provided
-      if (formData.address) {
-        // Mock multiple property results
-        const mockProperties = Array.from({ length: 5 }, (_, i) => ({
-          id: `PROP${10000 + i}`,
-          taxpayerId: `TXP${20000 + i}`,
-          taxpayerName: `${['John Doe', 'Jane Smith', 'Robert Johnson', 'Alice Brown', 'David Wilson'][i % 5]}`,
-          address: `${i + 1} ${formData.address}, ${['Ikeja', 'Alimosho', 'Eti-Osa', 'Surulere', 'Yaba'][i % 5]}`,
-          lga: ['Ikeja', 'Alimosho', 'Eti-Osa', 'Surulere', 'Yaba'][i % 5],
-          classification: ['Residential', 'Commercial', 'Industrial', 'Commercial', 'Residential'][i % 5],
-          subClassification: ['Single Family Home', 'Office', 'Manufacturing', 'Retail', 'Apartment'][i % 5],
-          assessedValue: ((10000000 + i * 2000000)).toLocaleString(),
-          lastAssessmentDate: `2023-0${i+1}-15`,
-          status: i % 4 === 0 ? 'inactive' : 'active',
-          yearsPaid: i % 2 === 0 ? ["2021", "2022"] : ["2021"],
-          outstandingYears: i % 2 === 0 ? ["2023", "2024"] : ["2022", "2023", "2024"],
-          propertyType: i % 2 === 0 ? 'individual' : 'business'
-        }));
-        
-        setSearchResults({
-          properties: mockProperties,
-          count: mockProperties.length,
-          isMultiple: true
-        });
-      } else if (formData.searchType === "property" && formData.propertyId) {
-        // Single property result for property ID search
-        const mockProperty = {
-          id: formData.propertyId,
-          taxpayerId: "TXP20001",
-          taxpayerName: "John Doe",
-          address: "123 Example Street, Ikeja",
-          lga: "Ikeja",
-          classification: "Residential",
-          subClassification: "Single Family Home",
-          assessedValue: "15,000,000",
-          lastAssessmentDate: "2023-01-15",
-          status: "active",
-          yearsPaid: ["2021", "2022"],
-          outstandingYears: ["2023", "2024"],
-          landArea: "500 sqm",
-          buildingArea: "300 sqm",
-          propertyImage: "https://via.placeholder.com/150",
-          propertyType: 'individual'
-        };
-        
-        setSinglePropertyResult(mockProperty);
-      } else if (formData.searchType === "taxpayer" && formData.taxpayerId) {
-        // Multiple property results for taxpayer ID search
-        const mockProperties = Array.from({ length: 3 }, (_, i) => ({
-          id: `PROP${20000 + i}`,
-          taxpayerId: formData.taxpayerId,
-          taxpayerName: "Jane Smith",
-          address: `${i + 1} Business Avenue, ${['Ikeja', 'Alimosho', 'Eti-Osa'][i % 3]}`,
-          lga: ['Ikeja', 'Alimosho', 'Eti-Osa'][i % 3],
-          classification: ['Commercial', 'Commercial', 'Industrial'][i % 3],
-          subClassification: ['Office', 'Retail', 'Warehouse'][i % 3],
-          assessedValue: ((20000000 + i * 5000000)).toLocaleString(),
-          lastAssessmentDate: `2023-0${i+2}-20`,
-          status: 'active',
-          yearsPaid: ["2021", "2022"],
-          outstandingYears: ["2023", "2024"],
-          propertyType: 'business'
-        }));
-        
-        setSearchResults({
-          properties: mockProperties,
-          count: mockProperties.length,
-          isMultiple: true
-        });
-      }
-      
-      setProcessing(false);
-    }, 1500);
-  };
-  
-  // Handle bulk search form submission
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setProcessing(true);
-    
-    // Clear any previous search results
-    setSearchResults({ properties: [], count: 0, isMultiple: false });
-    
-    // Simulate API call to get bill count
-    setTimeout(() => {
-      setProcessing(false);
-      
-      // Sample search results
-      const results = {
-        count: 150,
-        totalValue: '15,750,000',
-        breakdown: {
-          residential: 95,
-          commercial: 35,
-          industrial: 20
-        }
-      };
-      
-      setSearchResults(results);
-      
-      Swal.fire({
-        icon: 'success',
-        title: 'LUC Bills Found',
-        text: `${results.count} bills found matching your criteria with total value of ₦${results.totalValue}.`,
-        confirmButtonText: 'Generate & Print Bills',
-        cancelButtonText: 'Review Details',
-        showCancelButton: true,
-        confirmButtonColor: theme.palette.primary.main,
-        cancelButtonColor: theme.palette.grey[400]
-      }).then((result) => {
-        if (result.isConfirmed) {
-          // Simulate bill printing
-          handlePrintBills();
-        }
-      });
-    }, 1500);
-  };
-  
-  // Handle bill printing
-  const handlePrintBills = () => {
-    Swal.fire({
-      title: 'Processing LUC Bills',
-      text: 'Please wait while your Land Use Charge bills are being processed for generation.',
-      allowEscapeKey: false,
-      allowOutsideClick: false,
-      didOpen: () => {
-        Swal.showLoading();
-      }
-    });
-    
-    // Simulate processing time
-    setTimeout(() => {
-      Swal.close();
-      
-      // Generate new bills and add to history
-      const newBills = Array.from({ length: searchResults.count }, (_, i) => ({
-        id: `bill-${Math.floor(Math.random() * 10000)}`,
-        propertyId: `PROP${10000 + i}`,
-        taxpayerId: `TXP${20000 + i}`,
-        taxpayerName: `${['John Doe', 'Jane Smith', 'Robert Johnson', 'Alice Brown', 'David Wilson'][i % 5]} ${i}`,
-        propertyAddress: `${i + 1} ${['Main Street', 'Oak Avenue', 'Park Road', 'Beach Boulevard', 'Hill Drive'][i % 5]}, ${['Ikeja', 'Alimosho', 'Eti-Osa', 'Surulere', 'Yaba'][i % 5]}`,
-        year: `${new Date().getFullYear() - (i % 3)}`,
-        amount: (50000 + (i * 1000)).toLocaleString(),
-        generatedDate: new Date().toISOString().split('T')[0],
-        status: 'unpaid',
-        classification: ['Residential', 'Commercial', 'Industrial'][i % 3],
-        lga: formData.lga.includes('all') ? ['Ikeja', 'Alimosho', 'Eti-Osa', 'Surulere', 'Yaba'][i % 5] : formData.lga[i % formData.lga.length],
-        generatedBy: 'Admin'
-      }));
-      
-      setGenerationHistory(prev => [...newBills, ...prev]);
-      
-      Swal.fire({
-        icon: 'success',
-        title: 'Bills Generated Successfully',
-        text: `${searchResults.count} LUC bills have been generated successfully.`,
-        footer: '<a href="#">Download generation report</a>',
-        confirmButtonText: 'Print Bills',
-        showCancelButton: true,
-        cancelButtonText: 'Close'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          // In a real application, this would open a new window with the bills
-          window.open(`/api/printlucbill?request=lucBillPrint&propertyLga=${formData.lga.join(',')}&selectedYear=${formData.year.join(',')}&selectedClass=${formData.classification.join(',')}`, '_blank');
-        }
-      });
-    }, 2000);
-  };
-  
-  // Open bill generation dialog
-  const handleOpenBillDialog = (property) => {
-    setBillDialog({
-      open: true,
-      property,
-      selectedYears: [],
-      amounts: {}
-    });
-  };
-  
-  // Close bill generation dialog
-  const handleCloseBillDialog = () => {
-    setBillDialog({
-      open: false,
-      property: null,
-      selectedYears: [],
-      amounts: {}
-    });
-  };
-  
-  // Handle year selection in bill dialog
-  const handleYearSelection = (year) => {
-    const currentYears = [...billDialog.selectedYears];
-    const yearIndex = currentYears.indexOf(year);
-    
-    if (yearIndex >= 0) {
-      // Remove the year from selection
-      currentYears.splice(yearIndex, 1);
-      
-      // Also remove amount for this year
-      const newAmounts = {...billDialog.amounts};
-      delete newAmounts[year];
-      
-      setBillDialog(prev => ({
-        ...prev,
-        selectedYears: currentYears,
-        amounts: newAmounts
-      }));
-    } else {
-      // Check if the year is already in the array to prevent duplicates
-      if (!currentYears.includes(year)) {
-        // Calculate a default amount based on property value
-        let defaultAmount = '50000';
-        if (billDialog.property && billDialog.property.assessedValue) {
-          // Extract numeric value from formatted string and calculate 0.5%
-          const numericValue = parseFloat(billDialog.property.assessedValue.replace(/,/g, ''));
-          if (!isNaN(numericValue)) {
-            defaultAmount = Math.max(Math.round(numericValue * 0.005), 25000).toString();
-          }
-        }
-        
-        // Add the year to selection with the default amount
-        setBillDialog(prev => ({
-          ...prev,
-          selectedYears: [...prev.selectedYears, year],
-          amounts: {
-            ...prev.amounts,
-            [year]: defaultAmount
-          }
-        }));
-      }
-    }
-  };
-  
-  // Handle amount change for a year
-  const handleAmountChange = (year, amount) => {
-    setBillDialog(prev => ({
-      ...prev,
-      amounts: {
-        ...prev.amounts,
-        [year]: amount
-      }
-    }));
-  };
-  
-  // Handle single bill generation
-  const handleGenerateSingleBill = () => {
-    if (billDialog.selectedYears.length === 0) {
-      Swal.fire({
-        icon: 'error',
-        title: 'No Years Selected',
-        text: 'Please select at least one year to generate a bill for.'
-      });
-      return;
-    }
-    
-    Swal.fire({
-      title: 'Generating Bills',
-      text: 'Please wait while your Land Use Charge bills are being generated.',
-      allowEscapeKey: false,
-      allowOutsideClick: false,
-      didOpen: () => {
-        Swal.showLoading();
-      }
-    });
-    
-    // Simulate processing time
-    setTimeout(() => {
-      Swal.close();
-      
-      // Generate new bills and add to history
-      const newBills = billDialog.selectedYears.map(year => ({
-        id: `bill-${Math.floor(Math.random() * 10000)}`,
-        propertyId: billDialog.property.id,
-        taxpayerId: billDialog.property.taxpayerId,
-        taxpayerName: billDialog.property.taxpayerName,
-        propertyAddress: billDialog.property.address,
-        year,
-        amount: billDialog.amounts[year] ? parseInt(billDialog.amounts[year]).toLocaleString() : "50,000",
-        generatedDate: new Date().toISOString().split('T')[0],
-        status: 'unpaid',
-        classification: billDialog.property.classification,
-        lga: billDialog.property.lga,
-        generatedBy: 'Admin'
-      }));
-      
-      setGenerationHistory(prev => [...newBills, ...prev]);
-      
-      handleCloseBillDialog();
-      
-      Swal.fire({
-        icon: 'success',
-        title: 'Bills Generated Successfully',
-        text: `${billDialog.selectedYears.length} LUC bills have been generated successfully for ${billDialog.property.taxpayerName}.`,
-        confirmButtonText: 'View Bills',
-        showCancelButton: true,
-        cancelButtonText: 'Stay Here'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          setActiveTab(LUC_TABS.HISTORY);
-        }
-      });
-    }, 1500);
   };
   
   // Handle pagination change
@@ -678,179 +528,34 @@ const BulkLUCGeneration = () => {
     });
   };
   
-  // Open edit bill dialog
-  const handleOpenEditDialog = (bill) => {
-    if (bill.status === 'paid') {
-      Swal.fire({
-        icon: 'error',
-        title: 'Cannot Edit Paid Bill',
-        text: 'This bill has already been paid and cannot be modified.'
-      });
-      return;
-    }
-    
-    setEditBillDialog({
-      open: true,
-      bill,
-      amount: bill.amount.replace(/,/g, '')
-    });
-  };
-  
-  // Close edit bill dialog
-  const handleCloseEditDialog = () => {
-    setEditBillDialog({
-      open: false,
-      bill: null,
-      amount: ""
-    });
-  };
-  
-  // Handle edit bill amount
-  const handleEditBillAmount = () => {
-    const updatedBill = {
-      ...editBillDialog.bill,
-      amount: parseInt(editBillDialog.amount).toLocaleString()
-    };
-    
-    const updatedHistory = generationHistory.map(bill => 
-      bill.id === updatedBill.id ? updatedBill : bill
-    );
-    
-    setGenerationHistory(updatedHistory);
-    handleCloseEditDialog();
-    
-    Swal.fire({
-      icon: 'success',
-      title: 'Bill Updated',
-      text: 'The bill amount has been updated successfully.'
-    });
-  };
-  
-  // Handle print single bill
-  const handlePrintSingleBill = (bill) => {
-    // In a real application, this would open a print dialog with the bill
-    window.open(`/api/printlucbill?request=singleBill&billId=${bill.id}`, '_blank');
-  };
-  
-  // Render selected items as chips
-  const renderSelectedValue = (selected) => {
-    if (selected.length === 0) {
-      return <em>Select options</em>;
-    }
-    
-    if (selected.includes('all')) {
-      return 'All';
-    }
-    
-    if (selected.length <= 2) {
-      return selected.join(', ');
-    }
-    
-    return `${selected.length} selected`;
-  };
-  
-  // Calculate outstanding years for bill generation
-  const getOutstandingYears = () => {
-    if (!singlePropertyResult) return [];
-    
-    const currentYear = new Date().getFullYear();
-    const startYear = Math.min(...singlePropertyResult.yearsPaid.map(Number), currentYear - 4);
-    const allYears = [];
-    
-    for (let year = startYear; year <= currentYear; year++) {
-      allYears.push(year.toString());
-    }
-    
-    return allYears.filter(year => !singlePropertyResult.yearsPaid.includes(year));
-  };
-  
-  // Handle history filter change
-  const handleHistoryFilterChange = (e) => {
-    const { name, value } = e.target;
-    setHistoryFilters(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-  
   // Handle history search
   const handleHistorySearch = (e) => {
     setHistorySearch(e.target.value);
   };
   
-  // Reset history filters
-  const resetHistoryFilters = () => {
-    setHistoryFilters({
-      status: "all",
-      year: "all",
-      dateFrom: "",
-      dateTo: "",
-      searchQuery: ""
-    });
-    setHistorySearch("");
-  };
-  
-  // Filter history records based on filters and search
+  // Filter history records based on search
   const filteredHistory = useMemo(() => {
-    return generationHistory.filter(bill => {
-      // Filter by status
-      if (historyFilters.status !== "all" && bill.status !== historyFilters.status) {
-        return false;
-      }
-      
-      // Filter by year
-      if (historyFilters.year !== "all" && bill.year !== historyFilters.year) {
-        return false;
-      }
-      
-      // Filter by date range
-      if (historyFilters.dateFrom && new Date(bill.generatedDate) < new Date(historyFilters.dateFrom)) {
-        return false;
-      }
-      
-      if (historyFilters.dateTo && new Date(bill.generatedDate) > new Date(historyFilters.dateTo)) {
-        return false;
-      }
-      
-      // Filter by search query
-      if (historySearch) {
+    if (!historySearch) return generationHistory;
+    
         const searchLower = historySearch.toLowerCase();
-        return (
+    return generationHistory.filter(bill => (
           bill.id.toLowerCase().includes(searchLower) ||
           bill.propertyId.toLowerCase().includes(searchLower) ||
           bill.taxpayerName.toLowerCase().includes(searchLower) ||
           bill.propertyAddress.toLowerCase().includes(searchLower) ||
           bill.year.includes(searchLower)
-        );
-      }
-      
-      return true;
-    });
-  }, [generationHistory, historyFilters, historySearch]);
+    ));
+  }, [generationHistory, historySearch]);
   
   // Calculate history summary stats
   const historySummary = useMemo(() => {
     const paid = filteredHistory.filter(bill => bill.status === BILL_STATUS.PAID);
     const unpaid = filteredHistory.filter(bill => bill.status === BILL_STATUS.UNPAID);
     
-    // Calculate total amount
-    const totalAmount = filteredHistory.reduce((sum, bill) => {
-      const numAmount = parseInt(bill.amount.replace(/,/g, ''));
-      return sum + (isNaN(numAmount) ? 0 : numAmount);
-    }, 0);
-    
-    // Calculate paid amount
-    const paidAmount = paid.reduce((sum, bill) => {
-      const numAmount = parseInt(bill.amount.replace(/,/g, ''));
-      return sum + (isNaN(numAmount) ? 0 : numAmount);
-    }, 0);
-    
     return {
       total: filteredHistory.length,
       paid: paid.length,
       unpaid: unpaid.length,
-      totalAmount: totalAmount.toLocaleString(),
-      paidAmount: paidAmount.toLocaleString(),
       collectionRate: filteredHistory.length ? Math.round((paid.length / filteredHistory.length) * 100) : 0
     };
   }, [filteredHistory]);
@@ -864,19 +569,10 @@ const BulkLUCGeneration = () => {
     }
   };
   
-  // Handle select all bills
-  const handleSelectAllBills = (event) => {
-    if (event.target.checked) {
-      const visibleBills = filteredHistory
-        .slice(
-          historyPagination.page * historyPagination.rowsPerPage,
-          historyPagination.page * historyPagination.rowsPerPage + historyPagination.rowsPerPage
-        )
-        .map(bill => bill.id);
-      setSelectedBills(visibleBills);
-    } else {
-      setSelectedBills([]);
-    }
+  // Handle printing single bill
+  const handlePrintSingleBill = (bill) => {
+    // In a real application, this would open a print dialog with the bill
+    window.open(`/api/printlucbill?request=singleBill&billId=${bill.id}`, '_blank');
   };
   
   // Handle batch print
@@ -885,7 +581,8 @@ const BulkLUCGeneration = () => {
       Swal.fire({
         icon: 'error',
         title: 'No Bills Selected',
-        text: 'Please select at least one bill to print.'
+        text: 'Please select at least one bill to print.',
+        confirmButtonColor: theme.palette.primary.main
       });
       return;
     }
@@ -894,1027 +591,1077 @@ const BulkLUCGeneration = () => {
     window.open(`/api/printlucbill?request=batchBill&billIds=${selectedBills.join(',')}`, '_blank');
   };
   
+  // Handle single property search
+  const handleSinglePropertySearch = () => {
+    if (!singleBillData.propertyId && !singleBillData.taxpayerId && !singleBillData.propertyAddress) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Missing Information',
+        text: 'Please provide at least one search criteria',
+        confirmButtonColor: theme.palette.primary.main
+      });
+      return;
+    }
+    
+    setSingleBillData(prev => ({ ...prev, loading: true, found: false, propertyDetails: null }));
+    
+    // Simulate API call to fetch property details
+    setTimeout(() => {
+      // Mock property data
+      const mockProperty = {
+        id: singleBillData.propertyId || `PROP${Math.floor(Math.random() * 10000)}`,
+        taxpayerId: singleBillData.taxpayerId || `TXP${Math.floor(Math.random() * 10000)}`,
+        taxpayerName: 'John Doe',
+        address: singleBillData.propertyAddress || '123 Example Street, Ikeja',
+        lga: 'Ikeja',
+        classification: 'Residential',
+        value: 25000000,
+        lastAssessment: '2023-05-15',
+        lastPayment: '2023-06-10',
+        status: 'active'
+      };
+      
+      setSingleBillData(prev => ({
+        ...prev,
+        loading: false,
+        found: true,
+        propertyDetails: mockProperty
+      }));
+    }, 1500);
+  };
+  
+  // Generate single bill
+  const handleGenerateSingleBill = () => {
+    if (!singleBillData.propertyDetails) return;
+    
+    setProcessing(true);
+    
+    // Simulate bill generation
+    setTimeout(() => {
+      const property = singleBillData.propertyDetails;
+      const billId = `BILL-${Math.floor(Math.random() * 10000)}`;
+      const amount = Math.floor(property.value * 0.005); // Fixed rate at 0.5%
+      
+      // Create the bill object
+      const newBill = {
+        id: billId,
+        propertyId: property.id,
+        taxpayerId: property.taxpayerId,
+        taxpayerName: property.taxpayerName,
+        propertyAddress: property.address,
+        year: new Date().getFullYear().toString(),
+        amount: amount.toLocaleString(),
+        generatedDate: new Date().toISOString().split('T')[0],
+        status: 'unpaid',
+        classification: property.classification,
+        lga: property.lga,
+        generatedBy: 'Admin',
+        batchId: `SINGLE-${new Date().getTime()}`
+      };
+      
+      // Add to history
+      setGenerationHistory(prevHistory => [newBill, ...prevHistory]);
+      
+      // Show success message
+      Swal.fire({
+        icon: 'success',
+        title: 'Bill Generated Successfully',
+        text: `Bill ID: ${billId} for ₦${amount.toLocaleString()} has been generated`,
+        confirmButtonColor: theme.palette.primary.main,
+        showCancelButton: true,
+        cancelButtonText: 'Close',
+        confirmButtonText: 'Print Bill',
+        reverseButtons: true
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Handle print action
+          window.open(`/api/printlucbill?request=singleBill&billId=${billId}`, '_blank');
+        }
+      });
+      
+      // Reset single bill data
+      setSingleBillData({
+        propertyId: "",
+        taxpayerId: "",
+        propertyAddress: "",
+        propertyDetails: null,
+        loading: false,
+        found: false
+      });
+      
+      setProcessing(false);
+    }, 1500);
+  };
+  
   return (
     <Box className={styles.container}>
-      {/* Dashboard Header */}
-      <div className={styles.dashboardHeader}>
-        <Box>
-          <Typography variant="h4" className={styles.pageTitle}>
-            Bulk LUC Generation
-          </Typography>
-          <Typography variant="body1" className={styles.pageSubtitle}>
-            Generate Land Use Charge bills in bulk based on property filters
-          </Typography>
-        </Box>
-        
-        <div className={styles.statsGrid}>
-          <div className={styles.statCard}>
-            <div className={styles.statLabel}>
-              <BusinessIcon fontSize="small" color="primary" />
-              Total Properties
-            </div>
-            <div className={styles.statValue}>
-              {dashboardStats.totalProperties.toLocaleString()}
-            </div>
-            <div className={`${styles.statChange} ${styles.statChangePositive}`}>
-              <TrendingUpIcon fontSize="small" />
-              {dashboardStats.propertyGrowth}% from last month
-            </div>
-          </div>
-          
-          <div className={styles.statCard}>
-            <div className={styles.statLabel}>
-              <ReceiptLongIcon fontSize="small" color="primary" />
-              Generated Bills
-            </div>
-            <div className={styles.statValue}>
-              {dashboardStats.totalBillsGenerated.toLocaleString()}
-            </div>
-            <div className={`${styles.statChange} ${styles.statChangePositive}`}>
-              <Badge badgeContent={dashboardStats.pendingBills} color="error" sx={{ mr: 1 }} />
-              Pending bills
-            </div>
-          </div>
-          
-          <div className={styles.statCard}>
-            <div className={styles.statLabel}>
-              <PaymentsIcon fontSize="small" color="primary" />
-              Total Revenue
-            </div>
-            <div className={styles.statValue}>
-              {dashboardStats.totalRevenue}
-            </div>
-            <div className={`${styles.statChange} ${styles.statChangePositive}`}>
-              <TrendingUpIcon fontSize="small" />
-              {dashboardStats.revenueGrowth}% growth
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      {/* Tabs Section */}
-      <div className={styles.tabContainer}>
-        <div className={styles.tabs}>
-          <button 
-            className={`${styles.tab} ${activeTab === LUC_TABS.SEARCH ? styles.tabSelected : ''}`}
-            onClick={() => setActiveTab(LUC_TABS.SEARCH)}
-          >
-            <SearchIcon fontSize="small" />
-            Search Properties
-          </button>
-          <button 
-            className={`${styles.tab} ${activeTab === LUC_TABS.HISTORY ? styles.tabSelected : ''}`}
-            onClick={() => setActiveTab(LUC_TABS.HISTORY)}
-          >
-            <HistoryIcon fontSize="small" />
-            Generation History
-            {dashboardStats.pendingBills > 0 && (
-              <span className={styles.tabBadge}>{dashboardStats.pendingBills}</span>
-            )}
-          </button>
-        </div>
-      </div>
-      
-      {/* Tab Content */}
-      {activeTab === LUC_TABS.SEARCH ? (
-        <>
+      {/* Header */}
+      <Box className={styles.pageHeader}>
+        <div className={styles.headerContent}>
           <div>
-            {/* Search Card */}
-            <div className={styles.card}>
-              <div className={styles.cardHeader}>
-                <div className={styles.cardTitle}>
-                  <div className={styles.cardTitleIcon}>
-                    <SearchIcon fontSize="small" />
-                  </div>
-                  Property Search
-                </div>
-                <Button 
-                  variant="outlined"
-                  size="small"
-                  startIcon={isFilterExpanded ? <KeyboardArrowDownIcon /> : <FilterListIcon />}
-                  onClick={() => setIsFilterExpanded(!isFilterExpanded)}
-                  className={styles.buttonOutline}
-                >
-                  {isFilterExpanded ? 'Hide Filters' : 'Show Filters'}
-                </Button>
-              </div>
-              
-              {/* Search Form */}
-              <div className={styles.cardContent}>
-                <form className={styles.searchForm}>
-                  <div className={styles.formGroup}>
-                    <label className={styles.formLabel}>Search By</label>
-                    <Select
-                      value={formData.searchType}
-                      onChange={(e) => setFormData({...formData, searchType: e.target.value})}
-                      className={styles.formControl}
-                      displayEmpty
-                    >
-                      <MenuItem value={SEARCH_TYPES.PROPERTY}>
-                        <Stack direction="row" alignItems="center" spacing={1}>
-                          <HomeIcon fontSize="small" color="primary" />
-                          <span>Property ID</span>
-                        </Stack>
-                      </MenuItem>
-                      <MenuItem value={SEARCH_TYPES.TAXPAYER}>
-                        <Stack direction="row" alignItems="center" spacing={1}>
-                          <AccountBalanceIcon fontSize="small" color="primary" />
-                          <span>Taxpayer ID</span>
-                        </Stack>
-                      </MenuItem>
-                      <MenuItem value={SEARCH_TYPES.ADDRESS}>
-                        <Stack direction="row" alignItems="center" spacing={1}>
-                          <LocationOnIcon fontSize="small" color="primary" />
-                          <span>Address</span>
-                        </Stack>
-                      </MenuItem>
-                    </Select>
-                  </div>
-                  
-                  {formData.searchType === SEARCH_TYPES.PROPERTY && (
-                    <div className={styles.formGroup}>
-                      <label className={styles.formLabel}>Property ID</label>
-                      <div className={styles.inputWithIcon}>
-                        <HomeIcon className={styles.inputIcon} />
-                        <input
-                          type="text"
-                          className={`${styles.formControl} ${styles.inputWithIconPadding}`}
-                          placeholder="Enter property ID (e.g., PROP10001)"
-                          value={formData.propertyId}
-                          onChange={(e) => setFormData({...formData, propertyId: e.target.value})}
-                        />
-                      </div>
-                    </div>
-                  )}
-                  
-                  {formData.searchType === SEARCH_TYPES.TAXPAYER && (
-                    <div className={styles.formGroup}>
-                      <label className={styles.formLabel}>Taxpayer ID</label>
-                      <div className={styles.inputWithIcon}>
-                        <AccountBalanceIcon className={styles.inputIcon} />
-                        <input
-                          type="text"
-                          className={`${styles.formControl} ${styles.inputWithIconPadding}`}
-                          placeholder="Enter taxpayer ID (e.g., TXP20001)"
-                          value={formData.taxpayerId}
-                          onChange={(e) => setFormData({...formData, taxpayerId: e.target.value})}
-                        />
-                      </div>
-                    </div>
-                  )}
-                  
-                  {formData.searchType === SEARCH_TYPES.ADDRESS && (
-                    <div className={styles.formGroup}>
-                      <label className={styles.formLabel}>Property Address</label>
-                      <div className={styles.inputWithIcon}>
-                        <LocationOnIcon className={styles.inputIcon} />
-                        <input
-                          type="text"
-                          className={`${styles.formControl} ${styles.inputWithIconPadding}`}
-                          placeholder="Enter full or partial address"
-                          value={formData.address}
-                          onChange={(e) => setFormData({...formData, address: e.target.value})}
-                        />
-                      </div>
-                    </div>
-                  )}
-                  
-                  <div className={styles.formActions}>
-                    <button
-                      type="button"
-                      className={`${styles.button} ${styles.buttonPrimary}`}
-                      onClick={handlePropertySearch}
-                      disabled={processing}
-                    >
-                      {processing ? (
-                        <>
-                          <CircularProgress size={16} color="inherit" />
-                          Searching...
-                        </>
-                      ) : (
-                        <>
-                          <SearchIcon fontSize="small" />
-                          Search Properties
-                        </>
-                      )}
-                    </button>
-                  </div>
-                </form>
-                
-                {/* Advanced Filter Section - Collapsible */}
-                {isFilterExpanded && (
-                  <div className={styles.filterSection}>
-                    <div className={styles.filterHeader}>
-                      <div className={styles.filterTitle}>
-                        <FilterListIcon fontSize="small" />
-                        Advanced Filters
-                      </div>
-                      <Button 
-                        size="small"
-                        className={styles.buttonText}
-                        onClick={() => {
-                          setFormData({
-                            ...formData,
-                            lga: ["all"],
-                            classification: ["all"],
-                            year: ["all"],
-                            minValue: "",
-                            maxValue: ""
-                          });
-                          setActiveFilters([]);
-                        }}
-                      >
-                        Reset Filters
-                      </Button>
-                    </div>
-                    
-                    <div className={styles.filtersGrid}>
-                      <div className={styles.filterGroup}>
-                        <label className={styles.filterLabel}>Local Government Area</label>
-                        <Select
-                          multiple
-                          value={formData.lga}
-                          onChange={(e) => {
-                            setFormData({...formData, lga: e.target.value});
-                            updateActiveFilters('LGA', e.target.value);
-                          }}
-                          className={styles.formControl}
-                          renderValue={(selected) => {
-                            if (selected.includes('all')) return 'All LGAs';
-                            return selected.join(', ');
-                          }}
-                          displayEmpty
-                        >
-                          <MenuItem value="all">
-                            <Checkbox checked={formData.lga.includes('all')} />
-                            All Local Government Areas
-                          </MenuItem>
-                          <Divider />
-                          {options.lgas.map((lga) => (
-                            <MenuItem key={lga} value={lga}>
-                              <Checkbox checked={formData.lga.includes(lga)} />
-                              {lga}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </div>
-                      
-                      <div className={styles.filterGroup}>
-                        <label className={styles.filterLabel}>Classification</label>
-                        <Select
-                          multiple
-                          value={formData.classification}
-                          onChange={(e) => {
-                            setFormData({...formData, classification: e.target.value});
-                            updateActiveFilters('Classification', e.target.value);
-                          }}
-                          className={styles.formControl}
-                          renderValue={(selected) => {
-                            if (selected.includes('all')) return 'All Classifications';
-                            return selected.join(', ');
-                          }}
-                          displayEmpty
-                        >
-                          <MenuItem value="all">
-                            <Checkbox checked={formData.classification.includes('all')} />
-                            All Classifications
-                          </MenuItem>
-                          <Divider />
-                          {options.classifications.map((classification) => (
-                            <MenuItem key={classification.areaClassification} value={classification.areaClassification}>
-                              <Checkbox checked={formData.classification.includes(classification.areaClassification)} />
-                              {classification.areaClassification}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </div>
-                      
-                      <div className={styles.filterGroup}>
-                        <label className={styles.filterLabel}>Year</label>
-                        <Select
-                          multiple
-                          value={formData.year}
-                          onChange={(e) => {
-                            setFormData({...formData, year: e.target.value});
-                            updateActiveFilters('Year', e.target.value);
-                          }}
-                          className={styles.formControl}
-                          renderValue={(selected) => {
-                            if (selected.includes('all')) return 'All Years';
-                            return selected.join(', ');
-                          }}
-                          displayEmpty
-                        >
-                          <MenuItem value="all">
-                            <Checkbox checked={formData.year.includes('all')} />
-                            All Years
-                          </MenuItem>
-                          <Divider />
-                          {options.years.map((year) => (
-                            <MenuItem key={year} value={year}>
-                              <Checkbox checked={formData.year.includes(year)} />
-                              {year}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </div>
-                    </div>
-                    
-                    <div className={styles.filtersGrid}>
-                      <div className={styles.filterGroup}>
-                        <label className={styles.filterLabel}>Minimum Property Value (₦)</label>
-                        <input
-                          type="text"
-                          className={styles.formControl}
-                          placeholder="e.g., 1,000,000"
-                          value={formData.minValue}
-                          onChange={(e) => {
-                            setFormData({...formData, minValue: e.target.value});
-                            if (e.target.value) {
-                              updateActiveFilters('Min Value', `₦${e.target.value}`);
-                            } else {
-                              removeActiveFilter('Min Value');
-                            }
-                          }}
-                        />
-                      </div>
-                      
-                      <div className={styles.filterGroup}>
-                        <label className={styles.filterLabel}>Maximum Property Value (₦)</label>
-                        <input
-                          type="text"
-                          className={styles.formControl}
-                          placeholder="e.g., 10,000,000"
-                          value={formData.maxValue}
-                          onChange={(e) => {
-                            setFormData({...formData, maxValue: e.target.value});
-                            if (e.target.value) {
-                              updateActiveFilters('Max Value', `₦${e.target.value}`);
-                            } else {
-                              removeActiveFilter('Max Value');
-                            }
-                          }}
-                        />
-                      </div>
-                    </div>
-                    
-                    {activeFilters.length > 0 && (
-                      <div className={styles.activeFilters}>
-                        <label className={styles.filterLabel}>Active Filters:</label>
-                        {activeFilters.map((filter, index) => (
-                          <div key={index} className={styles.activeFilterChip}>
-                            {filter.name}: {filter.value}
-                            <span 
-                              className={styles.activeFilterChipRemove}
-                              onClick={() => removeActiveFilter(filter.name)}
-                            >
-                              <CloseIcon style={{ fontSize: 12 }} />
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                )}
-                
-                {/* Search Information */}
-                <Alert 
-                  severity="info" 
-                  icon={<InfoIcon fontSize="inherit" />}
-                  sx={{ mt: 2, borderRadius: 2 }}
-                >
-                  Search by property ID for exact matches or address for broader results. Business properties can be found using taxpayer ID.
-                </Alert>
-              </div>
-            </div>
-            
-            {/* Search Results */}
-            {searchResults.isMultiple && searchResults.properties.length > 0 && (
-              <div className={styles.searchResults}>
-                <div className={styles.card}>
-                  <div className={styles.resultsHeader}>
-                    <div className={styles.resultsTitle}>
-                      <InfoIcon fontSize="small" />
-                      Search Results ({searchResults.count} properties found)
-                    </div>
-                    
-                    <div className={styles.resultActions}>
-                      <ToggleButtonGroup
-                        value={viewMode}
-                        exclusive
-                        onChange={handleViewModeChange}
-                        size="small"
-                        sx={{ bgcolor: 'rgba(255,255,255,0.2)', borderRadius: 1 }}
-                      >
-                        <ToggleButton value={VIEWS.GRID} sx={{ color: 'white' }}>
-                          <ViewModuleIcon fontSize="small" />
-                        </ToggleButton>
-                        <ToggleButton value={VIEWS.TABLE} sx={{ color: 'white' }}>
-                          <ViewColumnIcon fontSize="small" />
-                        </ToggleButton>
-                      </ToggleButtonGroup>
-                      
-                      <Button
-                        variant="contained"
-                        size="small"
-                        startIcon={<RefreshIcon />}
-                        onClick={handlePropertySearch}
-                        sx={{ bgcolor: 'rgba(255,255,255,0.2)', '&:hover': { bgcolor: 'rgba(255,255,255,0.3)' } }}
-                      >
-                        Refresh
-                      </Button>
-                    </div>
-                  </div>
-                  
-                  {viewMode === VIEWS.GRID ? (
-                    <div className={styles.propertiesGrid}>
-                      {searchResults.properties.map((property) => (
-                        <div key={property.id} className={styles.propertyCard} onClick={() => setSinglePropertyResult(property)}>
-                          <div className={styles.propertyCardHeader}>
-                            <div className={styles.propertyId}>{property.id}</div>
-                            <div className={styles.propertyAddress}>{property.address}</div>
-                            <div className={styles.propertyOwner}>
-                              <AccountBalanceIcon fontSize="small" color="action" />
-                              {property.taxpayerName}
-                            </div>
-                          </div>
-                          
-                          <div className={styles.propertyCardBody}>
-                            <div className={styles.propertyDetail}>
-                              <div className={styles.propertyDetailLabel}>Classification</div>
-                              <div className={styles.propertyDetailValue}>{property.classification}</div>
-                            </div>
-                            
-                            <div className={styles.propertyDetail}>
-                              <div className={styles.propertyDetailLabel}>Type</div>
-                              <div className={styles.propertyDetailValue}>
-                                <span className={property.propertyType === 'individual' ? styles.chipIndividual : styles.chipBusiness}>
-                                  {property.propertyType === 'individual' ? 'Individual' : 'Business'}
-                                </span>
-                              </div>
-                            </div>
-                            
-                            <div className={styles.propertyDetail}>
-                              <div className={styles.propertyDetailLabel}>Assessed Value</div>
-                              <div className={styles.propertyDetailValue}>₦{property.assessedValue}</div>
-                            </div>
-                            
-                            <div className={styles.propertyDetail}>
-                              <div className={styles.propertyDetailLabel}>Status</div>
-                              <div className={styles.propertyDetailValue}>
-                                <span className={property.status === 'active' ? styles.chipActive : styles.chipInactive}>
-                                  {property.status}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                          
-                          <div className={styles.propertyCardFooter}>
-                            <Button
-                              variant="outlined"
-                              size="small"
-                              startIcon={<InfoIcon />}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setSinglePropertyResult(property);
-                              }}
-                            >
-                              Details
-                            </Button>
-                            
-                            <Button
-                              variant="contained"
-                              size="small"
-                              color="primary"
-                              startIcon={<AddIcon />}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleOpenBillDialog(property);
-                              }}
-                            >
-                              Generate Bill
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className={styles.tableContainer}>
-                      {!isMobile ? (
-                        <table className={styles.table}>
-                          <thead className={styles.tableHeader}>
-                            <tr>
-                              <th className={styles.tableHeaderCell} style={{ width: '40px' }}>
-                                <Checkbox
-                                  size="small"
-                                  onChange={handleSelectAllBills}
-                                  checked={
-                                    selectedBills.length > 0 &&
-                                    selectedBills.length ===
-                                      Math.min(
-                                        historyPagination.rowsPerPage,
-                                        filteredHistory.length - historyPagination.page * historyPagination.rowsPerPage
-                                      )
-                                  }
-                                  indeterminate={
-                                    selectedBills.length > 0 &&
-                                    selectedBills.length <
-                                      Math.min(
-                                        historyPagination.rowsPerPage,
-                                        filteredHistory.length - historyPagination.page * historyPagination.rowsPerPage
-                                      )
-                                  }
-                                />
-                              </th>
-                              <th className={styles.tableHeaderCell}>Bill ID</th>
-                              <th className={styles.tableHeaderCell}>Property ID</th>
-                              <th className={styles.tableHeaderCell}>Taxpayer</th>
-                              <th className={styles.tableHeaderCell}>Address</th>
-                              <th className={styles.tableHeaderCell}>Year</th>
-                              <th className={styles.tableHeaderCell}>Amount (₦)</th>
-                              <th className={styles.tableHeaderCell}>Generation Date</th>
-                              <th className={styles.tableHeaderCell}>Status</th>
-                              <th className={styles.tableHeaderCell} align="right">Actions</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {filteredHistory
-                              .slice(
-                                historyPagination.page * historyPagination.rowsPerPage,
-                                historyPagination.page * historyPagination.rowsPerPage + historyPagination.rowsPerPage
-                              )
-                              .map((bill, index) => (
-                                <tr key={bill.id} className={`${styles.tableRow} ${index % 2 === 1 ? styles.tableRowAlternate : ''} ${selectedBills.includes(bill.id) ? styles.tableRowSelected : ''}`}>
-                                  <td className={styles.tableCell} style={{ width: '40px' }}>
-                                    <Checkbox
-                                      size="small"
-                                      checked={selectedBills.includes(bill.id)}
-                                      onChange={() => handleSelectBill(bill.id)}
-                                      disabled={bill.status === BILL_STATUS.PAID}
-                                    />
-                                  </td>
-                                  <td className={styles.tableCell}>{bill.id}</td>
-                                  <td className={styles.tableCell}>{bill.propertyId}</td>
-                                  <td className={styles.tableCell}>
-                                    <div style={{ fontWeight: '500' }}>{bill.taxpayerName}</div>
-                                    <div style={{ fontSize: '0.85rem', color: 'var(--gray-500)' }}>{bill.taxpayerId}</div>
-                                  </td>
-                                  <td className={styles.tableCell}>
-                                    <div style={{ maxWidth: '220px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                      {bill.propertyAddress}
-                                    </div>
-                                  </td>
-                                  <td className={styles.tableCell} style={{ fontWeight: '600' }}>{bill.year}</td>
-                                  <td className={styles.tableCell}>
-                                    <strong style={{ color: 'var(--primary)' }}>₦{bill.amount}</strong>
-                                  </td>
-                                  <td className={styles.tableCell}>{bill.generatedDate}</td>
-                                  <td className={styles.tableCell}>
-                                    <span className={bill.status === BILL_STATUS.PAID ? styles.chipActive : styles.chipInactive}>
-                                      {bill.status}
-                                    </span>
-                                  </td>
-                                  <td className={styles.tableCell}>
-                                    <div className={styles.tableActions}>
-                                      <IconButton
-                                        size="small"
-                                        onClick={() => handlePrintSingleBill(bill)}
-                                        className={styles.buttonIcon}
-                                        title="Print Bill"
-                                      >
-                                        <PrintIcon fontSize="small" />
-                                      </IconButton>
-                                      
-                                      <IconButton
-                                        size="small"
-                                        onClick={() => handleOpenEditDialog(bill)}
-                                        disabled={bill.status === BILL_STATUS.PAID}
-                                        className={styles.buttonIcon}
-                                        title="Edit Bill"
-                                      >
-                                        <EditIcon fontSize="small" />
-                                      </IconButton>
-                                    </div>
-                                  </td>
-                                </tr>
-                              ))}
-                          </tbody>
-                        </table>
-                      ) : (
-                        // Mobile-friendly list view
-                        <div className={styles.historyCardsGrid}>
-                          {filteredHistory
-                            .slice(
-                              historyPagination.page * historyPagination.rowsPerPage,
-                              historyPagination.page * historyPagination.rowsPerPage + historyPagination.rowsPerPage
-                            )
-                            .map((bill) => (
-                              <div key={bill.id} className={`${styles.historyCard} ${selectedBills.includes(bill.id) ? styles.historyCardSelected : ''}`}>
-                                <div className={styles.historyCardHeader}>
-                                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                                    <Checkbox
-                                      size="small"
-                                      checked={selectedBills.includes(bill.id)}
-                                      onChange={() => handleSelectBill(bill.id)}
-                                      disabled={bill.status === BILL_STATUS.PAID}
-                                    />
-                                    <div className={styles.historyCardTitle}>{bill.id}</div>
-                                  </div>
-                                  <span className={bill.status === BILL_STATUS.PAID ? styles.chipActive : styles.chipInactive}>
-                                    {bill.status}
-                                  </span>
-                                </div>
-                                
-                                <div className={styles.historyCardBody}>
-                                  <div className={styles.historyCardRow}>
-                                    <span>Property</span>
-                                    <span>{bill.propertyId}</span>
-                                  </div>
-                                  <div className={styles.historyCardRow}>
-                                    <span>Taxpayer</span>
-                                    <span>{bill.taxpayerName}</span>
-                                  </div>
-                                  <div className={styles.historyCardRow}>
-                                    <span>Year</span>
-                                    <strong>{bill.year}</strong>
-                                  </div>
-                                  <div className={styles.historyCardRow}>
-                                    <span>Amount</span>
-                                    <strong style={{ color: 'var(--primary)' }}>₦{bill.amount}</strong>
-                                  </div>
-                                  <div className={styles.historyCardRow}>
-                                    <span>Date</span>
-                                    <span>{bill.generatedDate}</span>
-                                  </div>
-                                </div>
-                                
-                                <div className={styles.historyCardFooter}>
-                                  <Button
-                                    size="small"
-                                    variant="outlined"
-                                    onClick={() => handlePrintSingleBill(bill)}
-                                    startIcon={<PrintIcon fontSize="small" />}
-                                    className={styles.buttonOutline}
-                                  >
-                                    Print
-                                  </Button>
-                                  
-                                  <Button
-                                    size="small"
-                                    variant="contained"
-                                    onClick={() => handleOpenEditDialog(bill)}
-                                    disabled={bill.status === BILL_STATUS.PAID}
-                                    startIcon={<EditIcon fontSize="small" />}
-                                    className={styles.buttonPrimary}
-                                  >
-                                    Edit
-                                  </Button>
-                                </div>
-                              </div>
-                            ))}
-                        </div>
-                      )}
-                    </div>
-                  )}
-                  
-                  {/* Pagination */}
-                  <div style={{ padding: '1rem', display: 'flex', justifyContent: 'flex-end' }}>
-                    <TablePagination
-                      component="div"
-                      count={filteredHistory.length}
-                      page={historyPagination.page}
-                      onPageChange={handleChangePage}
-                      rowsPerPage={historyPagination.rowsPerPage}
-                      onRowsPerPageChange={handleChangeRowsPerPage}
-                      rowsPerPageOptions={[5, 10, 25, 50]}
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        </>
-      ) : (
-        <>
-          <div className={styles.card}>
-            <div className={styles.cardHeader}>
-              <div className={styles.cardTitle}>
-                <div className={styles.cardTitleIcon}>
-                  <HistoryIcon fontSize="small" />
-                </div>
-                Bill Generation History
-              </div>
-              <div style={{ display: 'flex', gap: '1rem' }}>
-                <div className={styles.inputWithIcon}>
-                  <SearchIcon className={styles.inputIcon} />
-                  <input
-                    type="text"
-                    className={`${styles.formControl} ${styles.inputWithIconPadding}`}
-                    placeholder="Search by ID, address or taxpayer..."
-                    style={{ width: '250px' }}
-                    value={historySearch}
-                    onChange={handleHistorySearch}
-                  />
-                </div>
-                <ToggleButtonGroup
-                  value={historyViewMode}
-                  exclusive
-                  onChange={handleViewModeChange}
-                  size="small"
-                >
-                  <ToggleButton value={VIEWS.GRID} className={styles.buttonSecondary}>
-                    <ViewModuleIcon fontSize="small" />
-                  </ToggleButton>
-                  <ToggleButton value={VIEWS.TABLE} className={styles.buttonSecondary}>
-                    <ViewColumnIcon fontSize="small" />
-                  </ToggleButton>
-                </ToggleButtonGroup>
-                {selectedBills.length > 0 && (
-                  <Button
-                    size="small"
-                    variant="contained"
-                    startIcon={<PrintIcon />}
-                    onClick={handleBatchPrint}
-                    className={styles.buttonPrimary}
-                  >
-                    Print Selected ({selectedBills.length})
-                  </Button>
-                )}
-              </div>
-            </div>
-
-            <div className={styles.statsSummary}>
-              <div className={styles.statSummaryCard}>
-                <div className={styles.statSummaryLabel}>Total Bills</div>
-                <div className={styles.statSummaryValue}>{historySummary.total}</div>
-              </div>
-              <div className={styles.statSummaryCard}>
-                <div className={styles.statSummaryLabel}>Collection Rate</div>
-                <div className={styles.statSummaryValue}>{historySummary.collectionRate}%</div>
-              </div>
-            </div>
-            
-            <div className={styles.filterSection}>
-              {/* ... filter controls ... */}
-            </div>
-
-            <div className={styles.cardContent}>
-              {historyViewMode === VIEWS.GRID ? (
-                <div className={styles.historyCardsGrid}>
-                  {filteredHistory
-                    .slice(
-                      historyPagination.page * historyPagination.rowsPerPage,
-                      historyPagination.page * historyPagination.rowsPerPage + historyPagination.rowsPerPage
-                    )
-                    .map((bill) => (
-                      <div key={bill.id} className={`${styles.historyCard} ${selectedBills.includes(bill.id) ? styles.historyCardSelected : ''}`}>
-                        {/* ... bill card content from original file ... */}
-                          <div className={styles.historyCardFooter}>
-                              <Button
-                                size="small"
-                                variant="outlined"
-                                onClick={() => handlePrintSingleBill(bill)}
-                                startIcon={<PrintIcon fontSize="small" />}
-                                className={styles.buttonOutline}
-                              >
-                                Print
-                              </Button>
-                              <Button
-                                size="small"
-                                variant="contained"
-                                onClick={() => handleOpenEditDialog(bill)}
-                                disabled={bill.status === BILL_STATUS.PAID}
-                                startIcon={<EditIcon fontSize="small" />}
-                                className={styles.buttonPrimary}
-                              >
-                                Edit
-                              </Button>
-                          </div>
-                      </div>
-                    ))}
-                </div>
-              ) : (
-                <div className={styles.tableContainer}>
-                  {!isMobile ? (
-                    <table className={styles.table}>
-                      {/* ... table head ... */}
-                      <tbody>
-                        {filteredHistory
-                          .slice(
-                            historyPagination.page * historyPagination.rowsPerPage,
-                            historyPagination.page * historyPagination.rowsPerPage + historyPagination.rowsPerPage
-                          )
-                          .map((bill, index) => (
-                            <tr key={bill.id} className={`${styles.tableRow} ${index % 2 === 1 ? styles.tableRowAlternate : ''} ${selectedBills.includes(bill.id) ? styles.tableRowSelected : ''}`}>
-                              {/* ... table cells for bill data ... */}
-                                <td className={styles.tableCell}>
-                                  <div className={styles.tableActions}>
-                                  <IconButton 
-                                    size="small" 
-                                    onClick={() => handlePrintSingleBill(bill)}
-                                      className={styles.buttonIcon}
-                                      title="Print Bill"
-                                  >
-                                      <PrintIcon fontSize="small" />
-                                  </IconButton>
-                                    <IconButton 
-                                      size="small" 
-                                      onClick={() => handleOpenEditDialog(bill)}
-                                      disabled={bill.status === BILL_STATUS.PAID}
-                                      className={styles.buttonIcon}
-                                      title="Edit Bill"
-                                    >
-                                      <EditIcon fontSize="small" />
-                                    </IconButton>
-                                  </div>
-                                </td>
-                            </tr>
-                          ))}
-                      </tbody>
-                    </table>
-                  ) : (
-                    // Mobile-friendly list view
-                    <div className={styles.historyCardsGrid}>
-                      {filteredHistory
-                        .slice(
-                          historyPagination.page * historyPagination.rowsPerPage,
-                          historyPagination.page * historyPagination.rowsPerPage + historyPagination.rowsPerPage
-                        )
-                        .map((bill) => (
-                          <div key={bill.id} className={`${styles.historyCard} ${selectedBills.includes(bill.id) ? styles.historyCardSelected : ''}`}>
-                            {/* ... bill card content for mobile ... */}
-                                <div className={styles.historyCardFooter}>
-                                    <Button
-                                      size="small"
-                                      variant="outlined"
-                                      onClick={() => handlePrintSingleBill(bill)}
-                                      startIcon={<PrintIcon fontSize="small" />}
-                                      className={styles.buttonOutline}
-                                    >
-                                      Print
-                                    </Button>
-                                    <Button
-                                      size="small"
-                                      variant="contained"
-                                      onClick={() => handleOpenEditDialog(bill)}
-                                      disabled={bill.status === BILL_STATUS.PAID}
-                                      startIcon={<EditIcon fontSize="small" />}
-                                      className={styles.buttonPrimary}
-                                    >
-                                      Edit
-                                    </Button>
-                                </div>
-                          </div>
-                        ))}
-                    </div>
-                  )}
-                </div>
-              )}
-              
-              {/* Pagination - this was likely the adjacent element */}
-              <div style={{ padding: '1rem', display: 'flex', justifyContent: 'flex-end' }}>
-                <TablePagination
-                  component="div"
-                  count={filteredHistory.length}
-                  page={historyPagination.page}
-                  onPageChange={handleChangePage}
-                  rowsPerPage={historyPagination.rowsPerPage}
-                  onRowsPerPageChange={handleChangeRowsPerPage}
-                  rowsPerPageOptions={[5, 10, 25, 50]}
-                />
-              </div>
-            </div>
-          </div>
-        </>
-      )}
-      
-      {/* Bill Generation Dialog */}
-      <Dialog
-        open={billDialog.open}
-        onClose={handleCloseBillDialog}
-        maxWidth="md"
-        fullWidth
-      >
-        <DialogTitle>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <AddIcon color="primary" />
-            <div>
-              <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                Generate LUC Bill
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {billDialog.property?.address}
-              </Typography>
-            </div>
-          </div>
-        </DialogTitle>
-        
-        <DialogContent dividers>
-          {billDialog.property && (
-            <div className={styles.billGenerationForm}>
-              <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 600, mb: 2 }}>
-                Select Years for Bill Generation
-              </Typography>
-              
-              <div className={styles.yearGrid}>
-                {options.years.map(year => (
-                  <div
-                    key={year}
-                    className={`${styles.yearCard} ${billDialog.selectedYears.includes(year) ? styles.yearCardSelected : ''}`}
-                    onClick={() => handleYearSelection(year)}
-                  >
-                    <div className={styles.yearNumber}>{year}</div>
-                    
-                    {billDialog.selectedYears.includes(year) && (
-                      <TextField
-                        fullWidth
-                        label="Amount (₦)"
-                        value={billDialog.amounts[year] || ''}
-                        onChange={(e) => handleAmountChange(year, e.target.value)}
-                        variant="outlined"
-                        size="small"
-                        onClick={(e) => e.stopPropagation()}
-                        sx={{ mt: 1 }}
-                      />
-                    )}
-                  </div>
-                ))}
-              </div>
-              
-              {billDialog.selectedYears.length > 0 && (
-                <Alert severity="info" icon={<InfoIcon fontSize="inherit" />}>
-                  You have selected {billDialog.selectedYears.length} year(s) for bill generation.
-                  Total amount: ₦{Object.values(billDialog.amounts).reduce((sum, amount) => sum + parseInt(amount || 0), 0).toLocaleString()}
-                </Alert>
-              )}
-            </div>
-          )}
-        </DialogContent>
-        
-        <DialogActions sx={{ p: 2 }}>
-          <Button onClick={handleCloseBillDialog} className={styles.buttonSecondary}>
-            Cancel
-          </Button>
-          <Button 
-            onClick={handleGenerateSingleBill}
-            variant="contained"
-            disabled={billDialog.selectedYears.length === 0}
-            startIcon={<AddIcon />}
-            className={styles.buttonPrimary}
-          >
-            Generate {billDialog.selectedYears.length} Bill{billDialog.selectedYears.length !== 1 ? 's' : ''}
-          </Button>
-        </DialogActions>
-      </Dialog>
-      
-      {/* Bill Edit Dialog */}
-      <Dialog 
-        open={editBillDialog.open} 
-        onClose={handleCloseEditDialog}
-        maxWidth="xs"
-        fullWidth
-      >
-        <DialogTitle>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <EditIcon color="primary" />
-            <Typography variant="h6" sx={{ fontWeight: 600 }}>
-              Edit Bill Amount
+            <Typography className={styles.pageTitle}>
+              Land Use Charge Generation
+            </Typography>
+            <Typography className={styles.pageSubtitle}>
+              Generate and manage Land Use Charge bills efficiently across multiple LGAs
             </Typography>
           </div>
-        </DialogTitle>
-        
-        <DialogContent>
-          {editBillDialog.bill && (
-            <div style={{ marginTop: '1rem' }}>
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                <strong>Property:</strong> {editBillDialog.bill.propertyAddress}
-              </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                <strong>Year:</strong> {editBillDialog.bill.year}
-              </Typography>
-              
-              <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Amount (₦)</label>
-                <input
-                  type="text"
-                  className={styles.formControl}
-                  value={editBillDialog.amount}
-                  onChange={(e) => setEditBillDialog(prev => ({ ...prev, amount: e.target.value }))}
-                />
+          <div className={styles.headerActions}>
+            <Button
+              variant="outlined"
+              onClick={() => setActiveTab(LUC_TABS.HISTORY)}
+              startIcon={<HistoryIcon />}
+              size="small"
+            >
+              View Bill History
+            </Button>
+            <Button 
+              variant="contained" 
+              startIcon={<HelpIcon />}
+              size="small"
+              onClick={() => {
+                Swal.fire({
+                  title: 'How to Generate Bills',
+                  html: `
+                    <ol style="text-align: left; padding-left: 1rem;">
+                      <li>Choose between Single or Bulk generation mode</li>
+                      <li>Fill in the required fields</li>
+                      <li>Click "Generate Bills" to process</li>
+                      <li>View and manage generated bills in History tab</li>
+                    </ol>
+                  `,
+                  icon: 'info',
+                  confirmButtonColor: '#3085d6'
+                });
+              }}
+            >
+              Help
+            </Button>
+          </div>
+        </div>
+
+        {/* Stats cards */}
+        <div className={styles.statsGrid}>
+          <div className={styles.statCard}>
+            <div className={styles.statIcon}>
+              <BusinessIcon />
+            </div>
+            <div className={styles.statContent}>
+              <div className={styles.statLabel}>Total Properties</div>
+              <div className={styles.statValue}>{dashboardStats.totalProperties.toLocaleString()}</div>
+              <div className={styles.statTrend}>
+                <TrendingUpIcon fontSize="small" />
+                <span>+5% this month</span>
               </div>
             </div>
+          </div>
+          
+          <div className={styles.statCard}>
+            <div className={styles.statIcon}>
+              <ReceiptLongIcon />
+            </div>
+            <div className={styles.statContent}>
+              <div className={styles.statLabel}>Generated Bills</div>
+              <div className={styles.statValue}>{dashboardStats.totalBillsGenerated.toLocaleString()}</div>
+              <div className={styles.statBadge}>
+                {dashboardStats.pendingBills} Pending
+              </div>
+            </div>
+          </div>
+          
+          <div className={styles.statCard}>
+            <div className={styles.statIcon}>
+              <AccountBalanceIcon />
+            </div>
+            <div className={styles.statContent}>
+              <div className={styles.statLabel}>Total Revenue</div>
+              <div className={styles.statValue}>{dashboardStats.totalRevenue}</div>
+              <div className={styles.progressBar}>
+                <LinearProgress 
+                  variant="determinate" 
+                  value={dashboardStats.collectionRate} 
+                  sx={{ 
+                    height: 6,
+                    borderRadius: 3,
+                    backgroundColor: '#e2e8f0',
+                    '& .MuiLinearProgress-bar': {
+                      backgroundColor: '#0ea5e9',
+                    },
+                  }}
+                />
+              </div>
+              <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: 'block' }}>
+                {dashboardStats.collectionRate}% Collection Rate
+              </Typography>
+            </div>
+          </div>
+        </div>
+      </Box>
+      
+      {/* Navigation Tabs */}
+      <div className={styles.navContainer}>
+        <div className={styles.navTabs}>
+          <Button
+            className={activeTab === LUC_TABS.SEARCH ? styles.navTabActive : styles.navTab}
+            onClick={() => setActiveTab(LUC_TABS.SEARCH)}
+            startIcon={<SearchIcon />}
+          >
+            Generate Bills
+          </Button>
+          
+          <Button
+            className={activeTab === LUC_TABS.HISTORY ? styles.navTabActive : styles.navTab}
+            onClick={() => {
+              setActiveTab(LUC_TABS.HISTORY);
+              loadGenerationHistory();
+            }}
+            startIcon={<HistoryIcon />}
+          >
+            Bill History
+            {dashboardStats.pendingBills > 0 && (
+              <Badge 
+                badgeContent={dashboardStats.pendingBills} 
+                color="error"
+                sx={{ ml: 1 }}
+              />
+            )}
+          </Button>
+        </div>
+      </div>
+      
+      {/* Main Content */}
+      {activeTab === LUC_TABS.SEARCH ? (
+        <div className={styles.mainContent}>
+          {activeStep === GENERATE_STEPS.SELECT_CRITERIA ? (
+            <>
+              <Box className={styles.cardHeader}>
+                <div className={styles.headerWithIcon}>
+                  <div className={styles.headerIcon}>
+                    <ReceiptLongIcon />
+                  </div>
+                  <Typography variant="h6">Generate Land Use Charge Bills</Typography>
+                </div>
+              </Box>
+              
+              <Box className={styles.cardContent}>
+                {/* Mode Selection */}
+                <div className={styles.modeSelector}>
+                  <div 
+                    className={`${styles.modeCard} ${generationMode === GENERATION_MODE.SINGLE ? styles.modeCardSelected : ''}`}
+                    onClick={() => setGenerationMode(GENERATION_MODE.SINGLE)}
+                  >
+                    <div className={styles.modeCardTitle}>
+                      <ReceiptLongIcon />
+                      Single Bill
+                    </div>
+                    <div className={styles.modeCardDescription}>
+                      Generate a bill for a specific property using property ID or taxpayer information
+                    </div>
+                  </div>
+                  
+                  <div 
+                    className={`${styles.modeCard} ${generationMode === GENERATION_MODE.BULK ? styles.modeCardSelected : ''}`}
+                    onClick={() => setGenerationMode(GENERATION_MODE.BULK)}
+                  >
+                    <div className={styles.modeCardTitle}>
+                      <ViewListIcon />
+                      Bulk Generation
+                    </div>
+                    <div className={styles.modeCardDescription}>
+                      Generate multiple bills at once based on property classification, location and other criteria
+                    </div>
+                  </div>
+                </div>
+                
+                {generationMode === GENERATION_MODE.SINGLE ? (
+                  <Box className={styles.singleGenerationContainer}>
+                    <Typography variant="body1" className={styles.sectionDescription}>
+                      Find a property and generate a single Land Use Charge bill.
+                    </Typography>
+                    
+                    <Grid container spacing={4}>
+                      <Grid item xs={12} md={4}>
+                        <div className={styles.fieldGroup}>
+                          <label className={styles.fieldLabel}>
+                            Property ID <span className={styles.requiredField}>*</span>
+                          </label>
+                          <TextField
+                            fullWidth
+                            placeholder="Enter property ID"
+                            size="medium"
+                            value={singleBillData.propertyId}
+                            onChange={(e) => setSingleBillData({...singleBillData, propertyId: e.target.value})}
+                            variant="outlined"
+                            error={formErrors?.propertyId}
+                            helperText={formErrors?.propertyId}
+                            InputProps={{
+                              startAdornment: (
+                                <InputAdornment position="start">
+                                  <BusinessIcon fontSize="small" color="primary" />
+                                </InputAdornment>
+                              ),
+                            }}
+                          />
+                        </div>
+                      </Grid>
+                      
+                      <Grid item xs={12} md={4}>
+                        <div className={styles.fieldGroup}>
+                          <label className={styles.fieldLabel}>
+                            Taxpayer ID <span className={styles.optionalField}>(optional)</span>
+                          </label>
+                          <TextField
+                            fullWidth
+                            placeholder="Enter taxpayer ID"
+                            size="medium"
+                            value={singleBillData.taxpayerId}
+                            onChange={(e) => setSingleBillData({...singleBillData, taxpayerId: e.target.value})}
+                            variant="outlined"
+                            InputProps={{
+                              startAdornment: (
+                                <InputAdornment position="start">
+                                  <PersonIcon fontSize="small" color="primary" />
+                                </InputAdornment>
+                              ),
+                            }}
+                          />
+                        </div>
+                      </Grid>
+                      
+                      <Grid item xs={12} md={4}>
+                        <div className={styles.fieldGroup}>
+                          <label className={styles.fieldLabel}>
+                            Property Address <span className={styles.optionalField}>(optional)</span>
+                          </label>
+                          <TextField
+                            fullWidth
+                            placeholder="Enter address"
+                            size="medium"
+                            value={singleBillData.propertyAddress}
+                            onChange={(e) => setSingleBillData({...singleBillData, propertyAddress: e.target.value})}
+                            variant="outlined"
+                            InputProps={{
+                              startAdornment: (
+                                <InputAdornment position="start">
+                                  <LocationOnIcon fontSize="small" color="primary" />
+                                </InputAdornment>
+                              ),
+                            }}
+                          />
+                        </div>
+                      </Grid>
+                    </Grid>
+                    
+                    <Box className={styles.searchButtonContainer}>
+                      <Button
+                        variant="contained"
+                        onClick={handleSinglePropertySearch}
+                        disabled={singleBillData.loading}
+                        startIcon={singleBillData.loading ? <CircularProgress size={20} color="inherit" /> : <SearchIcon />}
+                        className={styles.searchButton}
+                      >
+                        {singleBillData.loading ? 'Searching...' : 'Search Property'}
+                      </Button>
+                    </Box>
+                    
+                    {singleBillData.found && singleBillData.propertyDetails && (
+                      <Box className={styles.propertyResultContainer}>
+                        <Typography variant="h6" className={styles.resultTitle}>
+                          <CheckCircleIcon color="success" />
+                          Property Found
+                        </Typography>
+                        
+                        <Grid container spacing={3} className={styles.propertyDetailsGrid}>
+                          <Grid item xs={12} md={6} lg={3}>
+                            <Typography variant="body2" color="text.secondary" className={styles.detailLabel}>Property ID</Typography>
+                            <Typography variant="subtitle1" className={styles.detailValue}>{singleBillData.propertyDetails.id}</Typography>
+                          </Grid>
+                          <Grid item xs={12} md={6} lg={3}>
+                            <Typography variant="body2" color="text.secondary" className={styles.detailLabel}>Taxpayer</Typography>
+                            <Typography variant="subtitle1" className={styles.detailValue}>{singleBillData.propertyDetails.taxpayerName}</Typography>
+                            <Typography variant="caption" color="text.secondary">{singleBillData.propertyDetails.taxpayerId}</Typography>
+                          </Grid>
+                          <Grid item xs={12} md={6} lg={3}>
+                            <Typography variant="body2" color="text.secondary" className={styles.detailLabel}>Classification</Typography>
+                            <Typography variant="subtitle1" className={styles.detailValue}>{singleBillData.propertyDetails.classification}</Typography>
+                          </Grid>
+                          <Grid item xs={12} md={6} lg={3}>
+                            <Typography variant="body2" color="text.secondary" className={styles.detailLabel}>Property Value</Typography>
+                            <Typography variant="subtitle1" className={styles.detailValue}>₦{singleBillData.propertyDetails.value.toLocaleString()}</Typography>
+                          </Grid>
+                          <Grid item xs={12}>
+                            <Typography variant="body2" color="text.secondary" className={styles.detailLabel}>Address</Typography>
+                            <Typography variant="subtitle1" className={styles.detailValue}>{singleBillData.propertyDetails.address}</Typography>
+                          </Grid>
+                        </Grid>
+                        
+                        <Box className={styles.generateButtonContainer}>
+                          <Button
+                            variant="contained"
+                            onClick={handleGenerateSingleBill}
+                            disabled={processing}
+                            startIcon={processing ? <CircularProgress size={20} color="inherit" /> : <ReceiptLongIcon />}
+                            className={styles.generateButton}
+                          >
+                            {processing ? 'Generating...' : 'Generate Bill'}
+                          </Button>
+                        </Box>
+                      </Box>
+                    )}
+                  </Box>
+                ) : (
+                  /* Bulk Generation */
+                  <Box className={styles.bulkGenerationContainer}>
+                    <Alert 
+                      severity="info"
+                      variant="outlined"
+                      icon={<InfoIcon className={styles.alertIcon} />}
+                      className={styles.infoAlert}
+                    >
+                      <AlertTitle className={styles.alertTitle}>Bulk Generation Mode</AlertTitle>
+                      <Typography className={styles.alertDescription}>
+                        Bills will be generated for all properties matching the criteria below.
+                        Ensure all fields are properly filled to target the correct properties.
+                      </Typography>
+                    </Alert>
+                    
+                    <Grid container spacing={4} className={styles.formGrid}>
+                      <Grid item xs={12} md={4}>
+                        <div className={styles.fieldGroup}>
+                          <label className={styles.fieldLabel}>
+                            Local Government Area <span className={styles.requiredField}>*</span>
+                          </label>
+                          <FormControl fullWidth size="medium" error={!!formErrors?.lga}>
+                            <Select
+                              multiple
+                              value={formData.lga}
+                              onChange={(e) => {
+                                setFormData({...formData, lga: e.target.value});
+                                updateActiveFilters('lga', e.target.value);
+                              }}
+                              input={<OutlinedInput className={styles.select} />}
+                              renderValue={(selected) => (
+                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                  {selected.length === 0 ? (
+                                    <Typography variant="body2" color="text.secondary">Select LGA</Typography>
+                                  ) : (
+                                    selected.map((value) => (
+                                      <Chip key={value} label={value} size="small" className={styles.filterChip} />
+                                    ))
+                                  )}
+                                </Box>
+                              )}
+                              MenuProps={{
+                                PaperProps: {
+                                  className: styles.menuPaper
+                                }
+                              }}
+                            >
+                              {options.lgas.map((lga) => (
+                                <MenuItem key={lga} value={lga} className={styles.menuItem}>
+                                  <Checkbox checked={formData.lga.indexOf(lga) > -1} color="primary" />
+                                  <ListItemText primary={lga} />
+                                </MenuItem>
+                              ))}
+                            </Select>
+                            {formErrors?.lga && <FormHelperText className={styles.errorText}>{formErrors.lga}</FormHelperText>}
+                          </FormControl>
+                          <Typography variant="caption" className={styles.fieldHint}>
+                            Select one or multiple local government areas
+                          </Typography>
+                        </div>
+                      </Grid>
+                      
+                      <Grid item xs={12} md={4}>
+                        <div className={styles.fieldGroup}>
+                          <label className={styles.fieldLabel}>
+                            Property Classification <span className={styles.requiredField}>*</span>
+                          </label>
+                          <FormControl fullWidth size="medium" error={!!formErrors?.classification}>
+                            <Select
+                              multiple
+                              value={formData.classification}
+                              onChange={(e) => {
+                                setFormData({...formData, classification: e.target.value});
+                                updateActiveFilters('classification', e.target.value);
+                              }}
+                              input={<OutlinedInput className={styles.select} />}
+                              renderValue={(selected) => (
+                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                  {selected.length === 0 ? (
+                                    <Typography variant="body2" color="text.secondary">Select Classification</Typography>
+                                  ) : (
+                                    selected.map((value) => (
+                                      <Chip key={value} label={value} size="small" className={styles.filterChip} />
+                                    ))
+                                  )}
+                                </Box>
+                              )}
+                              MenuProps={{
+                                PaperProps: {
+                                  className: styles.menuPaper
+                                }
+                              }}
+                            >
+                              {options.classifications.map((classification) => (
+                                <MenuItem key={classification} value={classification} className={styles.menuItem}>
+                                  <Checkbox checked={formData.classification.indexOf(classification) > -1} color="primary" />
+                                  <ListItemText primary={classification} />
+                                </MenuItem>
+                              ))}
+                            </Select>
+                            {formErrors?.classification && <FormHelperText className={styles.errorText}>{formErrors.classification}</FormHelperText>}
+                          </FormControl>
+                          <Typography variant="caption" className={styles.fieldHint}>
+                            Select property type classifications for filtering
+                          </Typography>
+                        </div>
+                      </Grid>
+                      
+                      <Grid item xs={12} md={4}>
+                        <div className={styles.fieldGroup}>
+                          <label className={styles.fieldLabel}>
+                            Year <span className={styles.requiredField}>*</span>
+                          </label>
+                          <FormControl fullWidth size="medium" error={!!formErrors?.year}>
+                            <Select
+                              multiple
+                              value={formData.year}
+                              onChange={(e) => {
+                                setFormData({...formData, year: e.target.value});
+                                updateActiveFilters('year', e.target.value);
+                              }}
+                              input={<OutlinedInput className={styles.select} />}
+                              renderValue={(selected) => (
+                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                  {selected.length === 0 ? (
+                                    <Typography variant="body2" color="text.secondary">Select Year</Typography>
+                                  ) : (
+                                    selected.map((value) => (
+                                      <Chip key={value} label={value} size="small" className={styles.filterChip} />
+                                    ))
+                                  )}
+                                </Box>
+                              )}
+                              MenuProps={{
+                                PaperProps: {
+                                  className: styles.menuPaper
+                                }
+                              }}
+                            >
+                              {options.years.map((year) => (
+                                <MenuItem key={year} value={year} className={styles.menuItem}>
+                                  <Checkbox checked={formData.year.indexOf(year) > -1} color="primary" />
+                                  <ListItemText primary={year} />
+                                </MenuItem>
+                              ))}
+                            </Select>
+                            {formErrors?.year && <FormHelperText className={styles.errorText}>{formErrors.year}</FormHelperText>}
+                          </FormControl>
+                          <Typography variant="caption" className={styles.fieldHint}>
+                            Select billing year(s)
+                          </Typography>
+                        </div>
+                      </Grid>
+                    </Grid>
+                    
+                    <Typography variant="h6" className={styles.sectionTitle}>
+                      <FilterIcon className={styles.sectionIcon} />
+                      Property Value Range & Rate
+                    </Typography>
+                    
+                    <Grid container spacing={4} className={styles.formGrid}>
+                      <Grid item xs={12} md={4}>
+                        <div className={styles.fieldGroup}>
+                          <label className={styles.fieldLabel}>
+                            Minimum Value <span className={styles.requiredField}>*</span>
+                          </label>
+                          <TextField
+                            fullWidth
+                            size="medium"
+                            value={formData.minValue}
+                            onChange={(e) => setFormData({...formData, minValue: e.target.value})}
+                            placeholder="Minimum property value"
+                            error={!!formErrors?.minValue}
+                            helperText={formErrors?.minValue}
+                            variant="outlined"
+                            className={styles.textField}
+                            InputProps={{
+                              startAdornment: <InputAdornment position="start">₦</InputAdornment>,
+                            }}
+                          />
+                          <Typography variant="caption" className={styles.fieldHint}>
+                            Enter the minimum property value threshold
+                          </Typography>
+                        </div>
+                      </Grid>
+                      
+                      <Grid item xs={12} md={4}>
+                        <div className={styles.fieldGroup}>
+                          <label className={styles.fieldLabel}>
+                            Maximum Value <span className={styles.requiredField}>*</span>
+                          </label>
+                          <TextField
+                            fullWidth
+                            size="medium"
+                            value={formData.maxValue}
+                            onChange={(e) => setFormData({...formData, maxValue: e.target.value})}
+                            placeholder="Maximum property value"
+                            error={!!formErrors?.maxValue}
+                            helperText={formErrors?.maxValue}
+                            variant="outlined"
+                            className={styles.textField}
+                            InputProps={{
+                              startAdornment: <InputAdornment position="start">₦</InputAdornment>,
+                            }}
+                          />
+                          <Typography variant="caption" className={styles.fieldHint}>
+                            Enter the maximum property value threshold
+                          </Typography>
+                        </div>
+                      </Grid>
+                      
+                      <Grid item xs={12} md={4}>
+                        <div className={styles.fieldGroup}>
+                          <label className={styles.fieldLabel}>
+                            Billing Rate <span className={styles.requiredField}>*</span>
+                          </label>
+                          <TextField
+                            fullWidth
+                            size="medium"
+                            value={formData.rate}
+                            onChange={(e) => setFormData({...formData, rate: e.target.value})}
+                            placeholder="Billing rate (e.g., 0.005 for 0.5%)"
+                            error={!!formErrors?.rate}
+                            helperText={formErrors?.rate}
+                            variant="outlined"
+                            className={styles.textField}
+                            InputProps={{
+                              endAdornment: <InputAdornment position="end">%</InputAdornment>,
+                            }}
+                          />
+                          <Typography variant="caption" className={styles.fieldHint}>
+                            Enter rate as decimal (e.g., 0.005 = 0.5%)
+                          </Typography>
+                        </div>
+                      </Grid>
+                    </Grid>
+                    
+                    {activeFilters.length > 0 && (
+                      <Box className={styles.activeFiltersContainer}>
+                        <Typography variant="body2" className={styles.activeFiltersLabel}>
+                          Active Filters:
+                        </Typography>
+                        <div className={styles.activeFiltersChips}>
+                          {activeFilters.map((filter) => (
+                            <Chip
+                              key={filter.id}
+                              label={`${filter.name}: ${filter.value}`}
+                              onDelete={() => removeActiveFilter(filter.name)}
+                              className={styles.activeFilterChip}
+                              deleteIcon={<CloseIcon />}
+                            />
+                          ))}
+                          <Button 
+                            size="small" 
+                            variant="outlined" 
+                            onClick={handleReset}
+                            startIcon={<RefreshIcon />}
+                            className={styles.clearFiltersButton}
+                          >
+                            Clear All
+                          </Button>
+                        </div>
+                      </Box>
+                    )}
+                  </Box>
+                )}
+              </Box>
+              
+              {/* Card Footer with Actions */}
+              <div className={styles.cardFooter}>
+                <div className={styles.footerInfo}>
+                  {activeFilters.length > 0 ? (
+                    <Typography variant="body2" className={styles.filterSummary}>
+                      <InfoIcon fontSize="small" className={styles.infoSummaryIcon} />
+                      {`${activeFilters.length} filter${activeFilters.length > 1 ? 's' : ''} applied`}
+                    </Typography>
+                  ) : (
+                    <Typography variant="body2" className={styles.filterSummary}>
+                      <InfoIcon fontSize="small" className={styles.infoSummaryIcon} />
+                      No filters applied yet
+                    </Typography>
+                  )}
+                </div>
+                <div className={styles.footerActions}>
+                  <Button
+                    variant="outlined"
+                    onClick={handleReset}
+                    startIcon={<RefreshIcon />}
+                    className={styles.resetButton}
+                    disabled={processing}
+                  >
+                    Reset
+                  </Button>
+                  <Button
+                    variant="contained"
+                    onClick={handleGenerateBills}
+                    startIcon={processing ? <CircularProgress size={20} color="inherit" /> : <ReceiptLongIcon />}
+                    disabled={processing}
+                    className={styles.generateBillsButton}
+                  >
+                    {processing ? 'Processing...' : 'Generate Bills'}
+                  </Button>
+                </div>
+              </div>
+            </>
+          ) : (
+            <Paper elevation={0} className={styles.contentCard}>
+              <div className={styles.cardHeader}>
+                <div className={styles.headerWithIcon}>
+                  <ReceiptLongIcon className={styles.headerIcon} />
+                  <Typography variant="h6">Bill Generation Progress</Typography>
+                </div>
+                <div>
+                  <Chip label={bulkGeneration.batchId} color="primary" />
+                </div>
+              </div>
+              
+              <div className={styles.cardContent}>
+                {bulkGeneration.inProgress ? (
+                  <Box sx={{ textAlign: 'center', py: 4 }}>
+                    <Typography variant="h6" sx={{ mb: 1 }}>
+                      Generating Bills...
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                      Please wait while we generate {generationSummary.propertyCount} bills. This may take a few minutes.
+                    </Typography>
+                    
+                    <Box sx={{ width: '80%', mx: 'auto', mb: 1 }}>
+                      <LinearProgress
+                        variant="determinate"
+                        value={bulkGeneration.progress}
+                        sx={{ height: 10, borderRadius: 5 }}
+                      />
+                    </Box>
+                    <Typography variant="body2" color="text.secondary" align="center">
+                      {bulkGeneration.progress.toFixed(0)}% Complete
+                    </Typography>
+                  </Box>
+                ) : (
+                  <div className={styles.successContainer}>
+                    <CheckCircleIcon className={styles.successIcon} />
+                    <Typography className={styles.successTitle}>
+                      Bills Generated Successfully!
+                    </Typography>
+                    
+                    <Typography className={styles.successMessage}>
+                      {generationSummary.propertyCount} Land Use Charge bills have been generated successfully 
+                      with a total revenue of ₦{generationSummary.estimatedRevenue.toLocaleString()}.
+                    </Typography>
+                    
+                    <div className={styles.summaryGrid}>
+                      <div className={styles.summaryItem}>
+                        <div className={styles.summaryLabel}>Batch ID</div>
+                        <div className={styles.summaryValue}>{bulkGeneration.batchId}</div>
+                      </div>
+                      <div className={styles.summaryItem}>
+                        <div className={styles.summaryLabel}>Total Properties</div>
+                        <div className={styles.summaryValue}>{generationSummary.propertyCount.toLocaleString()}</div>
+                      </div>
+                      <div className={styles.summaryItem}>
+                        <div className={styles.summaryLabel}>Expected Revenue</div>
+                        <div className={styles.summaryValue}>₦{generationSummary.estimatedRevenue.toLocaleString()}</div>
+                      </div>
+                      <div className={styles.summaryItem}>
+                        <div className={styles.summaryLabel}>Date Generated</div>
+                        <div className={styles.summaryValue}>{new Date().toLocaleDateString()}</div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+              
+              <div className={styles.cardFooter}>
+                {!bulkGeneration.inProgress && (
+                  <>
+                    <Button
+                      variant="outlined"
+                      startIcon={<PrintIcon />}
+                      onClick={() => window.open(`/api/printlucbill?request=batchPrint&batchId=${bulkGeneration.batchId}`, '_blank')}
+                    >
+                      Print Bills
+                    </Button>
+                    
+                    <Button
+                      variant="outlined"
+                      startIcon={<DownloadIcon />}
+                      onClick={() => window.open(`/api/downloadlucbill?batchId=${bulkGeneration.batchId}`, '_blank')}
+                    >
+                      Download CSV
+                    </Button>
+                    
+                    <Button
+                      variant="contained"
+                      onClick={() => {
+                        setActiveTab(LUC_TABS.HISTORY);
+                        handleReset();
+                      }}
+                      startIcon={<HistoryIcon />}
+                    >
+                      View in History
+                    </Button>
+                    
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={handleReset}
+                      startIcon={<RefreshIcon />}
+                    >
+                      Generate More Bills
+                    </Button>
+                  </>
+                )}
+              </div>
+            </Paper>
           )}
-        </DialogContent>
-        
-        <DialogActions sx={{ p: 2 }}>
-          <Button onClick={handleCloseEditDialog} className={styles.buttonSecondary}>
-            Cancel
-          </Button>
-          <Button onClick={handleEditBillAmount} className={styles.buttonPrimary}>
-            Save Changes
-          </Button>
-        </DialogActions>
-      </Dialog>
+        </div>
+      ) : (
+        <div className={styles.mainContent}>
+          {/* History View - Improved with Table */}
+          <div className={styles.cardHeader}>
+            <div className={styles.headerWithIcon}>
+              <div className={styles.headerIcon}>
+                <HistoryIcon />
+              </div>
+              <Typography variant="h6">Bill Generation History</Typography>
+            </div>
+            <TextField
+              placeholder="Search bills..."
+              size="small"
+              variant="outlined"
+              value={historySearch}
+              onChange={handleHistorySearch}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon fontSize="small" />
+                  </InputAdornment>
+                )
+              }}
+              sx={{ width: 240 }}
+            />
+          </div>
+
+          <Box sx={{ p: 2, bgcolor: '#F9FAFB', borderBottom: '1px solid', borderColor: 'divider' }}>
+            <Grid container spacing={2}>
+              <Grid item xs={6} md={3}>
+                <Card variant="outlined" sx={{ borderRadius: 1 }}>
+                  <CardContent sx={{ p: 2 }}>
+                    <Typography variant="body2" color="text.secondary" gutterBottom>Total Bills</Typography>
+                    <Typography variant="h5" fontWeight={600}>{historySummary.total}</Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+              <Grid item xs={6} md={3}>
+                <Card variant="outlined" sx={{ borderRadius: 1 }}>
+                  <CardContent sx={{ p: 2 }}>
+                    <Typography variant="body2" color="text.secondary" gutterBottom>Paid Bills</Typography>
+                    <Typography variant="h5" fontWeight={600} color="success.main">{historySummary.paid}</Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+              <Grid item xs={6} md={3}>
+                <Card variant="outlined" sx={{ borderRadius: 1 }}>
+                  <CardContent sx={{ p: 2 }}>
+                    <Typography variant="body2" color="text.secondary" gutterBottom>Unpaid Bills</Typography>
+                    <Typography variant="h5" fontWeight={600} color="warning.main">{historySummary.unpaid}</Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+              <Grid item xs={6} md={3}>
+                <Card variant="outlined" sx={{ borderRadius: 1 }}>
+                  <CardContent sx={{ p: 2 }}>
+                    <Typography variant="body2" color="text.secondary" gutterBottom>Collection Rate</Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <Typography variant="h5" fontWeight={600} sx={{ mr: 1 }}>{historySummary.collectionRate}%</Typography>
+                      <LinearProgress 
+                        variant="determinate" 
+                        value={historySummary.collectionRate} 
+                        sx={{ 
+                          width: 40, 
+                          height: 6, 
+                          borderRadius: 3,
+                          bgcolor: '#e2e8f0',
+                          '& .MuiLinearProgress-bar': {
+                            backgroundColor: '#0ea5e9'
+                          }
+                        }}
+                      />
+                    </Box>
+                  </CardContent>
+                </Card>
+              </Grid>
+            </Grid>
+          </Box>
+
+          <TableContainer sx={{ maxHeight: 440 }}>
+            <Table stickyHeader aria-label="bill history table" className={styles.table}>
+              <TableHead>
+                <TableRow>
+                  <TableCell padding="checkbox" align="center">
+                    <Checkbox 
+                      indeterminate={selectedBills.length > 0 && selectedBills.length < filteredHistory.length}
+                      checked={filteredHistory.length > 0 && selectedBills.length === filteredHistory.length}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSelectedBills(filteredHistory.map(bill => bill.id));
+                        } else {
+                          setSelectedBills([]);
+                        }
+                      }}
+                    />
+                  </TableCell>
+                  <TableCell>Bill ID</TableCell>
+                  <TableCell>Property</TableCell>
+                  <TableCell>Taxpayer</TableCell>
+                  <TableCell>Year</TableCell>
+                  <TableCell>Amount</TableCell>
+                  <TableCell>Date Generated</TableCell>
+                  <TableCell>Status</TableCell>
+                  <TableCell align="center">Actions</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {filteredHistory
+                  .slice(
+                    historyPagination.page * historyPagination.rowsPerPage,
+                    historyPagination.page * historyPagination.rowsPerPage + historyPagination.rowsPerPage
+                  )
+                  .map((bill) => (
+                    <TableRow 
+                      key={bill.id}
+                      selected={selectedBills.includes(bill.id)}
+                      hover
+                    >
+                      <TableCell padding="checkbox" align="center">
+                        <Checkbox 
+                          checked={selectedBills.includes(bill.id)}
+                          onChange={() => handleSelectBill(bill.id)}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Chip
+                          label={bill.id}
+                          variant="outlined"
+                          size="small"
+                          sx={{ fontFamily: 'monospace', fontSize: '0.75rem' }}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Tooltip title={bill.propertyAddress}>
+                          <Box>
+                            <Typography variant="body2" fontWeight={500} noWrap sx={{ maxWidth: 150 }}>
+                              {bill.propertyId}
+                            </Typography>
+                            <Typography variant="caption" color="text.secondary" noWrap>
+                              {bill.propertyAddress}
+                            </Typography>
+                          </Box>
+                        </Tooltip>
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="body2">{bill.taxpayerName}</Typography>
+                        <Typography variant="caption" color="text.secondary">{bill.taxpayerId}</Typography>
+                      </TableCell>
+                      <TableCell>{bill.year}</TableCell>
+                      <TableCell>
+                        <Typography variant="body2" fontWeight={500}>₦{bill.amountFormatted || bill.amount}</Typography>
+                      </TableCell>
+                      <TableCell>{bill.generatedDate}</TableCell>
+                      <TableCell>
+                        <div 
+                          className={`${styles.statusBadge} 
+                          ${bill.status === BILL_STATUS.PAID ? styles.paidBadge : styles.unpaidBadge}`}
+                        >
+                          {bill.status === BILL_STATUS.PAID ? (
+                            <>
+                              <CheckCircleIcon fontSize="small" />
+                              Paid
+                            </>
+                          ) : (
+                            <>
+                              <CancelIcon fontSize="small" />
+                              Unpaid
+                            </>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell align="center">
+                        <Tooltip title="Print Bill">
+                          <IconButton
+                            size="small"
+                            onClick={() => handlePrintSingleBill(bill)}
+                            sx={{ color: '#0ea5e9' }}
+                          >
+                            <PrintIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title={bill.status === BILL_STATUS.PAID ? "Already Paid" : "Edit Bill"}>
+                          <span>
+                            <IconButton
+                              size="small"
+                              disabled={bill.status === BILL_STATUS.PAID}
+                              sx={{ color: bill.status === BILL_STATUS.PAID ? '#D1D5DB' : '#0ea5e9' }}
+                            >
+                              <EditIcon fontSize="small" />
+                            </IconButton>
+                          </span>
+                        </Tooltip>
+                      </TableCell>
+                    </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          
+          {filteredHistory.length === 0 && (
+            <Box sx={{ textAlign: 'center', py: 6 }}>
+              <Typography variant="h6" color="text.secondary">No bills found</Typography>
+              <Typography variant="body2" color="text.secondary">Try modifying your search criteria</Typography>
+            </Box>
+          )}
+              
+          <div className={styles.cardFooter}>
+            {selectedBills.length > 0 ? (
+              <Button
+                variant="contained"
+                startIcon={<PrintIcon />}
+                onClick={handleBatchPrint}
+                sx={{ 
+                  bgcolor: '#0ea5e9',
+                  '&:hover': {
+                    bgcolor: '#0284c7'
+                  }
+                }}
+              >
+                Print Selected ({selectedBills.length})
+              </Button>
+            ) : (
+              <div />
+            )}
+            <TablePagination
+              component="div"
+              count={filteredHistory.length}
+              page={historyPagination.page}
+              onPageChange={handleChangePage}
+              rowsPerPage={historyPagination.rowsPerPage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+              rowsPerPageOptions={[10, 25, 50]}
+            />
+          </div>
+        </div>
+      )}
     </Box>
   );
 };

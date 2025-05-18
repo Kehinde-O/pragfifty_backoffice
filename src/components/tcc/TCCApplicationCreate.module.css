@@ -15,6 +15,7 @@
   display: flex;
   align-items: flex-start;
   margin-bottom: 32px;
+  flex-wrap: wrap;
 }
 
 .backButton {
@@ -39,6 +40,10 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
 }
 
+.headerContent {
+  flex: 1;
+}
+
 .headerContent h1 {
   font-size: 1.75rem;
   font-weight: 700;
@@ -53,6 +58,111 @@
   margin: 0;
 }
 
+.headerActions {
+  display: flex;
+  gap: 12px;
+  margin-left: auto;
+  align-self: center;
+}
+
+.draftButton, 
+.clearDraftButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.draftButton {
+  background-color: #4285F4;
+  color: white;
+}
+
+.draftButton:hover:not(:disabled) {
+  background-color: #2b6cb0;
+  transform: translateY(-2px);
+}
+
+.draftButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.clearDraftButton {
+  background-color: #f3f4f6;
+  color: #4b5563;
+}
+
+.clearDraftButton:hover {
+  background-color: #e5e7eb;
+  color: #dc2626;
+}
+
+/* Draft saved message */
+.draftSavedMessage {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #22c55e;
+  color: white;
+  padding: 12px 16px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 1000;
+  animation: slideInRight 0.3s ease, fadeOut 0.3s ease 4.7s;
+}
+
+.draftSavedIcon {
+  font-size: 1.25rem;
+}
+
+.dismissButton {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  margin-left: 8px;
+  opacity: 0.7;
+  padding: 4px;
+  font-size: 0.9rem;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dismissButton:hover {
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(100px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
 /* Step indicator styling */
 .stepIndicator {
   display: flex;
@@ -64,14 +174,7 @@
 }
 
 .stepIndicator::before {
-  content: '';
-  position: absolute;
-  top: 40px;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background-color: #e5e7eb;
-  z-index: 1;
+  display: none; /* Removing the default line, replaced with connectors */
 }
 
 .step {
@@ -83,6 +186,11 @@
   cursor: pointer;
   transition: all 0.2s ease;
   width: 20%;
+}
+
+.step.disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 .stepIcon {
@@ -98,12 +206,14 @@
   margin-bottom: 12px;
   border: 2px solid #e5e7eb;
   transition: all 0.3s ease;
+  position: relative;
+  z-index: 2;
 }
 
-.step.active .stepIcon {
-  background-color: rgba(66, 133, 244, 0.15);
-  color: #4285F4;
-  border-color: #4285F4;
+.step.completed .stepIcon {
+  background-color: rgba(74, 222, 128, 0.15);
+  color: #22c55e;
+  border-color: #22c55e;
 }
 
 .step.current .stepIcon {
@@ -126,12 +236,36 @@
   font-weight: 600;
 }
 
-.step:hover .stepIcon {
+.step.completed .stepLabel {
+  color: #22c55e;
+}
+
+.step:hover:not(.disabled) .stepIcon {
   transform: translateY(-3px);
 }
 
 .step.current:hover .stepIcon {
   transform: translateY(-3px) scale(1.1);
+}
+
+/* Step connectors */
+.stepConnector {
+  position: absolute;
+  top: 28px; /* Center of the icon */
+  left: 58%; /* Right side of the step */
+  width: 84%; /* Length of connector to next step */
+  height: 2px;
+  z-index: 1;
+}
+
+.stepConnectorInner {
+  background-color: #e5e7eb;
+  height: 100%;
+  width: 100%;
+}
+
+.step.completed .stepConnector .stepConnectorInner {
+  background-color: #22c55e;
 }
 
 /* Form styling */
@@ -669,6 +803,175 @@
   animation: spin 1s linear infinite;
 }
 
+/* Fix inconsistent classnames */
+.tcc-form-section {
+  margin-bottom: 24px;
+  border-radius: 12px;
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.tcc-form-section.collapsed {
+  max-height: 64px;
+}
+
+.tcc-form-section.active-section {
+  border-color: #4285F4;
+  box-shadow: 0 4px 16px rgba(66, 133, 244, 0.15);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background-color: #f9fafb;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.section-header:hover {
+  background-color: #f3f4f6;
+}
+
+.active-section .section-header {
+  background-color: rgba(66, 133, 244, 0.08);
+}
+
+.tcc-form-section-title {
+  display: flex;
+  align-items: center;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+}
+
+.section-icon {
+  margin-right: 12px;
+  color: #4285F4;
+  font-size: 1.25rem;
+}
+
+.section-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+  transition: transform 0.3s ease;
+}
+
+.collapsed .section-toggle {
+  transform: rotate(-90deg);
+}
+
+.section-content {
+  padding: 24px;
+  animation: fadeIn 0.3s ease;
+}
+
+.tccTaxYearsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.tccTaxYearCard {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.tccTaxYearCard:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transform: translateY(-4px);
+}
+
+.tccTaxYearHeader {
+  background-color: #f3f4f6;
+  padding: 14px 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.tccTaxYearTitle {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.tccTaxYearBody {
+  padding: 20px;
+}
+
+.tcc-form-field {
+  margin-bottom: 20px;
+}
+
+.tcc-form-field label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #4b5563;
+  margin-bottom: 8px;
+}
+
+.tcc-form-field input,
+.tcc-form-field select,
+.tcc-form-field textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 0.95rem;
+  color: #1f2937;
+  transition: all 0.2s ease;
+  background-color: #ffffff;
+}
+
+.tcc-form-field input:focus,
+.tcc-form-field select:focus,
+.tcc-form-field textarea:focus {
+  outline: none;
+  border-color: #4285F4;
+  box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.15);
+}
+
+.input-with-prefix {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-prefix {
+  position: absolute;
+  left: 16px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.input-with-prefix input {
+  padding-left: 32px;
+}
+
+/* Standardize date inputs */
+input[type="date"] {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 40px !important;
+  position: relative;
+}
+
+/* Currency inputs */
+.numeric-input {
+  text-align: right;
+  font-family: monospace;
+  letter-spacing: 0.5px;
+}
+
 @keyframes spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
@@ -691,7 +994,8 @@
     min-width: 120px;
   }
   
-  .taxYearsGrid {
+  .taxYearsGrid, 
+  .tccTaxYearsGrid {
     grid-template-columns: 1fr;
   }
   
@@ -728,11 +1032,13 @@
     font-size: 0.75rem;
   }
   
-  .sectionHeader {
+  .sectionHeader, 
+  .section-header {
     padding: 12px 16px;
   }
   
-  .sectionContent {
+  .sectionContent, 
+  .section-content {
     padding: 16px;
   }
   
@@ -758,5 +1064,302 @@
   
   .stepLabel {
     font-size: 0.7rem;
+  }
+}
+
+/* Application Summary Styles */
+.summarySection {
+  padding: 16px 0;
+}
+
+.summaryHeading {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 24px 0 16px 0;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.summaryHeading:first-child {
+  margin-top: 0;
+}
+
+.summaryRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-bottom: 8px;
+}
+
+.summaryItem {
+  flex: 1;
+  min-width: 200px;
+}
+
+.summaryLabel {
+  display: block;
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-bottom: 4px;
+}
+
+.summaryValue {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #1f2937;
+}
+
+.summaryTable {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.summaryTableHeader {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  background-color: #f3f4f6;
+  font-weight: 600;
+  color: #4b5563;
+  font-size: 0.875rem;
+}
+
+.summaryTableRow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid #e5e7eb;
+}
+
+.summaryTableRow:nth-child(even) {
+  background-color: #f9fafb;
+}
+
+.summaryTableCell {
+  padding: 12px 16px;
+  font-size: 0.95rem;
+  color: #4b5563;
+}
+
+.summaryDocumentList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.summaryDocumentItem {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  border-radius: 6px;
+  background-color: #f9fafb;
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+  color: #4b5563;
+}
+
+.summaryDocumentIcon {
+  color: #4285F4;
+  margin-right: 12px;
+  font-size: 1.1rem;
+}
+
+.summaryEmptyMessage {
+  font-size: 0.95rem;
+  color: #6b7280;
+  font-style: italic;
+  background-color: #f9fafb;
+  padding: 16px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .summaryTableHeader,
+  .summaryTableRow {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .summaryTableHeader div:nth-child(3),
+  .summaryTableHeader div:nth-child(4),
+  .summaryTableRow div:nth-child(3),
+  .summaryTableRow div:nth-child(4) {
+    display: none;
+  }
+}
+
+/* Modal styles */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+.modal {
+  background-color: white;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  animation: slideUp 0.4s ease;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px;
+}
+
+.modalCloseButton {
+  background: transparent;
+  border: none;
+  color: #9ca3af;
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition: color 0.2s;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.modalCloseButton:hover {
+  color: #4b5563;
+  background-color: #f3f4f6;
+}
+
+.modalBody {
+  padding: 0 32px 32px;
+  text-align: center;
+}
+
+.successIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  background-color: rgba(74, 222, 128, 0.1);
+  border-radius: 50%;
+  margin: 0 auto 24px;
+  color: #22c55e;
+  font-size: 2.5rem;
+}
+
+.modalTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 16px 0;
+}
+
+.modalMessage {
+  font-size: 1rem;
+  color: #4b5563;
+  margin: 0 0 24px 0;
+  line-height: 1.5;
+}
+
+.applicationNumberBox {
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.applicationNumberLabel {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-bottom: 4px;
+}
+
+.applicationNumber {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+  font-family: monospace;
+  letter-spacing: 0.5px;
+}
+
+.modalInstruction {
+  font-size: 0.95rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+.modalFooter {
+  padding: 24px 32px;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.modalButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  gap: 8px;
+}
+
+.modalButtonSecondary {
+  background-color: white;
+  color: #4b5563;
+  border: 1px solid #d1d5db;
+}
+
+.modalButtonSecondary:hover {
+  background-color: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.modalButtonPrimary {
+  background-color: #4285F4;
+  color: white;
+  border: none;
+  box-shadow: 0 2px 6px rgba(66, 133, 244, 0.3);
+}
+
+.modalButtonPrimary:hover {
+  background-color: #2b6cb0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(66, 133, 244, 0.4);
+}
+
+.buttonIcon {
+  font-size: 1rem;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 } 

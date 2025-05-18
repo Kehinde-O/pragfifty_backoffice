@@ -29,7 +29,11 @@ import {
   FaChevronRight,
   FaTags,
   FaHome,
-  FaFilePdf
+  FaFilePdf,
+  FaEnvelope,
+  FaPhone,
+  FaFile,
+  FaImage
 } from 'react-icons/fa';
 import styles from './TCC.module.css';
 
@@ -276,6 +280,230 @@ const TCCApplicationDetails = () => {
     </div>
   );
 
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case 'details':
+        return (
+          <Card title="Taxpayer Information" icon={<FaUser />} className={styles.tccInfoCard}>
+            <div className={styles.tccDetailGrid}>
+              <div className={styles.tccDetailRow}>
+                <div className={styles.tccDetailCol}>
+                  <div className={styles.tccFormGroup}>
+                    <div className={styles.tccFormLabel}>Full Name</div>
+                    <div className={styles.tccFormValue}>{application.taxpayerName}</div>
+                  </div>
+                </div>
+                
+                <div className={styles.tccDetailCol}>
+                  <div className={styles.tccFormGroup}>
+                    <div className={styles.tccFormLabel}>TIN</div>
+                    <div className={styles.tccFormValue}>{application.tin}</div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className={styles.tccDetailRow}>
+                <div className={styles.tccDetailCol}>
+                  <div className={styles.tccFormGroup}>
+                    <div className={styles.tccFormLabel}>Email Address</div>
+                    <div className={styles.tccFormValue}>
+                      <FaEnvelope className={styles.tccMetaIcon} /> {application.email}
+                    </div>
+                  </div>
+                </div>
+                
+                <div className={styles.tccDetailCol}>
+                  <div className={styles.tccFormGroup}>
+                    <div className={styles.tccFormLabel}>Phone Number</div>
+                    <div className={styles.tccFormValue}>
+                      <FaPhone className={styles.tccMetaIcon} /> {application.phone}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className={styles.tccDetailRow}>
+                <div className={styles.tccDetailCol}>
+                  <div className={styles.tccFormGroup}>
+                    <div className={styles.tccFormLabel}>Source of Income</div>
+                    <div className={styles.tccFormValue}>{getSourceOfIncomeLabel(application.sourceOfIncome)}</div>
+                  </div>
+                </div>
+                
+                <div className={styles.tccDetailCol}>
+                  <div className={styles.tccFormGroup}>
+                    <div className={styles.tccFormLabel}>Payment Platform</div>
+                    <div className={styles.tccFormValue}>{application.platformPayment === 'Y' ? 'Yes' : 'No'}</div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className={styles.tccDetailRow}>
+                <div className={styles.tccDetailColWide}>
+                  <div className={styles.tccFormGroup}>
+                    <div className={styles.tccFormLabel}>Comment/Note</div>
+                    <div className={styles.tccFormValue}>{application.comment || 'No comments'}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Card>
+        );
+        
+      case 'payments':
+        return (
+          <Card title="Income & Tax Information" icon={<FaMoneyBillWave />} className={styles.tccInfoCard}>
+            <div className={styles.tccTaxYearsGrid}>
+              {application.incomeDetails.map((income, index) => (
+                <div key={index} className={styles.tccTaxYearCard}>
+                  <div className={styles.tccTaxYearHeader}>
+                    <h4 className={styles.tccTaxYearTitle}>
+                      Tax Year {income.year}
+                    </h4>
+                  </div>
+                  
+                  <div className={styles.tccTaxYearBody}>
+                    <div className={styles.tccTaxYearSummary}>
+                      <div className={styles.tccTaxDataItem}>
+                        <div className={styles.tccTaxDataLabel}>Annual Income</div>
+                        <div className={styles.tccTaxDataValue}>{formatCurrency(income.annualIncome)}</div>
+                      </div>
+                      
+                      <div className={styles.tccTaxDataItem}>
+                        <div className={styles.tccTaxDataLabel}>Tax Paid</div>
+                        <div className={styles.tccTaxDataValue}>{formatCurrency(income.taxAmount)}</div>
+                      </div>
+                      
+                      <div className={styles.tccTaxDataItem}>
+                        <div className={styles.tccTaxDataLabel}>Receipt Number</div>
+                        <div className={styles.tccTaxDataValue}>{income.taxReceiptNo}</div>
+                      </div>
+                      
+                      <div className={styles.tccTaxDataItem}>
+                        <div className={styles.tccTaxDataLabel}>Receipt Date</div>
+                        <div className={styles.tccTaxDataValue}>{formatDate(income.taxReceiptDate)}</div>
+                      </div>
+                      
+                      <div className={styles.tccTaxDataItem}>
+                        <div className={styles.tccTaxDataLabel}>Outstanding Tax</div>
+                        <div className={`${styles.tccTaxDataValue} ${income.outstandingTax > 0 ? styles.highlight : ''}`}>
+                          {formatCurrency(income.outstandingTax)}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            <div className={styles.tccStatusInfoBar}>
+              <div className={styles.tccStatusInfoItem}>
+                <div className={styles.tccStatusInfoLabel}>Total Income (3 Years)</div>
+                <div className={styles.tccStatusInfoValue}>
+                  {formatCurrency(application.incomeDetails.reduce((total, income) => total + income.annualIncome, 0))}
+                </div>
+              </div>
+              
+              <div className={styles.tccStatusInfoItem}>
+                <div className={styles.tccStatusInfoLabel}>Total Tax Paid</div>
+                <div className={styles.tccStatusInfoValue}>
+                  {formatCurrency(application.incomeDetails.reduce((total, income) => total + income.taxAmount, 0))}
+                </div>
+              </div>
+              
+              <div className={styles.tccStatusInfoItem}>
+                <div className={styles.tccStatusInfoLabel}>Outstanding Tax</div>
+                <div className={styles.tccStatusInfoValue}>
+                  {formatCurrency(application.incomeDetails.reduce((total, income) => total + income.outstandingTax, 0))}
+                </div>
+              </div>
+            </div>
+          </Card>
+        );
+        
+      case 'documents':
+        return (
+          <Card title="Submitted Documents" icon={<FaFileAlt />} className={styles.tccInfoCard}>
+            <div className={styles.tccDocumentsGrid}>
+              {application.documents.map((doc) => (
+                <div key={doc.id} className={styles.tccEnhancedDocumentCard}>
+                  <div className={styles.tccDocumentCardHeader}>
+                    <div className={styles.tccDocumentTypeInfo}>
+                      <div className={styles.tccDocumentTypeIcon}>
+                        {doc.fileType === 'PDF' ? <FaFilePdf /> : 
+                         doc.fileType === 'JPEG' || doc.fileType === 'PNG' ? <FaImage /> : 
+                         <FaFile />}
+                      </div>
+                      <div className={styles.tccDocumentTypeName}>
+                        {doc.type}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className={styles.tccDocumentCardBody}>
+                    <div className={styles.tccDocumentName}>{doc.name}</div>
+                    
+                    <div className={styles.tccDocumentMetaData}>
+                      <div className={styles.tccDocumentMetaItem}>
+                        <FaCalendarAlt className={styles.tccDocumentMetaIcon} />
+                        Uploaded: {formatDate(doc.uploadDate)}
+                      </div>
+                      
+                      <div className={styles.tccDocumentMetaItem}>
+                        <FaFile className={styles.tccDocumentMetaIcon} />
+                        {doc.fileType}
+                      </div>
+                    </div>
+                    
+                    <div className={styles.tccDocumentCardActions}>
+                      <button className={styles.tccDocumentActionButton}>
+                        <FaEye /> View
+                      </button>
+                      <button className={styles.tccDocumentActionButton}>
+                        <FaDownload /> Download
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Card>
+        );
+        
+      case 'history':
+        return (
+          <Card title="Application Timeline" icon={<FaHistory />} className={styles.tccInfoCard}>
+            <div className={styles.tccTimeline}>
+              {application.timeline.map((event, index) => (
+                <div key={index} className={styles.tccTimelineItem}>
+                  <div className={`${styles.tccTimelineIcon} ${styles[event.status.toLowerCase()]}`}>
+                    {event.status === 'APPROVED' && <FaCheckCircle />}
+                    {event.status === 'REJECTED' && <FaTimesCircle />}
+                    {(event.status === 'UNDER_REVIEW' || event.status === 'SUBMITTED') && <FaClock />}
+                  </div>
+                  
+                  <div className={styles.tccTimelineContent}>
+                    <div className={styles.tccTimelineDate}>
+                      {formatDate(event.date)}
+                    </div>
+                    <div className={styles.tccTimelineTitle}>
+                      <StatusBadge status={event.status} /> {event.comment}
+                    </div>
+                    <div className={styles.tccTimelineActor}>
+                      <FaUser /> {event.actor}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Card>
+        );
+        
+      default:
+        return null;
+    }
+  };
+
   if (loading) {
     return renderSkeleton();
   }
@@ -328,7 +556,7 @@ const TCCApplicationDetails = () => {
 
   return (
     <div className={styles.tccApplicationContainer}>
-      {/* Header with Back Button and Actions */}
+      {/* Back button and header */}
       <div className={styles.tccDetailsHeader}>
         <div className={styles.tccHeaderLeft}>
           <button 
@@ -340,403 +568,212 @@ const TCCApplicationDetails = () => {
           
           <div className={styles.tccBreadcrumb}>
             <span className={styles.breadcrumbItem}>
-              <FaHome /> Home
+              <FaHome />
+              <span>Dashboard</span>
             </span>
             <span className={styles.breadcrumbSeparator}>
               <FaChevronRight />
             </span>
             <span className={styles.breadcrumbItem}>
-              TCC Applications
+              <FaFileAlt />
+              <span>TCC Applications</span>
             </span>
             <span className={styles.breadcrumbSeparator}>
               <FaChevronRight />
             </span>
             <span className={`${styles.breadcrumbItem} ${styles.current}`}>
-              {application.applicationNumber}
+              <FaIdCard />
+              <span>Application Details</span>
             </span>
           </div>
         </div>
-        
-        <div className={styles.tccActionButtons}>
-          {application.status === 'APPROVED' && (
-            <>
-              <Button 
-                variant="outline" 
-                startIcon={<FaPrint />}
-                onClick={() => console.log('Print TCC')}
-              >
-                Print TCC
-              </Button>
-              <Button 
-                variant="outline" 
-                startIcon={<FaDownload />}
-                onClick={() => console.log('Download TCC')}
-              >
-                Download TCC
-              </Button>
-            </>
-          )}
-          
-          {(application.status === 'SUBMITTED' || application.status === 'UNDER_REVIEW') && (
-            <Button 
-              variant="primary" 
-              startIcon={<FaEdit />}
-              onClick={handleProcess}
-            >
-              Process Application
-            </Button>
-          )}
-        </div>
       </div>
-      
-      {/* Application Title and Meta Info */}
+
+      {/* Page title */}
       <div className={styles.tccPageTitleSection}>
-        <h1 className={styles.tccTitle}>
-          TCC Application {application.applicationNumber}
-        </h1>
+        <h1 className={styles.tccTitle}>TCC Application Details</h1>
         
-        <div className={styles.tccApplicationMeta}>
-          <div className={styles.tccMetaItem}>
-            <FaUser className={styles.tccMetaIcon} />
-            <span className={styles.tccMetaLabel}>Taxpayer:</span>
-            <span className={styles.tccMetaValue}>{application.taxpayerName}</span>
+        {!loading && application && (
+          <div className={styles.tccApplicationMeta}>
+            <div className={styles.tccMetaItem}>
+              <FaIdCard className={styles.tccMetaIcon} />
+              <span className={styles.tccMetaLabel}>Application ID:</span>
+              <span className={styles.tccMetaValue}>{application.applicationNumber}</span>
+            </div>
+            <div className={styles.tccMetaItem}>
+              <FaCalendarAlt className={styles.tccMetaIcon} />
+              <span className={styles.tccMetaLabel}>Submitted:</span>
+              <span className={styles.tccMetaValue}>{formatDate(application.applicationDate)}</span>
+            </div>
+            <div className={styles.tccMetaItem}>
+              <FaTags className={styles.tccMetaIcon} />
+              <span className={styles.tccMetaLabel}>Status:</span>
+              <span className={styles.tccMetaValue}>
+                <StatusBadge status={application.status} />
+              </span>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {loading ? (
+        <div className={styles.tccLoadingSkeleton}>
+          <div className={styles.tccSkeletonHeader}></div>
+          <div className={styles.tccSkeletonStats}>
+            <div className={styles.tccSkeletonCard}></div>
+            <div className={styles.tccSkeletonCard}></div>
+            <div className={styles.tccSkeletonCard}></div>
+          </div>
+          <div className={styles.tccSkeletonContent}>
+            <div className={styles.tccSkeletonTabs}></div>
+            <div className={styles.tccSkeletonPanel}></div>
+          </div>
+        </div>
+      ) : error ? (
+        <div className={styles.tccErrorState}>
+          <FaExclamationTriangle />
+          <h3>Error Loading Application</h3>
+          <p>{error}</p>
+          <Button onClick={handleBackToList} startIcon={<FaArrowLeft />}>
+            Return to Applications
+          </Button>
+        </div>
+      ) : (
+        <>
+          {/* Status Summary Cards */}
+          <div className={styles.tccStatusSummary}>
+            <StatsCard
+              title="Taxpayer"
+              value={application.taxpayerName}
+              icon={<FaUser />}
+              color="primary"
+              animationStyle="fade"
+              footer={
+                <div className={styles.tccMetaItem}>
+                  <FaIdCard className={styles.tccMetaIcon} />
+                  <span className={styles.tccMetaValue}>{application.tin}</span>
+                </div>
+              }
+            />
+            
+            <StatsCard
+              title="TCC Number"
+              value={application.tccNumber || 'Not Issued'}
+              icon={<FaFileInvoice />}
+              color="success"
+              animationStyle="fade"
+              footer={application.issueDate ? (
+                <div className={styles.tccMetaItem}>
+                  <FaCalendarAlt className={styles.tccMetaIcon} />
+                  <span className={styles.tccMetaValue}>Issued: {formatDate(application.issueDate)}</span>
+                </div>
+              ) : null}
+            />
+            
+            <StatsCard
+              title="Tax Year"
+              value={application.year}
+              icon={<FaMoneyBillWave />}
+              color="info"
+              animationStyle="fade"
+              footer={
+                <div className={styles.tccMetaItem}>
+                  <FaCalendarAlt className={styles.tccMetaIcon} />
+                  <span className={styles.tccMetaValue}>{application.sourceOfIncome}</span>
+                </div>
+              }
+            />
+            
+            <StatsCard
+              title="Status"
+              value={<StatusBadge status={application.status} />}
+              icon={<FaClipboardList />}
+              color={
+                application.status === 'APPROVED' ? 'success' :
+                application.status === 'REJECTED' ? 'danger' :
+                application.status === 'UNDER_REVIEW' ? 'warning' : 'primary'
+              }
+              animationStyle="fade"
+            />
           </div>
           
-          <div className={styles.tccMetaItem}>
-            <FaIdCard className={styles.tccMetaIcon} />
-            <span className={styles.tccMetaLabel}>TIN:</span>
-            <span className={styles.tccMetaValue}>{application.tin}</span>
+          {/* Tabs for different sections */}
+          <div className={styles.tccTabs}>
+            <button 
+              className={`${styles.tccTabButton} ${activeTab === 'details' ? styles.active : ''}`} 
+              onClick={() => setActiveTab('details')}
+            >
+              <FaInfoCircle />
+              Details
+            </button>
+            <button 
+              className={`${styles.tccTabButton} ${activeTab === 'payments' ? styles.active : ''}`} 
+              onClick={() => setActiveTab('payments')}
+            >
+              <FaMoneyBillWave />
+              Tax Payments
+            </button>
+            <button 
+              className={`${styles.tccTabButton} ${activeTab === 'documents' ? styles.active : ''}`} 
+              onClick={() => setActiveTab('documents')}
+            >
+              <FaFileAlt />
+              Documents
+            </button>
+            <button 
+              className={`${styles.tccTabButton} ${activeTab === 'history' ? styles.active : ''}`} 
+              onClick={() => setActiveTab('history')}
+            >
+              <FaHistory />
+              History
+            </button>
           </div>
           
-          <div className={styles.tccMetaItem}>
-            <FaCalendarAlt className={styles.tccMetaIcon} />
-            <span className={styles.tccMetaLabel}>Date:</span>
-            <span className={styles.tccMetaValue}>{formatDate(application.applicationDate)}</span>
+          {/* Main Content based on active tab */}
+          <div className={styles.tccTabContent}>
+            {renderTabContent()}
           </div>
           
-          <div className={styles.tccMetaItem}>
-            <FaInfoCircle className={styles.tccMetaIcon} />
-            <span className={styles.tccMetaLabel}>Status:</span>
-            <StatusBadge status={application.status} />
-          </div>
-        </div>
-      </div>
-      
-      {/* Status Summary Cards */}
-      <div className={styles.tccStatusSummary}>
-        <div className={`${styles.tccStatusCard} ${styles.primary}`}>
-          <div className={styles.tccStatusIcon}>
-            <FaFileAlt />
-          </div>
-          <div className={styles.tccStatusInfo}>
-            <div className={styles.tccStatusLabel}>Application</div>
-            <div className={styles.tccStatusValue}>{application.applicationNumber}</div>
-          </div>
-        </div>
-        
-        <div className={`${styles.tccStatusCard} ${application.status === 'APPROVED' ? styles.success : styles.warning}`}>
-          <div className={styles.tccStatusIcon}>
-            {application.status === 'APPROVED' ? <FaCheckCircle /> : <FaClock />}
-          </div>
-          <div className={styles.tccStatusInfo}>
-            <div className={styles.tccStatusLabel}>TCC Status</div>
-            <div className={styles.tccStatusValue}>
-              <StatusBadge status={application.status} />
-            </div>
-          </div>
-        </div>
-        
-        <div className={`${styles.tccStatusCard} ${styles.info}`}>
-          <div className={styles.tccStatusIcon}>
-            <FaFileInvoice />
-          </div>
-          <div className={styles.tccStatusInfo}>
-            <div className={styles.tccStatusLabel}>TCC Number</div>
-            <div className={styles.tccStatusValue}>
-              {application.tccNumber || 'Not issued yet'}
-            </div>
-          </div>
-        </div>
-        
-        <div className={`${styles.tccStatusCard} ${styles.warning}`}>
-          <div className={styles.tccStatusIcon}>
-            <FaCalendarAlt />
-          </div>
-          <div className={styles.tccStatusInfo}>
-            <div className={styles.tccStatusLabel}>Tax Year</div>
-            <div className={styles.tccStatusValue}>{application.year}</div>
-          </div>
-        </div>
-      </div>
-      
-      {/* Tab Navigation */}
-      <div className={styles.tccTabs}>
-        <button 
-          className={`${styles.tccTabButton} ${activeTab === 'details' ? styles.active : ''}`}
-          onClick={() => setActiveTab('details')}
-        >
-          <FaUser /> Taxpayer Details
-        </button>
-        
-        <button 
-          className={`${styles.tccTabButton} ${activeTab === 'income' ? styles.active : ''}`}
-          onClick={() => setActiveTab('income')}
-        >
-          <FaMoneyBillWave /> Income & Tax
-        </button>
-        
-        <button 
-          className={`${styles.tccTabButton} ${activeTab === 'documents' ? styles.active : ''}`}
-          onClick={() => setActiveTab('documents')}
-        >
-          <FaFileAlt /> Documents
-        </button>
-        
-        <button 
-          className={`${styles.tccTabButton} ${activeTab === 'history' ? styles.active : ''}`}
-          onClick={() => setActiveTab('history')}
-        >
-          <FaHistory /> History
-        </button>
-      </div>
-      
-      {/* Tab Content */}
-      <div className={styles.tccTabContent}>
-        {/* Taxpayer Details Tab */}
-        {activeTab === 'details' && (
-          <div className={styles.tccInfoCard}>
-            <div className={styles.tccCardHeader}>
-              <h3 className={styles.tccCardTitle}>
-                <FaUser className={styles.tccCardIcon} /> Taxpayer Information
-              </h3>
-            </div>
+          {/* Action buttons */}
+          <div className={styles.tccActionButtons}>
+            {application.status !== 'APPROVED' && application.status !== 'REJECTED' && (
+              <Button 
+                variant="primary" 
+                startIcon={<FaEdit />}
+                onClick={handleProcess}
+              >
+                Process Application
+              </Button>
+            )}
             
-            <div className={styles.tccCardBody}>
-              <div className={styles.tccDetailGrid}>
-                <div className={styles.tccDetailRow}>
-                  <div className={styles.tccDetailCol}>
-                    <div className={styles.tccFormGroup}>
-                      <div className={styles.tccFormLabel}>Full Name</div>
-                      <div className={styles.tccFormValue}>{application.taxpayerName}</div>
-                    </div>
-                  </div>
-                  
-                  <div className={styles.tccDetailCol}>
-                    <div className={styles.tccFormGroup}>
-                      <div className={styles.tccFormLabel}>TIN</div>
-                      <div className={styles.tccFormValue}>{application.tin}</div>
-                    </div>
-                  </div>
-                </div>
+            {application.status === 'APPROVED' && (
+              <>
+                <Button 
+                  variant="outlined" 
+                  startIcon={<FaEye />}
+                  onClick={() => window.open(`/tcc-preview/${id}`, '_blank')}
+                >
+                  Preview TCC
+                </Button>
                 
-                <div className={styles.tccDetailRow}>
-                  <div className={styles.tccDetailCol}>
-                    <div className={styles.tccFormGroup}>
-                      <div className={styles.tccFormLabel}>Email Address</div>
-                      <div className={styles.tccFormValue}>{application.email}</div>
-                    </div>
-                  </div>
-                  
-                  <div className={styles.tccDetailCol}>
-                    <div className={styles.tccFormGroup}>
-                      <div className={styles.tccFormLabel}>Phone Number</div>
-                      <div className={styles.tccFormValue}>{application.phone}</div>
-                    </div>
-                  </div>
-                </div>
+                <Button 
+                  variant="primary" 
+                  startIcon={<FaDownload />}
+                >
+                  Download TCC
+                </Button>
                 
-                <div className={styles.tccDetailRow}>
-                  <div className={styles.tccDetailCol}>
-                    <div className={styles.tccFormGroup}>
-                      <div className={styles.tccFormLabel}>Source of Income</div>
-                      <div className={styles.tccFormValue}>{getSourceOfIncomeLabel(application.sourceOfIncome)}</div>
-                    </div>
-                  </div>
-                  
-                  <div className={styles.tccDetailCol}>
-                    <div className={styles.tccFormGroup}>
-                      <div className={styles.tccFormLabel}>Payment Platform</div>
-                      <div className={styles.tccFormValue}>{application.platformPayment === 'Y' ? 'Yes' : 'No'}</div>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className={styles.tccDetailRow}>
-                  <div className={styles.tccDetailColWide}>
-                    <div className={styles.tccFormGroup}>
-                      <div className={styles.tccFormLabel}>Comment/Note</div>
-                      <div className={styles.tccFormValue}>{application.comment || 'No comments'}</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+                <Button 
+                  variant="secondary" 
+                  startIcon={<FaPrint />}
+                >
+                  Print TCC
+                </Button>
+              </>
+            )}
           </div>
-        )}
-        
-        {/* Income & Tax Tab */}
-        {activeTab === 'income' && (
-          <div className={styles.tccInfoCard}>
-            <div className={styles.tccCardHeader}>
-              <h3 className={styles.tccCardTitle}>
-                <FaMoneyBillWave className={styles.tccCardIcon} /> Income & Tax Details
-              </h3>
-            </div>
-            
-            <div className={styles.tccCardBody}>
-              <div className={styles.tccTaxYearsGrid}>
-                {application.incomeDetails.map((income, index) => (
-                  <div key={index} className={styles.tccTaxYearCard}>
-                    <div className={styles.tccTaxYearHeader}>
-                      <h4 className={styles.tccTaxYearTitle}>
-                        Tax Year {income.year}
-                      </h4>
-                    </div>
-                    
-                    <div className={styles.tccTaxYearBody}>
-                      <div className={styles.tccTaxYearSummary}>
-                        <div className={styles.tccTaxDataItem}>
-                          <div className={styles.tccTaxDataLabel}>Annual Income</div>
-                          <div className={styles.tccTaxDataValue}>{formatCurrency(income.annualIncome)}</div>
-                        </div>
-                        
-                        <div className={styles.tccTaxDataItem}>
-                          <div className={styles.tccTaxDataLabel}>Tax Paid</div>
-                          <div className={styles.tccTaxDataValue}>{formatCurrency(income.taxAmount)}</div>
-                        </div>
-                        
-                        <div className={styles.tccTaxDataItem}>
-                          <div className={styles.tccTaxDataLabel}>Receipt Number</div>
-                          <div className={styles.tccTaxDataValue}>{income.taxReceiptNo}</div>
-                        </div>
-                        
-                        <div className={styles.tccTaxDataItem}>
-                          <div className={styles.tccTaxDataLabel}>Receipt Date</div>
-                          <div className={styles.tccTaxDataValue}>{formatDate(income.taxReceiptDate)}</div>
-                        </div>
-                        
-                        <div className={styles.tccTaxDataItem}>
-                          <div className={styles.tccTaxDataLabel}>Outstanding Tax</div>
-                          <div className={`${styles.tccTaxDataValue} ${income.outstandingTax > 0 ? styles.highlight : ''}`}>
-                            {formatCurrency(income.outstandingTax)}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              
-              <div className={styles.tccStatusInfoBar}>
-                <div className={styles.tccStatusInfoItem}>
-                  <div className={styles.tccStatusInfoLabel}>Total Income (3 Years)</div>
-                  <div className={styles.tccStatusInfoValue}>
-                    {formatCurrency(application.incomeDetails.reduce((total, income) => total + income.annualIncome, 0))}
-                  </div>
-                </div>
-                
-                <div className={styles.tccStatusInfoItem}>
-                  <div className={styles.tccStatusInfoLabel}>Total Tax Paid</div>
-                  <div className={styles.tccStatusInfoValue}>
-                    {formatCurrency(application.incomeDetails.reduce((total, income) => total + income.taxAmount, 0))}
-                  </div>
-                </div>
-                
-                <div className={styles.tccStatusInfoItem}>
-                  <div className={styles.tccStatusInfoLabel}>Outstanding Tax</div>
-                  <div className={styles.tccStatusInfoValue}>
-                    {formatCurrency(application.incomeDetails.reduce((total, income) => total + income.outstandingTax, 0))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-        
-        {/* Documents Tab */}
-        {activeTab === 'documents' && (
-          <div className={styles.tccInfoCard}>
-            <div className={styles.tccCardHeader}>
-              <h3 className={styles.tccCardTitle}>
-                <FaFileAlt className={styles.tccCardIcon} /> Submitted Documents
-              </h3>
-            </div>
-            
-            <div className={styles.tccCardBody}>
-              <div className={styles.tccDocumentsGrid}>
-                {application.documents.map((doc) => (
-                  <div key={doc.id} className={styles.tccDocumentCard}>
-                    <div className={styles.tccDocumentIcon}>
-                      {doc.fileType === 'PDF' ? <FaFilePdf /> : <FaFileAlt />}
-                    </div>
-                    
-                    <div className={styles.tccDocumentInfo}>
-                      <div className={styles.tccDocumentName}>{doc.name}</div>
-                      <div className={styles.tccDocumentMeta}>
-                        {doc.type} • {formatDate(doc.uploadDate)}
-                      </div>
-                    </div>
-                    
-                    <div className={styles.tccDocumentActions}>
-                      <button 
-                        className={styles.iconButton}
-                        title="View Document"
-                        onClick={() => console.log(`View document ${doc.id}`)}
-                      >
-                        <FaEye />
-                      </button>
-                      <button 
-                        className={styles.iconButton}
-                        title="Download Document"
-                        onClick={() => console.log(`Download document ${doc.id}`)}
-                      >
-                        <FaDownload />
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-        
-        {/* History Tab */}
-        {activeTab === 'history' && (
-          <div className={styles.tccInfoCard}>
-            <div className={styles.tccCardHeader}>
-              <h3 className={styles.tccCardTitle}>
-                <FaHistory className={styles.tccCardIcon} /> Application History
-              </h3>
-            </div>
-            
-            <div className={styles.tccCardBody}>
-              <div className={styles.tccTimeline}>
-                {application.timeline.map((event, index) => (
-                  <div key={index} className={styles.tccTimelineItem}>
-                    <div className={`${styles.tccTimelineIcon} ${styles[event.status.toLowerCase()]}`}>
-                      {event.status === 'APPROVED' && <FaCheckCircle />}
-                      {event.status === 'REJECTED' && <FaTimesCircle />}
-                      {(event.status === 'UNDER_REVIEW' || event.status === 'SUBMITTED') && <FaClock />}
-                    </div>
-                    
-                    <div className={styles.tccTimelineContent}>
-                      <div className={styles.tccTimelineDate}>
-                        {formatDate(event.date)}
-                      </div>
-                      <div className={styles.tccTimelineTitle}>
-                        <StatusBadge status={event.status} /> {event.comment}
-                      </div>
-                      <div className={styles.tccTimelineActor}>
-                        <FaUser /> {event.actor}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
+        </>
+      )}
     </div>
   );
 };
