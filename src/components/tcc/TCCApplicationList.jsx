@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, Button } from '../common/ui';
 import { 
   FaPlus, 
   FaSearch, 
@@ -20,7 +19,7 @@ import {
   FaClipboardCheck,
   FaListAlt
 } from 'react-icons/fa';
-import styles from './TCC.module.css';
+import styles from './TCCApplicationList.module.css';
 
 const TCCApplicationList = () => {
   const navigate = useNavigate();
@@ -218,34 +217,16 @@ const TCCApplicationList = () => {
     setFilterStatus('SUBMITTED');
   };
 
-  // Empty state component
-  const EmptyState = ({ message, filterActive, onClearFilters }) => (
-    <div className={styles.emptyStateTable}>
-      <div className={styles.emptyIcon}>
-        <FaExclamationTriangle />
-      </div>
-      <p>{message}</p>
-      {filterActive && (
-        <button 
-          onClick={onClearFilters}
-          className={styles.clearFiltersButton}
-        >
-          Clear Filters
-        </button>
-      )}
-    </div>
-  );
-
   return (
-    <div className={styles.tccApplicationContainer}>
-      <div className={styles.tccHeaderWrapper}>
-        <div className={styles.tccHeaderContent}>
-          <h1 className={styles.tccHeaderTitle}>TCC Applications</h1>
-          <p className={styles.tccHeaderSubtitle}>Manage Tax Clearance Certificate Applications</p>
+    <div className={styles.applicationListContainer}>
+      <div className={styles.header}>
+        <div className={styles.headerLeft}>
+          <h1 className={styles.title}>TCC Applications</h1>
+          <p className={styles.subtitle}>Manage Tax Clearance Certificate Applications</p>
         </div>
-        <div className={styles.tccHeaderActions}>
+        <div className={styles.headerActions}>
           <button 
-            className={styles.tccRefreshButton}
+            className={styles.refreshButton}
             onClick={handleRefresh}
             disabled={loading}
           >
@@ -253,7 +234,7 @@ const TCCApplicationList = () => {
             Refresh
           </button>
           <button 
-            className={styles.tccAddButton}
+            className={styles.addButton}
             onClick={handleCreateTCC}
           >
             <FaPlus />
@@ -263,57 +244,57 @@ const TCCApplicationList = () => {
       </div>
 
       {/* Stats Cards */}
-      <div className={styles.tccStatsRow}>
-        <div className={`${styles.tccStatsCard} ${styles.tccStatsPrimary}`}>
-          <div className={styles.tccStatsIconWrapper}>
-            <FaFileAlt className={styles.tccStatsIcon} />
+      <div className={styles.statsRow}>
+        <div className={`${styles.statsCard} ${styles.statsPrimary}`}>
+          <div className={styles.statsIconWrapper}>
+            <FaFileAlt className={styles.statsIcon} />
           </div>
-          <div className={styles.tccStatsContent}>
-            <div className={styles.tccStatsValue}>{totalApplications}</div>
-            <div className={styles.tccStatsLabel}>Total Applications</div>
+          <div className={styles.statsContent}>
+            <div className={styles.statsValue}>{totalApplications}</div>
+            <div className={styles.statsLabel}>Total Applications</div>
           </div>
         </div>
         
         <div 
-          className={`${styles.tccStatsCard} ${styles.tccStatsWarning}`}
+          className={`${styles.statsCard} ${styles.statsWarning}`}
           onClick={pendingCount > 0 ? handleProcessNow : undefined}
           style={pendingCount > 0 ? {cursor: 'pointer'} : {}}
         >
-          <div className={styles.tccStatsIconWrapper}>
-            <FaRegClock className={styles.tccStatsIcon} />
+          <div className={styles.statsIconWrapper}>
+            <FaRegClock className={styles.statsIcon} />
           </div>
-          <div className={styles.tccStatsContent}>
-            <div className={styles.tccStatsValue}>{pendingCount}</div>
-            <div className={styles.tccStatsLabel}>Pending Processing</div>
+          <div className={styles.statsContent}>
+            <div className={styles.statsValue}>{pendingCount}</div>
+            <div className={styles.statsLabel}>Pending Processing</div>
           </div>
         </div>
         
-        <div className={`${styles.tccStatsCard} ${styles.tccStatsSuccess}`}>
-          <div className={styles.tccStatsIconWrapper}>
-            <FaCheckCircle className={styles.tccStatsIcon} />
+        <div className={`${styles.statsCard} ${styles.statsSuccess}`}>
+          <div className={styles.statsIconWrapper}>
+            <FaCheckCircle className={styles.statsIcon} />
           </div>
-          <div className={styles.tccStatsContent}>
-            <div className={styles.tccStatsValue}>{approvedCount}</div>
-            <div className={styles.tccStatsLabel}>Approved TCCs</div>
+          <div className={styles.statsContent}>
+            <div className={styles.statsValue}>{approvedCount}</div>
+            <div className={styles.statsLabel}>Approved TCCs</div>
           </div>
         </div>
       </div>
 
       {/* Application List Card */}
-      <div className={styles.tccListCard}>
-        <div className={styles.tccListCardHeader}>
-          <div className={styles.tccListCardTitle}>
-            <FaListAlt className={styles.tccListCardIcon} />
+      <div className={styles.listCard}>
+        <div className={styles.listCardHeader}>
+          <div className={styles.listCardTitle}>
+            <FaListAlt className={styles.listCardIcon} />
             <span>Application List</span>
           </div>
-          <div className={styles.tccListCardFilters}>
-            <div className={styles.tccStatusFilter}>
-              <span className={styles.tccFilterLabel}>Status:</span>
-              <div className={styles.tccSelectWrapper}>
+          <div className={styles.listCardFilters}>
+            <div className={styles.statusFilter}>
+              <span className={styles.filterLabel}>Status:</span>
+              <div className={styles.selectWrapper}>
                 <select 
                   value={filterStatus}
                   onChange={(e) => setFilterStatus(e.target.value)}
-                  className={styles.tccFilterSelect}
+                  className={styles.filterSelect}
                 >
                   <option value="ALL">All Statuses</option>
                   <option value="SUBMITTED">Submitted</option>
@@ -324,13 +305,13 @@ const TCCApplicationList = () => {
               </div>
             </div>
             
-            <div className={styles.tccYearFilter}>
-              <span className={styles.tccFilterLabel}>Year:</span>
-              <div className={styles.tccSelectWrapper}>
+            <div className={styles.yearFilter}>
+              <span className={styles.filterLabel}>Year:</span>
+              <div className={styles.selectWrapper}>
                 <select 
                   value={filterYear}
                   onChange={(e) => setFilterYear(e.target.value)}
-                  className={styles.tccFilterSelect}
+                  className={styles.filterSelect}
                 >
                   <option value="ALL">All Years</option>
                   {availableYears.map(year => (
@@ -342,20 +323,20 @@ const TCCApplicationList = () => {
           </div>
         </div>
         
-        <div className={styles.tccListCardBody}>
-          <div className={styles.tccSearchContainer}>
-            <div className={styles.tccSearchInputWrapper}>
-              <FaSearch className={styles.tccSearchIcon} />
+        <div className={styles.listCardBody}>
+          <div className={styles.searchContainer}>
+            <div className={styles.searchInputWrapper}>
+              <FaSearch className={styles.searchIcon} />
               <input
                 type="text"
                 placeholder="Search by application #, taxpayer or TIN..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className={styles.tccSearchInput}
+                className={styles.searchInput}
               />
               {searchTerm && (
                 <button 
-                  className={styles.tccClearSearchButton}
+                  className={styles.clearSearchButton}
                   onClick={() => setSearchTerm('')}
                 >
                   <FaTimes />
@@ -366,11 +347,11 @@ const TCCApplicationList = () => {
 
           {/* Error Display */}
           {error && (
-            <div className={styles.tccErrorMessage}>
+            <div className={styles.errorMessage}>
               <FaExclamationTriangle /> {error}
               <button 
                 onClick={handleRefresh} 
-                className={styles.tccRetryButton}
+                className={styles.retryButton}
               >
                 Retry
               </button>
@@ -378,8 +359,8 @@ const TCCApplicationList = () => {
           )}
 
           {/* Table */}
-          <div className={styles.tccTableContainer}>
-            <table className={styles.tccApplicationTable}>
+          <div className={styles.tableContainer}>
+            <table className={styles.applicationTable}>
               <thead>
                 <tr>
                   <th>Application #</th>
@@ -396,25 +377,25 @@ const TCCApplicationList = () => {
                 {loading ? (
                   // Skeleton Loading State
                   Array.from({ length: 5 }).map((_, index) => (
-                    <tr key={`skeleton-${index}`} className={styles.tccSkeletonRow}>
-                      <td><div className={styles.tccSkeletonCell}></div></td>
-                      <td><div className={styles.tccSkeletonCell}></div></td>
-                      <td><div className={styles.tccSkeletonCell}></div></td>
-                      <td><div className={styles.tccSkeletonCell}></div></td>
-                      <td><div className={styles.tccSkeletonCell}></div></td>
-                      <td><div className={styles.tccSkeletonBadge}></div></td>
-                      <td><div className={styles.tccSkeletonCell}></div></td>
-                      <td><div className={styles.tccSkeletonActions}></div></td>
+                    <tr key={`skeleton-${index}`} className={styles.skeletonRow}>
+                      <td><div className={styles.skeletonCell}></div></td>
+                      <td><div className={styles.skeletonCell}></div></td>
+                      <td><div className={styles.skeletonCell}></div></td>
+                      <td><div className={styles.skeletonCell}></div></td>
+                      <td><div className={styles.skeletonCell}></div></td>
+                      <td><div className={styles.skeletonBadge}></div></td>
+                      <td><div className={styles.skeletonCell}></div></td>
+                      <td><div className={styles.skeletonActions}></div></td>
                     </tr>
                   ))
                 ) : filteredApplications.length === 0 ? (
                   <tr>
-                    <td colSpan="8" className={styles.tccEmptyCell}>
-                      <div className={styles.tccEmptyStateContainer}>
-                        <div className={styles.tccEmptyStateIcon}>
+                    <td colSpan="8" className={styles.emptyCell}>
+                      <div className={styles.emptyStateContainer}>
+                        <div className={styles.emptyStateIcon}>
                           <FaExclamationTriangle />
                         </div>
-                        <p className={styles.tccEmptyStateMessage}>No applications found</p>
+                        <p className={styles.emptyStateMessage}>No applications found</p>
                         {(searchTerm || filterStatus !== 'ALL' || filterYear !== 'ALL') && (
                           <button 
                             onClick={() => {
@@ -422,7 +403,7 @@ const TCCApplicationList = () => {
                               setFilterStatus('ALL');
                               setFilterYear('ALL');
                             }}
-                            className={styles.tccClearFiltersButton}
+                            className={styles.clearFiltersButton}
                           >
                             Clear Filters
                           </button>
@@ -436,9 +417,9 @@ const TCCApplicationList = () => {
                     <tr 
                       key={app.id} 
                       onClick={() => handleViewDetails(app.id)} 
-                      className={styles.tccTableRow}
+                      className={styles.tableRow}
                     >
-                      <td className={styles.tccAppNumberCell}>{app.applicationNumber}</td>
+                      <td className={styles.appNumberCell}>{app.applicationNumber}</td>
                       <td>{app.taxpayerName}</td>
                       <td>{app.tin}</td>
                       <td>{formatDate(app.applicationDate)}</td>
@@ -448,9 +429,9 @@ const TCCApplicationList = () => {
                       </td>
                       <td>{app.tccNumber || 'Not issued'}</td>
                       <td>
-                        <div className={styles.tccRowActions}>
+                        <div className={styles.rowActions}>
                           <button 
-                            className={styles.tccViewButton}
+                            className={styles.viewButton}
                             onClick={(e) => {
                               e.stopPropagation();
                               handleViewDetails(app.id);
@@ -461,11 +442,12 @@ const TCCApplicationList = () => {
                           </button>
                           {needsProcessing(app.status) && (
                             <button 
-                              className={styles.tccProcessButton}
+                              className={styles.processButton}
                               onClick={(e) => {
                                 e.stopPropagation();
                                 handleProcessTCC(app.id);
                               }}
+                              title="Process Application"
                             >
                               Process
                             </button>
@@ -481,13 +463,13 @@ const TCCApplicationList = () => {
 
           {/* Pagination */}
           {!loading && filteredApplications.length > 0 && (
-            <div className={styles.tccPaginationWrapper}>
-              <div className={styles.tccPaginationInfo}>
+            <div className={styles.paginationWrapper}>
+              <div className={styles.paginationInfo}>
                 Showing {((currentPage - 1) * rowsPerPage) + 1} to {Math.min(currentPage * rowsPerPage, filteredApplications.length)} of {filteredApplications.length} entries
               </div>
-              <div className={styles.tccPaginationControls}>
+              <div className={styles.paginationControls}>
                 <button 
-                  className={`${styles.tccPaginationButton} ${currentPage === 1 ? styles.disabled : ''}`}
+                  className={`${styles.paginationButton} ${currentPage === 1 ? styles.disabled : ''}`}
                   disabled={currentPage === 1}
                   onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                 >
@@ -508,7 +490,7 @@ const TCCApplicationList = () => {
                   return (
                     <button
                       key={pageNumber}
-                      className={`${styles.tccPaginationNumber} ${currentPage === pageNumber ? styles.active : ''}`}
+                      className={`${styles.paginationNumber} ${currentPage === pageNumber ? styles.active : ''}`}
                       onClick={() => setCurrentPage(pageNumber)}
                     >
                       {pageNumber}
@@ -516,7 +498,7 @@ const TCCApplicationList = () => {
                   );
                 })}
                 <button 
-                  className={`${styles.tccPaginationButton} ${currentPage === totalPages ? styles.disabled : ''}`}
+                  className={`${styles.paginationButton} ${currentPage === totalPages ? styles.disabled : ''}`}
                   disabled={currentPage === totalPages}
                   onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                 >
