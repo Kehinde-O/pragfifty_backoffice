@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Card } from '../common/ui';
-import { FaUserPlus, FaIdCard } from 'react-icons/fa';
+import { FaUserPlus, FaIdCard, FaUser, FaBuilding, FaUsers, FaArrowRight, FaMapMarkerAlt } from 'react-icons/fa';
+import styles from './Dashboard.module.css';
 
-const TaxpayerInsights = () => {
+const TaxpayerInsights = ({ period }) => {
   const [insightsData, setInsightsData] = useState({
     registrationsThisMonth: 0,
     totalIndividuals: 0,
@@ -39,7 +39,7 @@ const TaxpayerInsights = () => {
         setTimeout(() => {
           setInsightsData(mockData);
           setIsLoading(false);
-        }, 1000);
+        }, 800);
       } catch (error) {
         console.error('Error fetching taxpayer insights:', error);
         setIsLoading(false);
@@ -47,7 +47,7 @@ const TaxpayerInsights = () => {
     };
     
     fetchInsights();
-  }, []);
+  }, [period]);
   
   // Format large numbers with commas
   const formatNumber = (num) => {
@@ -60,123 +60,125 @@ const TaxpayerInsights = () => {
     return (count / maxCount) * 100;
   };
   
+  // Helper function to get bar colors
+  const getBarColor = (index) => {
+    const colors = [
+      '#4285F4', '#34A853', '#FBBC05', '#EA4335', '#8E24AA'
+    ];
+    return colors[index % colors.length];
+  };
+  
+  const insightCards = [
+    {
+      id: 'new-reg',
+      title: 'New Registrations',
+      value: insightsData.registrationsThisMonth,
+      subtitle: 'This Month',
+      icon: <FaUserPlus />,
+      color: '#4285F4'
+    },
+    {
+      id: 'individual',
+      title: 'Individual Taxpayers',
+      value: insightsData.totalIndividuals,
+      subtitle: 'Total Registered',
+      icon: <FaUser />,
+      color: '#34A853'
+    },
+    {
+      id: 'business',
+      title: 'Business Taxpayers',
+      value: insightsData.totalBusinesses,
+      subtitle: 'Total Registered',
+      icon: <FaBuilding />,
+      color: '#FBBC05'
+    },
+    {
+      id: 'active',
+      title: 'Active Taxpayers',
+      value: `${insightsData.activeRatio}%`,
+      subtitle: 'Activity Ratio',
+      icon: <FaUsers />,
+      color: '#EA4335'
+    }
+  ];
+  
   return (
-    <Card>
-      <div className="section-header">
-        <h2 className="section-title">Taxpayer Insights</h2>
-        <div className="section-actions">
-          <a href="/dashboard/taxpayers" className="card-link">
-            View Details
-          </a>
-        </div>
+    <>
+      <div className={styles.sectionHeader}>
+        <h3 className={styles.cardContentTitle}>
+          <FaUsers /> Taxpayer Insights
+        </h3>
       </div>
       
-      <div className="taxpayer-stats">
-        <div className="stats-row">
-          <div className="stat-item">
-            <h4 className="stat-label">New Registrations</h4>
-            <div className="stat-value">
-              {isLoading ? (
-                <div className="skeleton-loader" style={{ width: '60px', height: '24px' }}></div>
-              ) : (
-                formatNumber(insightsData.registrationsThisMonth)
-              )}
-            </div>
-            <p className="stat-subtext">This Month</p>
+      {isLoading ? (
+        <div className={styles.loadingState}>
+          <div className={styles.loadingIcon}>
+            <FaUsers />
           </div>
-          
-          <div className="stat-item">
-            <h4 className="stat-label">Individual Taxpayers</h4>
-            <div className="stat-value">
-              {isLoading ? (
-                <div className="skeleton-loader" style={{ width: '60px', height: '24px' }}></div>
-              ) : (
-                formatNumber(insightsData.totalIndividuals)
-              )}
-            </div>
-            <p className="stat-subtext">Total Registered</p>
-          </div>
-          
-          <div className="stat-item">
-            <h4 className="stat-label">Business Taxpayers</h4>
-            <div className="stat-value">
-              {isLoading ? (
-                <div className="skeleton-loader" style={{ width: '60px', height: '24px' }}></div>
-              ) : (
-                formatNumber(insightsData.totalBusinesses)
-              )}
-            </div>
-            <p className="stat-subtext">Total Registered</p>
-          </div>
-          
-          <div className="stat-item">
-            <h4 className="stat-label">Active Taxpayers</h4>
-            <div className="stat-value">
-              {isLoading ? (
-                <div className="skeleton-loader" style={{ width: '60px', height: '24px' }}></div>
-              ) : (
-                `${insightsData.activeRatio}%`
-              )}
-            </div>
-            <p className="stat-subtext">Activity Ratio</p>
-          </div>
+          <div>Loading taxpayer data...</div>
         </div>
-      </div>
-      
-      <div className="lga-distribution">
-        <h4 className="subsection-title">
-          <FaUserPlus style={{ marginRight: '0.5rem' }} />
-          Top Niger State LGAs by Taxpayer Count
-        </h4>
-        {isLoading ? (
-          <div className="skeleton-loader" style={{ width: '100%', height: '150px' }}></div>
-        ) : (
-          <div className="lga-bars">
-            {insightsData.topLGAs.map((lga, index) => (
-              <div key={index} className="lga-bar-item">
-                <div className="lga-name">{lga.name}</div>
-                <div className="lga-bar-container">
-                  <div 
-                    className="lga-bar" 
-                    style={{ 
-                      width: `${calculateBarWidth(lga.count)}%`,
-                      backgroundColor: getBarColor(index)
-                    }}
-                  ></div>
+      ) : (
+        <>
+          <div className={styles.taxpayerStatsGrid}>
+            {insightCards.map(card => (
+              <div key={card.id} className={styles.taxpayerStatCard} style={{ borderTop: `3px solid ${card.color}` }}>
+                <div className={styles.taxpayerStatIcon} style={{ color: card.color }}>
+                  {card.icon}
                 </div>
-                <div className="lga-count">{formatNumber(lga.count)}</div>
+                <div className={styles.taxpayerStatContent}>
+                  <div className={styles.taxpayerStatValue}>{formatNumber(card.value)}</div>
+                  <div className={styles.taxpayerStatTitle}>{card.title}</div>
+                  <div className={styles.taxpayerStatSubtitle}>{card.subtitle}</div>
+                </div>
               </div>
             ))}
           </div>
-        )}
-      </div>
+          
+          <div className={styles.insightSection}>
+            <div className={styles.insightSectionHeader}>
+              <FaMapMarkerAlt /> <span>Top LGAs by Taxpayer Count</span>
+            </div>
+            <div className={styles.lgaBarChart}>
+              {insightsData.topLGAs.map((lga, index) => (
+                <div key={index} className={styles.lgaBarItem}>
+                  <div className={styles.lgaBarName}>
+                    <span>{lga.name}</span>
+                  </div>
+                  <div className={styles.lgaBarContainer}>
+                    <div 
+                      className={styles.lgaBar} 
+                      style={{ 
+                        width: `${calculateBarWidth(lga.count)}%`,
+                        backgroundColor: getBarColor(index)
+                      }}
+                    />
+                  </div>
+                  <div className={styles.lgaBarValue}>{formatNumber(lga.count)}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          <div className={styles.insightSection}>
+            <div className={styles.insightSectionHeader}>
+              <FaIdCard /> <span>Tax Clearance Certificates</span>
+            </div>
+            <div className={styles.tccSummary}>
+              <div className={styles.tccValue}>{formatNumber(insightsData.taxClearances)}</div>
+              <div className={styles.tccLabel}>Issued this month</div>
+            </div>
+          </div>
+        </>
+      )}
       
-      <div className="tax-clearance-summary">
-        <h4 className="subsection-title">
-          <FaIdCard style={{ marginRight: '0.5rem' }} />
-          Tax Clearance Certificates
-        </h4>
-        <div className="tcc-count">
-          {isLoading ? (
-            <div className="skeleton-loader" style={{ width: '80px', height: '32px' }}></div>
-          ) : (
-            <>
-              <span className="highlight-count">{formatNumber(insightsData.taxClearances)}</span>
-              <span className="count-label">Issued this month</span>
-            </>
-          )}
-        </div>
+      <div className={styles.viewAllLink}>
+        <a href="/dashboard/taxpayer-insights">
+          View All Taxpayer Data <FaArrowRight />
+        </a>
       </div>
-    </Card>
+    </>
   );
-};
-
-// Helper function to get bar colors
-const getBarColor = (index) => {
-  const colors = [
-    '#4285F4', '#34A853', '#FBBC05', '#EA4335', '#8E24AA'
-  ];
-  return colors[index % colors.length];
 };
 
 export default TaxpayerInsights; 

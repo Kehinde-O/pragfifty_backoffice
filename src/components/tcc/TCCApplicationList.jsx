@@ -12,9 +12,15 @@ import {
   FaCheckCircle, 
   FaSyncAlt,
   FaExclamationTriangle,
-  FaSort
+  FaSort,
+  FaChevronLeft,
+  FaChevronRight,
+  FaTimes,
+  FaRegClock,
+  FaClipboardCheck,
+  FaListAlt
 } from 'react-icons/fa';
-import './TCC.css';
+import styles from './TCC.module.css';
 
 const TCCApplicationList = () => {
   const navigate = useNavigate();
@@ -24,7 +30,7 @@ const TCCApplicationList = () => {
   const [filterStatus, setFilterStatus] = useState('ALL');
   const [filterYear, setFilterYear] = useState('ALL');
   const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, _setRowsPerPage] = useState(10);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -167,23 +173,23 @@ const TCCApplicationList = () => {
 
   // Status badge component
   const StatusBadge = ({ status }) => {
-    let badgeClass = 'status-badge ';
+    let badgeClass = styles.statusBadge + ' ';
     
     switch (status) {
       case 'APPROVED':
-        badgeClass += 'badge-approved';
+        badgeClass += styles.badgeApproved;
         break;
       case 'REJECTED':
-        badgeClass += 'badge-rejected';
+        badgeClass += styles.badgeRejected;
         break;
       case 'UNDER_REVIEW':
-        badgeClass += 'badge-pending';
+        badgeClass += styles.badgePending;
         break;
       case 'SUBMITTED':
-        badgeClass += 'badge-info';
+        badgeClass += styles.badgeInfo;
         break;
       default:
-        badgeClass += 'badge-default';
+        badgeClass += styles.badgeDefault;
     }
     
     // Format status for display
@@ -214,14 +220,15 @@ const TCCApplicationList = () => {
 
   // Empty state component
   const EmptyState = ({ message, filterActive, onClearFilters }) => (
-    <div className="empty-state-table">
-      <FaExclamationTriangle className="empty-icon" />
+    <div className={styles.emptyStateTable}>
+      <div className={styles.emptyIcon}>
+        <FaExclamationTriangle />
+      </div>
       <p>{message}</p>
       {filterActive && (
         <button 
-          className="clear-filters-button"
           onClick={onClearFilters}
-          aria-label="Clear all filters"
+          className={styles.clearFiltersButton}
         >
           Clear Filters
         </button>
@@ -229,107 +236,84 @@ const TCCApplicationList = () => {
     </div>
   );
 
-  // Stat Card component
-  const StatCard = ({ title, value, icon, color, onClick }) => (
-    <div className={`stat-card stat-${color}`} onClick={onClick} role={onClick ? "button" : "presentation"} tabIndex={onClick ? "0" : undefined}>
-      <div className="stat-card-content">
-        <div className="stat-card-info">
-          <h3 className="stat-card-title">{title}</h3>
-          <p className="stat-card-value">{loading ? '-' : value}</p>
-        </div>
-        <div className="stat-card-icon">
-          {icon}
-        </div>
-      </div>
-      {onClick && (
-        <div className="stat-card-footer">
-          <button className="stat-card-action">Process now</button>
-        </div>
-      )}
-    </div>
-  );
-
   return (
-    <div className="tcc-application-container">
-      <div className="page-header">
-        <div>
-          <h1 className="page-title">TCC Applications</h1>
-          <p className="page-subtitle">Manage Tax Clearance Certificate Applications</p>
+    <div className={styles.tccApplicationContainer}>
+      <div className={styles.tccHeaderWrapper}>
+        <div className={styles.tccHeaderContent}>
+          <h1 className={styles.tccHeaderTitle}>TCC Applications</h1>
+          <p className={styles.tccHeaderSubtitle}>Manage Tax Clearance Certificate Applications</p>
         </div>
-        <div className="page-actions">
-          <Button 
-            variant="outline" 
-            size="md" 
-            onClick={handleRefresh} 
-            title="Refresh data"
+        <div className={styles.tccHeaderActions}>
+          <button 
+            className={styles.tccRefreshButton}
+            onClick={handleRefresh}
             disabled={loading}
-            leadingIcon={<FaSyncAlt className={loading ? "spinning" : ""} />}
           >
+            <FaSyncAlt className={loading ? styles.spinning : ''} />
             Refresh
-          </Button>
-          <Button 
-            variant="primary" 
-            size="md" 
+          </button>
+          <button 
+            className={styles.tccAddButton}
             onClick={handleCreateTCC}
-            leadingIcon={<FaPlus />}
           >
+            <FaPlus />
             New Application
-          </Button>
+          </button>
         </div>
       </div>
 
       {/* Stats Cards */}
-      <div className="stats-grid">
-        <StatCard
-          title="Total Applications"
-          value={totalApplications}
-          icon={<FaFileAlt />}
-          color="primary"
-        />
+      <div className={styles.tccStatsRow}>
+        <div className={`${styles.tccStatsCard} ${styles.tccStatsPrimary}`}>
+          <div className={styles.tccStatsIconWrapper}>
+            <FaFileAlt className={styles.tccStatsIcon} />
+          </div>
+          <div className={styles.tccStatsContent}>
+            <div className={styles.tccStatsValue}>{totalApplications}</div>
+            <div className={styles.tccStatsLabel}>Total Applications</div>
+          </div>
+        </div>
         
-        <StatCard
-          title="Pending Processing"
-          value={pendingCount}
-          icon={<FaHourglassHalf />}
-          color="warning"
+        <div 
+          className={`${styles.tccStatsCard} ${styles.tccStatsWarning}`}
           onClick={pendingCount > 0 ? handleProcessNow : undefined}
-        />
+          style={pendingCount > 0 ? {cursor: 'pointer'} : {}}
+        >
+          <div className={styles.tccStatsIconWrapper}>
+            <FaRegClock className={styles.tccStatsIcon} />
+          </div>
+          <div className={styles.tccStatsContent}>
+            <div className={styles.tccStatsValue}>{pendingCount}</div>
+            <div className={styles.tccStatsLabel}>Pending Processing</div>
+          </div>
+        </div>
         
-        <StatCard
-          title="Approved TCCs"
-          value={approvedCount}
-          icon={<FaCheckCircle />}
-          color="success"
-        />
+        <div className={`${styles.tccStatsCard} ${styles.tccStatsSuccess}`}>
+          <div className={styles.tccStatsIconWrapper}>
+            <FaCheckCircle className={styles.tccStatsIcon} />
+          </div>
+          <div className={styles.tccStatsContent}>
+            <div className={styles.tccStatsValue}>{approvedCount}</div>
+            <div className={styles.tccStatsLabel}>Approved TCCs</div>
+          </div>
+        </div>
       </div>
 
-      <Card className="tcc-list-card">
-        {/* Search and Filter Controls */}
-        <div className="table-toolbar">
-          <div className="search-container">
-            <div className="search-box">
-              <FaSearch className="search-icon" />
-              <input
-                type="text"
-                placeholder="Search by application #, taxpayer or TIN..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="search-input"
-                aria-label="Search TCC applications"
-              />
-            </div>
+      {/* Application List Card */}
+      <div className={styles.tccListCard}>
+        <div className={styles.tccListCardHeader}>
+          <div className={styles.tccListCardTitle}>
+            <FaListAlt className={styles.tccListCardIcon} />
+            <span>Application List</span>
           </div>
-          
-          <div className="filter-toolbar">
-            <div className="filter-item">
-              <label htmlFor="status-filter">Status:</label>
-              <div className="filter-select-container">
+          <div className={styles.tccListCardFilters}>
+            <div className={styles.tccStatusFilter}>
+              <span className={styles.tccFilterLabel}>Status:</span>
+              <div className={styles.tccSelectWrapper}>
                 <select 
-                  id="status-filter"
                   value={filterStatus}
                   onChange={(e) => setFilterStatus(e.target.value)}
-                  className="filter-select"
-                  aria-label="Filter by status"
+                  className={styles.tccFilterSelect}
                 >
                   <option value="ALL">All Statuses</option>
                   <option value="SUBMITTED">Submitted</option>
@@ -337,202 +321,212 @@ const TCCApplicationList = () => {
                   <option value="APPROVED">Approved</option>
                   <option value="REJECTED">Rejected</option>
                 </select>
-                <FaSort className="filter-icon" />
               </div>
             </div>
             
-            <div className="filter-item">
-              <label htmlFor="year-filter">Year:</label>
-              <div className="filter-select-container">
+            <div className={styles.tccYearFilter}>
+              <span className={styles.tccFilterLabel}>Year:</span>
+              <div className={styles.tccSelectWrapper}>
                 <select 
-                  id="year-filter"
                   value={filterYear}
                   onChange={(e) => setFilterYear(e.target.value)}
-                  className="filter-select"
-                  aria-label="Filter by year"
+                  className={styles.tccFilterSelect}
                 >
                   <option value="ALL">All Years</option>
                   {availableYears.map(year => (
                     <option key={year} value={year}>{year}</option>
                   ))}
                 </select>
-                <FaSort className="filter-icon" />
               </div>
             </div>
           </div>
         </div>
-
-        {/* Error Display */}
-        {error && (
-          <div className="error-message" role="alert">
-            <FaExclamationTriangle /> {error}
-            <button 
-              onClick={handleRefresh} 
-              className="retry-button"
-              aria-label="Retry loading data"
-            >
-              Retry
-            </button>
+        
+        <div className={styles.tccListCardBody}>
+          <div className={styles.tccSearchContainer}>
+            <div className={styles.tccSearchInputWrapper}>
+              <FaSearch className={styles.tccSearchIcon} />
+              <input
+                type="text"
+                placeholder="Search by application #, taxpayer or TIN..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className={styles.tccSearchInput}
+              />
+              {searchTerm && (
+                <button 
+                  className={styles.tccClearSearchButton}
+                  onClick={() => setSearchTerm('')}
+                >
+                  <FaTimes />
+                </button>
+              )}
+            </div>
           </div>
-        )}
 
-        {/* Table */}
-        <div className="table-container">
-          <table className="tcc-table">
-            <thead>
-              <tr>
-                <th>Application #</th>
-                <th>Taxpayer</th>
-                <th>TIN</th>
-                <th>Application Date</th>
-                <th>Year</th>
-                <th>Status</th>
-                <th>TCC Number</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
-                // Skeleton Loading State
-                Array.from({ length: 5 }).map((_, index) => (
-                  <tr key={`skeleton-${index}`} className="skeleton-row">
-                    <td><div className="skeleton-cell skeleton-text"></div></td>
-                    <td><div className="skeleton-cell skeleton-text"></div></td>
-                    <td><div className="skeleton-cell skeleton-text"></div></td>
-                    <td><div className="skeleton-cell skeleton-text"></div></td>
-                    <td><div className="skeleton-cell skeleton-text"></div></td>
-                    <td><div className="skeleton-cell skeleton-badge"></div></td>
-                    <td><div className="skeleton-cell skeleton-text"></div></td>
-                    <td><div className="skeleton-cell skeleton-actions"></div></td>
-                  </tr>
-                ))
-              ) : filteredApplications.length === 0 ? (
+          {/* Error Display */}
+          {error && (
+            <div className={styles.tccErrorMessage}>
+              <FaExclamationTriangle /> {error}
+              <button 
+                onClick={handleRefresh} 
+                className={styles.tccRetryButton}
+              >
+                Retry
+              </button>
+            </div>
+          )}
+
+          {/* Table */}
+          <div className={styles.tccTableContainer}>
+            <table className={styles.tccApplicationTable}>
+              <thead>
                 <tr>
-                  <td colSpan="8" className="empty-cell">
-                    <EmptyState 
-                      message="No applications found" 
-                      filterActive={searchTerm || filterStatus !== 'ALL' || filterYear !== 'ALL'}
-                      onClearFilters={() => {
-                        setSearchTerm('');
-                        setFilterStatus('ALL');
-                        setFilterYear('ALL');
-                      }} 
-                    />
-                  </td>
+                  <th>Application #</th>
+                  <th>Taxpayer</th>
+                  <th>TIN</th>
+                  <th>Application Date</th>
+                  <th>Year</th>
+                  <th>Status</th>
+                  <th>TCC Number</th>
+                  <th>Actions</th>
                 </tr>
-              ) : (
-                // Table Data
-                paginatedData.map((app) => (
-                  <tr 
-                    key={app.id} 
-                    onClick={() => handleViewDetails(app.id)} 
-                    className="tcc-table-row"
-                    tabIndex="0"
-                    role="button"
-                    aria-label={`Application ${app.applicationNumber} for ${app.taxpayerName}`}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        handleViewDetails(app.id);
-                      }
-                    }}
-                  >
-                    <td><span className="application-number">{app.applicationNumber}</span></td>
-                    <td>{app.taxpayerName}</td>
-                    <td>{app.tin}</td>
-                    <td>{formatDate(app.applicationDate)}</td>
-                    <td className="text-center">{app.year}</td>
-                    <td><StatusBadge status={app.status} /></td>
-                    <td>{app.tccNumber || 'Not issued'}</td>
-                    <td>
-                      <div className="action-buttons">
-                        <button 
-                          className="icon-button action-view" 
-                          title="View Details"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleViewDetails(app.id);
-                          }}
-                          aria-label={`View details for application ${app.applicationNumber}`}
-                        >
-                          <FaEye />
-                        </button>
-                        {needsProcessing(app.status) && (
+              </thead>
+              <tbody>
+                {loading ? (
+                  // Skeleton Loading State
+                  Array.from({ length: 5 }).map((_, index) => (
+                    <tr key={`skeleton-${index}`} className={styles.tccSkeletonRow}>
+                      <td><div className={styles.tccSkeletonCell}></div></td>
+                      <td><div className={styles.tccSkeletonCell}></div></td>
+                      <td><div className={styles.tccSkeletonCell}></div></td>
+                      <td><div className={styles.tccSkeletonCell}></div></td>
+                      <td><div className={styles.tccSkeletonCell}></div></td>
+                      <td><div className={styles.tccSkeletonBadge}></div></td>
+                      <td><div className={styles.tccSkeletonCell}></div></td>
+                      <td><div className={styles.tccSkeletonActions}></div></td>
+                    </tr>
+                  ))
+                ) : filteredApplications.length === 0 ? (
+                  <tr>
+                    <td colSpan="8" className={styles.tccEmptyCell}>
+                      <div className={styles.tccEmptyStateContainer}>
+                        <div className={styles.tccEmptyStateIcon}>
+                          <FaExclamationTriangle />
+                        </div>
+                        <p className={styles.tccEmptyStateMessage}>No applications found</p>
+                        {(searchTerm || filterStatus !== 'ALL' || filterYear !== 'ALL') && (
                           <button 
-                            className="process-button" 
-                            title="Process Application"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleProcessTCC(app.id);
+                            onClick={() => {
+                              setSearchTerm('');
+                              setFilterStatus('ALL');
+                              setFilterYear('ALL');
                             }}
-                            aria-label={`Process application ${app.applicationNumber}`}
+                            className={styles.tccClearFiltersButton}
                           >
-                            Process
+                            Clear Filters
                           </button>
                         )}
                       </div>
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+                ) : (
+                  // Table Data
+                  paginatedData.map((app) => (
+                    <tr 
+                      key={app.id} 
+                      onClick={() => handleViewDetails(app.id)} 
+                      className={styles.tccTableRow}
+                    >
+                      <td className={styles.tccAppNumberCell}>{app.applicationNumber}</td>
+                      <td>{app.taxpayerName}</td>
+                      <td>{app.tin}</td>
+                      <td>{formatDate(app.applicationDate)}</td>
+                      <td>{app.year}</td>
+                      <td>
+                        <StatusBadge status={app.status} />
+                      </td>
+                      <td>{app.tccNumber || 'Not issued'}</td>
+                      <td>
+                        <div className={styles.tccRowActions}>
+                          <button 
+                            className={styles.tccViewButton}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleViewDetails(app.id);
+                            }}
+                            title="View Details"
+                          >
+                            <FaEye />
+                          </button>
+                          {needsProcessing(app.status) && (
+                            <button 
+                              className={styles.tccProcessButton}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleProcessTCC(app.id);
+                              }}
+                            >
+                              Process
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
 
-        {/* Pagination */}
-        {!loading && filteredApplications.length > 0 && (
-          <div className="pagination-container">
-            <div className="pagination-info">
-              Showing {((currentPage - 1) * rowsPerPage) + 1} to {Math.min(currentPage * rowsPerPage, filteredApplications.length)} of {filteredApplications.length} applications
-            </div>
-            <div className="pagination-controls">
-              <button 
-                className="pagination-button"
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage(prev => prev - 1)}
-                aria-label="Previous page"
-              >
-                Previous
-              </button>
-              <div className="pagination-pages">
-                {[...Array(Math.min(totalPages, 5))].map((_, i) => {
-                  // Show 5 page buttons with current page in the middle if possible
-                  let pageNum;
-                  if (totalPages <= 5) {
-                    pageNum = i + 1;
-                  } else if (currentPage <= 3) {
-                    pageNum = i + 1;
-                  } else if (currentPage >= totalPages - 2) {
-                    pageNum = totalPages - 4 + i;
-                  } else {
-                    pageNum = currentPage - 2 + i;
+          {/* Pagination */}
+          {!loading && filteredApplications.length > 0 && (
+            <div className={styles.tccPaginationWrapper}>
+              <div className={styles.tccPaginationInfo}>
+                Showing {((currentPage - 1) * rowsPerPage) + 1} to {Math.min(currentPage * rowsPerPage, filteredApplications.length)} of {filteredApplications.length} entries
+              </div>
+              <div className={styles.tccPaginationControls}>
+                <button 
+                  className={`${styles.tccPaginationButton} ${currentPage === 1 ? styles.disabled : ''}`}
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                >
+                  <FaChevronLeft />
+                </button>
+                {Array.from({ length: Math.min(totalPages, 5) }).map((_, index) => {
+                  let pageNumber = index + 1;
+                  if (totalPages > 5) {
+                    if (currentPage <= 3) {
+                      pageNumber = index + 1;
+                    } else if (currentPage >= totalPages - 2) {
+                      pageNumber = totalPages - 4 + index;
+                    } else {
+                      pageNumber = currentPage - 2 + index;
+                    }
                   }
                   
                   return (
                     <button
-                      key={pageNum}
-                      className={`pagination-page ${currentPage === pageNum ? 'active' : ''}`}
-                      onClick={() => setCurrentPage(pageNum)}
-                      aria-label={`Page ${pageNum}`}
-                      aria-current={currentPage === pageNum ? 'page' : undefined}
+                      key={pageNumber}
+                      className={`${styles.tccPaginationNumber} ${currentPage === pageNumber ? styles.active : ''}`}
+                      onClick={() => setCurrentPage(pageNumber)}
                     >
-                      {pageNum}
+                      {pageNumber}
                     </button>
                   );
                 })}
+                <button 
+                  className={`${styles.tccPaginationButton} ${currentPage === totalPages ? styles.disabled : ''}`}
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                >
+                  <FaChevronRight />
+                </button>
               </div>
-              <button 
-                className="pagination-button"
-                disabled={currentPage === totalPages}
-                onClick={() => setCurrentPage(prev => prev + 1)}
-                aria-label="Next page"
-              >
-                Next
-              </button>
             </div>
-          </div>
-        )}
-      </Card>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './LoginPage.css';
+import styles from './LoginPage.module.css';
 
 function LoginPage() {
   const navigate = useNavigate();
@@ -55,24 +55,24 @@ function LoginPage() {
   };
 
   return (
-    <div className="auth-container backoffice">
-      <div className="auth-card">
-        <div className="auth-branding">
-          <div className="auth-logo-container">
-            <div className="auth-logo">PF</div>
+    <div className={`${styles.authContainer} ${styles.backoffice}`}>
+      <div className={styles.authCard}>
+        <div className={styles.authBranding}>
+          <div className={styles.authLogoContainer}>
+            <div className={styles.authLogo}>PF</div>
           </div>
-          <h2 className="auth-title">Revenue Backoffice Portal</h2>
-          <p className="auth-subtitle">Administrative and Management System</p>
+          <h2 className={styles.authTitle}>Revenue Backoffice Portal</h2>
+          <p className={styles.authSubtitle}>Administrative and Management System</p>
         </div>
         
-        <form className="auth-form" onSubmit={handleSubmit}>
+        <form className={styles.authForm} onSubmit={handleSubmit}>
           <h2>Administrator Login</h2>
-          <p className="form-description">
+          <p className={styles.formDescription}>
             Access your administrative account to manage the revenue system
           </p>
           
           {error && (
-            <div className="error-message">
+            <div className={styles.errorMessage}>
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="12" cy="12" r="10"></circle>
                 <line x1="12" y1="8" x2="12" y2="12"></line>
@@ -82,8 +82,8 @@ function LoginPage() {
             </div>
           )}
           
-          <div className="form-section">
-            <div className="form-group">
+          <div className={styles.formSection}>
+            <div className={styles.formGroup}>
               <label htmlFor="username">Username / Email</label>
               <input
                 type="text"
@@ -96,9 +96,9 @@ function LoginPage() {
               />
             </div>
             
-            <div className="form-group">
+            <div className={styles.formGroup}>
               <label htmlFor="password">Password</label>
-              <div className="password-input-container">
+              <div className={styles.passwordInputContainer}>
                 <input
                   type={passwordVisible ? "text" : "password"}
                   id="password"
@@ -111,7 +111,7 @@ function LoginPage() {
                 <button 
                   type="button" 
                   onClick={togglePasswordVisibility}
-                  className="password-toggle"
+                  className={styles.passwordToggle}
                   aria-label={passwordVisible ? "Hide password" : "Show password"}
                 >
                   {passwordVisible ? (
@@ -129,8 +129,8 @@ function LoginPage() {
               </div>
             </div>
             
-            <div className="form-options">
-              <div className="checkbox-group">
+            <div className={styles.formOptions}>
+              <div className={styles.checkboxGroup}>
                 <input
                   type="checkbox"
                   id="rememberMe"
@@ -140,18 +140,18 @@ function LoginPage() {
                 />
                 <label htmlFor="rememberMe">Remember Me</label>
               </div>
-              <a href="#" className="forgot-password">Forgot Password?</a>
+              <a href="#" className={styles.forgotPassword}>Forgot Password?</a>
             </div>
           </div>
           
           <button 
             type="submit" 
-            className="submit-button"
+            className={styles.submitButton}
             disabled={loading}
           >
             {loading ? (
               <>
-                <span className="spinner"></span>
+                <span className={styles.spinner}></span>
                 <span>Authenticating...</span>
               </>
             ) : (
@@ -166,9 +166,9 @@ function LoginPage() {
             )}
           </button>
           
-          <div className="form-footer">
+          <div className={styles.formFooter}>
             <p>PragFifty Revenue Backoffice Portal | Admin Use Only</p>
-            <div className="footer-version">v1.0.0</div>
+            <div className={styles.footerVersion}>v1.0.0</div>
           </div>
         </form>
       </div>

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Card } from '../common/ui';
-import { FaExclamationTriangle, FaRegClock, FaChevronRight } from 'react-icons/fa';
+import { FaExclamationTriangle, FaRegClock, FaChevronRight, FaTasks, FaBell } from 'react-icons/fa';
+import styles from './Dashboard.module.css';
 
-const PendingApprovals = () => {
+const PendingApprovals = ({ period }) => {
   const [pendingItems, setPendingItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   
@@ -64,7 +64,7 @@ const PendingApprovals = () => {
         setTimeout(() => {
           setPendingItems(mockPendingItems);
           setIsLoading(false);
-        }, 1500);
+        }, 800);
       } catch (error) {
         console.error('Error fetching pending approvals:', error);
         setIsLoading(false);
@@ -72,28 +72,20 @@ const PendingApprovals = () => {
     };
     
     fetchPendingApprovals();
-  }, []);
+  }, [period]);
   
   // Get priority badge class
   const getPriorityBadgeClass = (priority) => {
     switch (priority.toLowerCase()) {
       case 'high':
-        return 'badge-rejected';
+        return styles.priorityHigh;
       case 'medium':
-        return 'badge-pending';
+        return styles.priorityMedium;
       case 'low':
-        return 'badge-approved';
+        return styles.priorityLow;
       default:
         return '';
     }
-  };
-  
-  // Get priority icon
-  const getPriorityIcon = (priority) => {
-    if (priority.toLowerCase() === 'high') {
-      return <FaExclamationTriangle className="priority-icon priority-high" />;
-    }
-    return null;
   };
   
   // Calculate summary counts
@@ -107,113 +99,85 @@ const PendingApprovals = () => {
   
   const summary = calculateSummary();
   
-  // Create a function to get link based on item type
-  const getItemLink = (item) => {
-    switch (item.type) {
-      case 'Tax Clearance':
-        return `/dashboard/tcc-application/${item.id}`;
-      case 'Self-Assessment':
-        return `/dashboard/assessments/self/${item.id}`;
-      case 'Taxpayer Registration':
-        return `/dashboard/taxpayers/verification/${item.id}`;
-      case 'Tax Return':
-        return `/dashboard/tax-returns/${item.id}`;
-      case 'Refund Request':
-        return `/dashboard/refunds/${item.id}`;
-      default:
-        return '#';
-    }
+  // Format date
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('en-NG', {
+      month: 'short',
+      day: 'numeric'
+    });
   };
   
   // Show only the first 3 items for the dashboard preview
   const displayItems = pendingItems.slice(0, 3);
   
-  // Render loading skeleton
-  const renderSkeleton = () => (
-    <div className="pending-approvals-skeleton">
-      <div className="approval-item-skeleton"></div>
-      <div className="approval-item-skeleton"></div>
-      <div className="approval-item-skeleton"></div>
-    </div>
-  );
-  
   return (
-    <Card>
-      <div className="section-header">
-        <div className="section-title-wrapper">
-          <h2 className="section-title">Pending Approvals</h2>
-          <div className="summary-counts">
-            {!isLoading && (
-              <>
-                <span className="summary-item">
-                  <span className="summary-label">Total:</span>
-                  <span className="summary-value">{summary.total}</span>
-                </span>
-                <span className="summary-item">
-                  <span className="summary-label">High Priority:</span>
-                  <span className="summary-value">{summary.highPriority}</span>
-                </span>
-                <span className="summary-item">
-                  <span className="summary-label">Unassigned:</span>
-                  <span className="summary-value">{summary.unassigned}</span>
-                </span>
-              </>
-            )}
+    <>
+      <div className={styles.sectionHeader}>
+        <h3 className={styles.cardContentTitle}>
+          <FaBell /> Pending Approvals
+        </h3>
+        {!isLoading && (
+          <div className={styles.statusBadges}>
+            <span className={styles.statusBadge}>
+              <strong>{summary.total}</strong> total
+            </span>
+            <span className={`${styles.statusBadge} ${styles.statusBadgeUrgent}`}>
+              <strong>{summary.highPriority}</strong> high priority
+            </span>
           </div>
-        </div>
-        <a href="/dashboard/tasks/pending" className="view-all-button">
-          View All <FaChevronRight />
-        </a>
+        )}
       </div>
       
       {isLoading ? (
-        renderSkeleton()
+        <div className={styles.loadingState}>
+          <div className={styles.loadingIcon}>
+            <FaTasks />
+          </div>
+          <div>Loading...</div>
+        </div>
       ) : (
-        <div className="pending-approvals-list">
+        <div className={styles.approvalTasks}>
           {displayItems.map((item) => (
-            <a key={item.id} href={getItemLink(item)} className="approval-item">
-              <div className="approval-item-header">
-                <div className="reference-container">
-                  {getPriorityIcon(item.priority)}
-                  <span className="approval-reference">{item.id}</span>
-                </div>
-                <span className={`status-badge ${getPriorityBadgeClass(item.priority)}`}>
+            <div key={item.id} className={styles.approvalTask}>
+              <div className={styles.approvalTaskHeader}>
+                <div className={styles.approvalTaskId}>{item.id}</div>
+                <div className={`${styles.priorityIndicator} ${getPriorityBadgeClass(item.priority)}`}>
+                  {item.priority === 'High' && <FaExclamationTriangle />}
                   {item.priority}
-                </span>
-              </div>
-              
-              <div className="approval-item-content">
-                <div className="approval-type">{item.type}</div>
-                <div className="approval-detail">{item.description}</div>
-                <div className="approval-applicant">{item.applicant}</div>
-              </div>
-              
-              <div className="approval-item-footer">
-                <div className="date-submitted">
-                  <FaRegClock className="date-icon" />
-                  <span>
-                    {new Date(item.submittedDate).toLocaleDateString('en-NG', {
-                      month: 'short',
-                      day: 'numeric'
-                    })}
-                  </span>
-                </div>
-                <div className="approval-item-action">
-                  <span className="action-label">Process</span>
-                  <FaChevronRight className="action-icon" />
                 </div>
               </div>
-            </a>
+              
+              <div className={styles.approvalTaskBody}>
+                <div className={styles.approvalTaskType}>{item.type}</div>
+                <div className={styles.approvalTaskDesc}>{item.description}</div>
+                <div className={styles.approvalTaskApplicant}>{item.applicant}</div>
+              </div>
+              
+              <div className={styles.approvalTaskFooter}>
+                <div className={styles.approvalTaskDate}>
+                  <FaRegClock />{formatDate(item.submittedDate)}
+                </div>
+                <button className={styles.approvalTaskAction}>
+                  Process <FaChevronRight />
+                </button>
+              </div>
+            </div>
           ))}
           
           {pendingItems.length > 3 && (
-            <div className="more-items-info">
-              <span>{pendingItems.length - 3} more items</span>
+            <div className={styles.moreItems}>
+              +{pendingItems.length - 3} more pending items
             </div>
           )}
         </div>
       )}
-    </Card>
+      
+      {!isLoading && (
+        <div className={styles.viewAllLink}>
+          <a href="/tasks/approvals">View All Pending Items →</a>
+        </div>
+      )}
+    </>
   );
 };
 

@@ -1,0 +1,434 @@
+.actionButtons {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.tableActionButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 6px;
+  background-color: white;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  position: relative;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.tableActionButton.viewButton {
+  color: #4285F4;
+  border-color: rgba(66, 133, 244, 0.2);
+  background-color: rgba(66, 133, 244, 0.05);
+}
+
+.tableActionButton.viewButton:hover {
+  background-color: rgba(66, 133, 244, 0.1);
+  box-shadow: 0 2px 5px rgba(66, 133, 244, 0.15);
+  transform: translateY(-1px);
+}
+
+.tableActionButton.editButton {
+  color: #d97706;
+  border-color: rgba(217, 119, 6, 0.2);
+  background-color: rgba(217, 119, 6, 0.05);
+}
+
+.tableActionButton.editButton:hover {
+  background-color: rgba(217, 119, 6, 0.1);
+  box-shadow: 0 2px 5px rgba(217, 119, 6, 0.15);
+  transform: translateY(-1px);
+}
+
+.tableActionButton.deleteButton {
+  color: #dc2626;
+  border-color: rgba(220, 38, 38, 0.2);
+  background-color: rgba(220, 38, 38, 0.05);
+}
+
+.tableActionButton.deleteButton:hover {
+  background-color: rgba(220, 38, 38, 0.1);
+  box-shadow: 0 2px 5px rgba(220, 38, 38, 0.15);
+  transform: translateY(-1px);
+}
+
+/* Loading and No Results States */
+.loadingIndicator, .noResults {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  text-align: center;
+  color: #64748b;
+}
+
+.spinning {
+  animation: spin 1.5s linear infinite;
+  font-size: 2rem;
+  color: #4285F4;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.noResults p {
+  font-size: 1rem;
+  margin: 0.5rem 0;
+}
+
+/* Individuals.module.css */
+.container {
+  padding: 1.5rem;
+  background-color: #f8fafc;
+  min-height: calc(100vh - 70px);
+}
+
+/* Dashboard Title Styling */
+.header {
+  margin-bottom: 1.5rem;
+  padding: 0;
+}
+
+.title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 0.75rem;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.title::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 40px;
+  height: 4px;
+  background-color: #4285F4;
+  border-radius: 2px;
+}
+
+.titleIconContainer {
+  background-color: rgba(66, 133, 244, 0.1);
+  color: #4285F4;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 1rem;
+  font-size: 1.25rem;
+}
+
+/* Taxpayer Stats Styling */
+.stats {
+  margin-bottom: 1.5rem;
+  padding: 0;
+}
+
+.statsRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.statItem {
+  background-color: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.statItem:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.07), 0 10px 15px rgba(0,0,0,0.03);
+}
+
+.statLabel {
+  color: #64748b;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0 0 0.75rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.statValue {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 0.75rem;
+}
+
+.activeValue {
+  color: #16a34a;
+}
+
+.inactiveValue {
+  color: #dc2626;
+}
+
+.pendingValue {
+  color: #d97706;
+}
+
+.statSubtext {
+  color: #64748b;
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.statPercentage {
+  background-color: rgba(22, 163, 74, 0.1);
+  color: #16a34a;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-weight: 600;
+  margin-right: 0.25rem;
+}
+
+/* Data Toolbar Styling */
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding: 0;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.searchFilterContainer {
+  display: flex;
+  gap: 1.5rem;
+  flex: 1 1 auto;
+  align-items: center;
+}
+
+.searchBox {
+  position: relative;
+  flex: 2 1 300px;
+  margin-left: 0;
+  padding-left: 0;
+  padding: 0px !important;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 0px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #64748b;
+  pointer-events: none;
+  font-size: 1rem;
+}
+
+.searchInput {
+  width: 100%;
+  height: 44px;
+  padding: 0 1rem 0 2.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  background-color: white;
+  transition: all 0.2s;
+}
+
+.searchInput::placeholder {
+  color: #9ca3af;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: #4285F4;
+  box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.2);
+}
+
+.filterBox {
+  flex: 1 1 200px;
+}
+
+.filterDropdown {
+  position: relative;
+  height: 44px;
+}
+
+.filterIcon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #64748b;
+  pointer-events: none;
+  font-size: 1rem;
+}
+
+.filterSelect {
+  width: 100%;
+  height: 44px;
+  padding: 0 1rem 0 2.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  background-color: white;
+  transition: all 0.2s;
+  cursor: pointer;
+  appearance: none;
+}
+
+.filterSelect:focus {
+  outline: none;
+  border-color: #4285F4;
+  box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.2);
+}
+
+.actionButtonsContainer {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.downloadButton, .primaryButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.downloadButton {
+  background-color: white;
+  color: #4285F4;
+  border: 1px solid #d1d5db;
+}
+
+.downloadButton:hover {
+  background-color: #f8fafc;
+  border-color: #4285F4;
+}
+
+.primaryButton {
+  background-color: #4285F4;
+  color: white;
+  border: none;
+}
+
+.primaryButton:hover {
+  background-color: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+/* Table Styles */
+.tableResponsive {
+  overflow-x: auto;
+  margin-bottom: 1.5rem;
+  border-radius: 12px;
+  background-color: white;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.tableHeader {
+  background-color: #f8fafc;
+}
+
+.tableHeaderCell {
+  padding: 1rem;
+  font-weight: 600;
+  color: #475569;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.tableCell {
+  padding: 1rem;
+  color: #1e293b;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.tableRow:hover {
+  background-color: #f8fafc;
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.statusActive {
+  background-color: #dcfce7;
+  color: #16a34a;
+}
+
+.statusInactive {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.statusPending {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .toolbar {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .searchFilterContainer {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .searchBox, .filterBox {
+    flex: none;
+    width: 100%;
+  }
+
+  .actionButtonsContainer {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .downloadButton, .primaryButton {
+    flex: 1;
+  }
+} 

@@ -6,8 +6,7 @@ import {
   FiRefreshCw, FiChevronDown, FiChevronUp, FiUser, FiEye, FiFilter, FiDownload
 } from 'react-icons/fi';
 import { FaUserTie, FaIdCard, FaUserPlus } from 'react-icons/fa';
-// We'll create this CSS file next
-import './Individuals.css'; 
+import styles from './Individuals.module.css';
 
 const Individuals = () => {
   const [individuals, setIndividuals] = useState([]);

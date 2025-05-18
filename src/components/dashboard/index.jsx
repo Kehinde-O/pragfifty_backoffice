@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import RevenueOverview from './RevenueOverview';
 import PerformanceMetrics from './PerformanceMetrics';
 import RecentTransactions from './RecentTransactions';
@@ -6,53 +6,133 @@ import TaxpayerInsights from './TaxpayerInsights';
 import PendingApprovals from './PendingApprovals';
 import RevenueByHeads from './RevenueByHeads';
 import TopContributors from './TopContributors';
-import './Dashboard.css';
+import { Card } from '../common/ui';
+import { FaRegCalendarAlt, FaChartLine, FaUsers, FaExchangeAlt, FaFileInvoiceDollar, FaUserCheck, FaClipboardCheck } from 'react-icons/fa';
+import styles from './Dashboard.module.css';
 
 const Dashboard = () => {
+  const [periodFilter, setPeriodFilter] = useState('month');
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handlePeriodChange = (e) => {
+    setIsLoading(true);
+    setPeriodFilter(e.target.value);
+    // Simulate loading state for better UX
+    setTimeout(() => setIsLoading(false), 500);
+  };
+
   return (
-    <div className="dashboard">
-      <div className="dashboard-header">
-        <h1 className="dashboard-title">Niger State Internal Revenue Service Dashboard</h1>
-        <div className="dashboard-actions">
-          <select className="dashboard-period-select">
-            <option value="today">Today</option>
-            <option value="week">This Week</option>
-            <option value="month" selected>This Month</option>
-            <option value="quarter">This Quarter</option>
-            <option value="year">This Year</option>
-          </select>
+    <div className={styles.dashboard}>
+      <div className={styles.dashboardHeader}>
+        <h1 className={styles.dashboardTitle}>Niger State Revenue Service Dashboard</h1>
+        <div className={styles.dashboardActions}>
+          <div className={styles.periodSelectorWrapper}>
+            <FaRegCalendarAlt className={styles.periodSelectorIcon} />
+            <select 
+              className={styles.dashboardPeriodSelect}
+              value={periodFilter}
+              onChange={handlePeriodChange}
+              aria-label="Select time period"
+              disabled={isLoading}
+            >
+              <option value="today">Today</option>
+              <option value="week">This Week</option>
+              <option value="month">This Month</option>
+              <option value="quarter">This Quarter</option>
+              <option value="year">This Year</option>
+            </select>
+          </div>
         </div>
       </div>
       
-      <div className="dashboard-section">
-        <RevenueOverview />
+      <div className={styles.dashboardSection}>
+        <RevenueOverview period={periodFilter} />
       </div>
       
-      <div className="dashboard-row">
-        <div className="dashboard-col dashboard-col-wide">
-          <RevenueByHeads />
-        </div>
-        <div className="dashboard-col">
-          <PerformanceMetrics />
-        </div>
-      </div>
-      
-      <div className="dashboard-row">
-        <div className="dashboard-col">
-          <TaxpayerInsights />
-        </div>
-        <div className="dashboard-col">
-          <TopContributors />
-        </div>
-      </div>
-      
-      <div className="dashboard-row">
-        <div className="dashboard-col dashboard-col-wide">
-          <RecentTransactions />
-        </div>
-        <div className="dashboard-col">
-          <PendingApprovals />
-        </div>
+      <div className={styles.dashboardGrid}>
+        <Card 
+          variant="default" 
+          elevation="md"
+          accent="primary"
+          className={styles.cardNormal}
+        >
+          <div className={styles.cardHeader}>
+            <div className={styles.cardIcon}>
+              <FaFileInvoiceDollar />
+            </div>
+            <h2 className={styles.cardHeaderTitle}>Revenue Analysis</h2>
+          </div>
+          <RevenueByHeads period={periodFilter} />
+        </Card>
+        
+        <Card 
+          variant="default" 
+          elevation="md"
+          accent="success"
+          className={styles.cardNormal}
+        >
+          <div className={styles.cardHeader}>
+            <div className={styles.cardIcon}>
+              <FaChartLine />
+            </div>
+            <h2 className={styles.cardHeaderTitle}>Performance</h2>
+          </div>
+          <PerformanceMetrics period={periodFilter} />
+        </Card>
+        
+        <Card 
+          variant="default" 
+          elevation="md"
+          accent="info"
+          className={styles.cardNormal}
+        >
+          <TaxpayerInsights period={periodFilter} />
+        </Card>
+        
+        <Card 
+          variant="default" 
+          elevation="md"
+          accent="warning"
+          className={styles.cardNormal}
+        >
+          <div className={styles.cardHeader}>
+            <div className={styles.cardIcon}>
+              <FaUserCheck />
+            </div>
+            <h2 className={styles.cardHeaderTitle}>Top Contributors</h2>
+          </div>
+          <TopContributors period={periodFilter} />
+        </Card>
+        
+        <Card 
+          variant="default" 
+          elevation="md"
+          accent="primary"
+          className={styles.cardNormal}
+        >
+          <div className={styles.cardHeader}>
+            <div className={styles.cardIcon}>
+              <FaExchangeAlt />
+            </div>
+            <h2 className={styles.cardHeaderTitle}>Recent Transactions</h2>
+          </div>
+          <RecentTransactions period={periodFilter} />
+        </Card>
+        
+        <Card 
+          variant="default" 
+          elevation="md"
+          accent="danger"
+          className={styles.cardNormal}
+        >
+          <div className={styles.cardHeader}>
+            <div className={styles.cardIcon}>
+              <FaClipboardCheck />
+            </div>
+            <h2 className={styles.cardHeaderTitle}>Pending Approvals</h2>
+          </div>
+          <PendingApprovals period={periodFilter} />
+        </Card>
       </div>
     </div>
   );

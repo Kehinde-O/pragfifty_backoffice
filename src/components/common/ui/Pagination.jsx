@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import './Pagination.css';
+import styles from './Pagination.module.css';
 
 const Pagination = ({
   currentPage = 1,
@@ -79,15 +79,15 @@ const Pagination = ({
   const pageNumbers = getPageNumbers();
 
   return (
-    <div className={`ui-pagination ${className}`} {...props}>
-      <div className="ui-pagination-info">
+    <div className={`${styles.pagination} ${className}`} {...props}>
+      <div className={styles.paginationInfo}>
         {onRowsPerPageChange && (
-          <div className="ui-pagination-rows-per-page">
+          <div className={styles.paginationRowsPerPage}>
             <span>Rows per page:</span>
             <select 
               value={rowsPerPage} 
               onChange={handleRowsPerPageChange}
-              className="ui-pagination-select"
+              className={styles.paginationSelect}
             >
               {rowsPerPageOptions.map(option => (
                 <option key={option} value={option}>
@@ -99,9 +99,9 @@ const Pagination = ({
         )}
       </div>
       
-      <div className="ui-pagination-controls">
+      <div className={styles.paginationControls}>
         <button 
-          className="ui-pagination-button ui-pagination-prev" 
+          className={styles.paginationButton}
           disabled={currentPage === 1}
           onClick={() => handlePageChange(currentPage - 1)}
           aria-label="Previous page"
@@ -112,14 +112,14 @@ const Pagination = ({
         </button>
         
         {showPageNumbers && (
-          <div className="ui-pagination-pages">
+          <div className={styles.paginationPages}>
             {pageNumbers.map((page, index) => (
               <React.Fragment key={index}>
                 {page === '...' ? (
-                  <span className="ui-pagination-ellipsis">...</span>
+                  <span className={styles.paginationEllipsis}>...</span>
                 ) : (
                   <button
-                    className={`ui-pagination-page ${currentPage === page ? 'ui-pagination-page-active' : ''}`}
+                    className={`${styles.paginationPage} ${currentPage === page ? styles.paginationPageActive : ''}`}
                     onClick={() => handlePageChange(page)}
                     aria-label={`Page ${page}`}
                     aria-current={currentPage === page ? 'page' : undefined}
@@ -133,7 +133,7 @@ const Pagination = ({
         )}
         
         <button 
-          className="ui-pagination-button ui-pagination-next" 
+          className={styles.paginationButton}
           disabled={currentPage === totalPages}
           onClick={() => handlePageChange(currentPage + 1)}
           aria-label="Next page"

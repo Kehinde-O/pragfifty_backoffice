@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import './Button.css';
+import styles from './Button.module.css';
 
 const Button = ({ 
   children, 
@@ -20,12 +20,12 @@ const Button = ({
       type={type}
       onClick={onClick}
       disabled={disabled}
-      className={`ui-button ui-button-${variant} ui-button-${size} ${fullWidth ? 'ui-button-full' : ''} ${className}`}
+      className={`${styles.button} ${styles[`button-${variant}`]} ${styles[`button-${size}`]} ${fullWidth ? styles.buttonFull : ''} ${className}`}
       {...props}
     >
-      {startIcon && <span className="ui-button-icon ui-button-start-icon">{startIcon}</span>}
-      <span className="ui-button-content">{children}</span>
-      {endIcon && <span className="ui-button-icon ui-button-end-icon">{endIcon}</span>}
+      {startIcon && <span className={styles.buttonIcon}>{startIcon}</span>}
+      <span className={styles.buttonContent}>{children}</span>
+      {endIcon && <span className={styles.buttonIcon}>{endIcon}</span>}
     </button>
   );
 };

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import './StatsCard.css';
+import styles from './StatsCard.module.css';
 
 const StatsCard = ({
   title,
@@ -26,42 +26,42 @@ const StatsCard = ({
 
   return (
     <div 
-      className={`ui-stats-card ui-stats-card-${color} ui-stats-animate-${animationStyle} ${className} ${onClick ? 'ui-stats-card-clickable' : ''}`}
+      className={`${styles.uiStatCard} ${styles[`statsCard-${color}`]} ${styles[`statsAnimate-${animationStyle}`]} ${className} ${onClick ? styles.statsCardClickable : ''}`}
       onClick={handleClick}
       {...props}
     >
-      <div className="ui-stats-card-content">
-        <div className="ui-stats-card-header">
-          <h3 className="ui-stats-card-title">{title}</h3>
-          {icon && <div className={`ui-stats-card-icon ui-stats-card-icon-${color}`}>{icon}</div>}
+      <div className={styles.statsCardContent}>
+        <div className={styles.statsCardHeader}>
+          <h3 className={styles.statsCardTitle}>{title}</h3>
+          {icon && <div className={`${styles.statsCardIcon} ${styles[`statsCardIcon-${color}`]}`}>{icon}</div>}
         </div>
         
-        <div className="ui-stats-card-body">
+        <div className={styles.statsCardBody}>
           {isLoading ? (
-            <div className="ui-stats-card-loading">
-              <div className="ui-stats-card-skeleton-value"></div>
-              <div className="ui-stats-card-skeleton-change"></div>
+            <div className={styles.statsCardLoading}>
+              <div className={styles.statsCardSkeletonValue}></div>
+              <div className={styles.statsCardSkeletonChange}></div>
             </div>
           ) : (
             <>
-              <div className="ui-stats-card-value">{value}</div>
+              <div className={styles.statsCardValue}>{value}</div>
               
               {change !== undefined && (
-                <div className={`ui-stats-card-change ui-stats-card-change-${changeType}`}>
-                  {trend === 'up' && <span className="ui-stats-card-change-arrow">↑</span>}
-                  {trend === 'down' && <span className="ui-stats-card-change-arrow">↓</span>}
-                  <span className="ui-stats-card-change-value">{Math.abs(change)}%</span>
-                  {changeLabel && <span className="ui-stats-card-change-label">{changeLabel}</span>}
+                <div className={`${styles.statsCardChange} ${styles[`statsCardChange-${changeType}`]}`}>
+                  {trend === 'up' && <span className={styles.statsCardChangeArrow}>↑</span>}
+                  {trend === 'down' && <span className={styles.statsCardChangeArrow}>↓</span>}
+                  <span className={styles.statsCardChangeValue}>{Math.abs(change)}%</span>
+                  {changeLabel && <span className={styles.statsCardChangeLabel}>{changeLabel}</span>}
                 </div>
               )}
             </>
           )}
         </div>
         
-        {footer && <div className="ui-stats-card-footer">{footer}</div>}
+        {footer && <div className={styles.statsCardFooter}>{footer}</div>}
       </div>
       
-      <div className="ui-stats-card-background-decoration"></div>
+      <div className={styles.statsCardBackgroundDecoration}></div>
     </div>
   );
 };

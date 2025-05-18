@@ -1,0 +1,60 @@
+/* MainLayout.module.css */
+.mainLayout {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  background-color: #f8fafc;
+}
+
+.contentArea {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: margin-left 0.3s ease;
+}
+
+.withSidebar {
+  margin-left: 240px; /* Match sidebar width when open */
+}
+
+.sidebarCollapsed {
+  margin-left: 64px; /* Match sidebar width when collapsed */
+}
+
+.mainContent {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem 0px;
+  background-color: #f8fafc;
+}
+
+/* Apply gutters to the main content area */
+.mainContent > div > div {
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0 0.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .mainContent {
+    padding: 1.25rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .withSidebar {
+    margin-left: 240px;
+  }
+  
+  .sidebarCollapsed {
+    margin-left: 0;
+  }
+  
+  .mainContent {
+    padding: 1rem;
+  }
+} 

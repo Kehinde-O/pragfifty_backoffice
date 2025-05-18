@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import './Container.css';
+import styles from './Container.module.css';
 
 const Container = ({
   children,
@@ -13,9 +13,9 @@ const Container = ({
   return (
     <div 
       className={`
-        ui-container 
-        ${fluid ? 'ui-container-fluid' : `ui-container-${size}`}
-        ${gutters ? 'ui-container-gutters' : ''}
+        ${styles.container}
+        ${fluid ? styles['container-fluid'] : styles[`container-${size}`]}
+        ${gutters ? styles.containerGutters : ''}
         ${className}
       `}
       {...props}

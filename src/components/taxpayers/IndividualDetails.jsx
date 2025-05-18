@@ -5,7 +5,7 @@ import {
   FiPhone, FiEdit2, FiDownload, FiUserCheck, FiUserX, FiClock, FiFlag
 } from 'react-icons/fi';
 import { FaIdCard, FaMoneyBillWave } from 'react-icons/fa';
-import './IndividualDetails.css';
+import styles from './IndividualDetails.module.css';
 
 const IndividualDetails = () => {
   const { id } = useParams();
@@ -86,12 +86,12 @@ const IndividualDetails = () => {
 
   if (loading) {
     return (
-      <div className="individual-details-container">
-        <div className="details-loading">
-          <div className="skeleton-header"></div>
-          <div className="skeleton-body">
-            <div className="skeleton-card"></div>
-            <div className="skeleton-card"></div>
+      <div className={styles.individualDetailsContainer}>
+        <div className={styles.detailsLoading}>
+          <div className={styles.skeletonHeader}></div>
+          <div className={styles.skeletonBody}>
+            <div className={styles.skeletonCard}></div>
+            <div className={styles.skeletonCard}></div>
           </div>
         </div>
       </div>
@@ -100,12 +100,12 @@ const IndividualDetails = () => {
 
   if (!taxpayer) {
     return (
-      <div className="individual-details-container">
-        <div className="details-not-found">
+      <div className={styles.individualDetailsContainer}>
+        <div className={styles.detailsNotFound}>
           <FiUser size={48} />
           <h2>Taxpayer Not Found</h2>
           <p>The taxpayer you are looking for does not exist or has been removed.</p>
-          <button className="back-button" onClick={goBack}>
+          <button className={styles.backButton} onClick={goBack}>
             <FiArrowLeft /> Back to Taxpayers List
           </button>
         </div>
@@ -114,35 +114,35 @@ const IndividualDetails = () => {
   }
 
   return (
-    <div className="individual-details-container">
+    <div className={styles.individualDetailsContainer}>
       {/* Header with back button */}
-      <div className="details-header">
-        <button className="back-button" onClick={goBack}>
+      <div className={styles.detailsHeader}>
+        <button className={styles.backButton} onClick={goBack}>
           <FiArrowLeft /> Back to Taxpayers
         </button>
-        <div className="details-actions">
-          <button className="export-button" onClick={handleExport}>
+        <div className={styles.detailsActions}>
+          <button className={styles.exportButton} onClick={handleExport}>
             <FiDownload /> Export Profile
           </button>
-          <button className="edit-button" onClick={handleEdit}>
+          <button className={styles.editButton} onClick={handleEdit}>
             <FiEdit2 /> Edit Profile
           </button>
         </div>
       </div>
 
       {/* Profile Header */}
-      <div className="profile-header">
-        <div className="profile-avatar">
+      <div className={styles.profileHeader}>
+        <div className={styles.profileAvatar}>
           {taxpayer.firstName[0]}{taxpayer.lastName[0]}
         </div>
-        <div className="profile-headline">
+        <div className={styles.profileHeadline}>
           <h1>{taxpayer.firstName} {taxpayer.middleName && `${taxpayer.middleName} `}{taxpayer.lastName}</h1>
-          <div className="profile-subheadline">
-            <div className="tin-display">
+          <div className={styles.profileSubheadline}>
+            <div className={styles.tinDisplay}>
               <FaIdCard /> TIN: {taxpayer.tin}
             </div>
             <StatusBadge status={taxpayer.status} />
-            <div className="occupation-display">
+            <div className={styles.occupationDisplay}>
               <FiBriefcase /> {taxpayer.occupation}
             </div>
           </div>
@@ -150,27 +150,27 @@ const IndividualDetails = () => {
       </div>
 
       {/* Tabs Navigation */}
-      <div className="details-tabs">
+      <div className={styles.detailsTabs}>
         <button 
-          className={`tab-button ${activeTab === 'overview' ? 'active' : ''}`}
+          className={`${styles.tabButton} ${activeTab === 'overview' ? styles.active : ''}`}
           onClick={() => setActiveTab('overview')}
         >
           Overview
         </button>
         <button 
-          className={`tab-button ${activeTab === 'tax-returns' ? 'active' : ''}`}
+          className={`${styles.tabButton} ${activeTab === 'tax-returns' ? styles.active : ''}`}
           onClick={() => setActiveTab('tax-returns')}
         >
           Tax Returns
         </button>
         <button 
-          className={`tab-button ${activeTab === 'compliance' ? 'active' : ''}`}
+          className={`${styles.tabButton} ${activeTab === 'compliance' ? styles.active : ''}`}
           onClick={() => setActiveTab('compliance')}
         >
           Compliance History
         </button>
         <button 
-          className={`tab-button ${activeTab === 'transactions' ? 'active' : ''}`}
+          className={`${styles.tabButton} ${activeTab === 'transactions' ? styles.active : ''}`}
           onClick={() => setActiveTab('transactions')}
         >
           Transactions
@@ -178,81 +178,81 @@ const IndividualDetails = () => {
       </div>
 
       {/* Tab Content */}
-      <div className="tab-content">
+      <div className={styles.tabContent}>
         {activeTab === 'overview' && (
-          <div className="overview-tab">
-            <div className="details-section">
+          <div className={styles.overviewTab}>
+            <div className={styles.detailsSection}>
               <h2>Personal Information</h2>
-              <div className="details-grid">
-                <div className="details-item">
-                  <div className="details-label">Name</div>
-                  <div className="details-value">{taxpayer.firstName} {taxpayer.middleName} {taxpayer.lastName}</div>
+              <div className={styles.detailsGrid}>
+                <div className={styles.detailsItem}>
+                  <div className={styles.detailsLabel}>Name</div>
+                  <div className={styles.detailsValue}>{taxpayer.firstName} {taxpayer.middleName} {taxpayer.lastName}</div>
                 </div>
-                <div className="details-item">
-                  <div className="details-label">Date of Birth</div>
-                  <div className="details-value">{formatDate(taxpayer.dateOfBirth)}</div>
+                <div className={styles.detailsItem}>
+                  <div className={styles.detailsLabel}>Date of Birth</div>
+                  <div className={styles.detailsValue}>{formatDate(taxpayer.dateOfBirth)}</div>
                 </div>
-                <div className="details-item">
-                  <div className="details-label">Gender</div>
-                  <div className="details-value">{taxpayer.gender}</div>
+                <div className={styles.detailsItem}>
+                  <div className={styles.detailsLabel}>Gender</div>
+                  <div className={styles.detailsValue}>{taxpayer.gender}</div>
                 </div>
-                <div className="details-item">
-                  <div className="details-label">Nationality</div>
-                  <div className="details-value">{taxpayer.nationality}</div>
+                <div className={styles.detailsItem}>
+                  <div className={styles.detailsLabel}>Nationality</div>
+                  <div className={styles.detailsValue}>{taxpayer.nationality}</div>
                 </div>
-                <div className="details-item">
-                  <div className="details-label">Occupation</div>
-                  <div className="details-value">{taxpayer.occupation}</div>
+                <div className={styles.detailsItem}>
+                  <div className={styles.detailsLabel}>Occupation</div>
+                  <div className={styles.detailsValue}>{taxpayer.occupation}</div>
                 </div>
-                <div className="details-item">
-                  <div className="details-label">TIN</div>
-                  <div className="details-value tin-number">{taxpayer.tin}</div>
+                <div className={styles.detailsItem}>
+                  <div className={styles.detailsLabel}>TIN</div>
+                  <div className={styles.detailsValue} style={{ fontWeight: 'bold' }}>{taxpayer.tin}</div>
                 </div>
               </div>
             </div>
 
-            <div className="details-section">
+            <div className={styles.detailsSection}>
               <h2>Contact Information</h2>
-              <div className="details-grid">
-                <div className="details-item">
-                  <div className="details-label">Email</div>
-                  <div className="details-value with-icon">
+              <div className={styles.detailsGrid}>
+                <div className={styles.detailsItem}>
+                  <div className={styles.detailsLabel}>Email</div>
+                  <div className={styles.detailsValue} style={{ display: 'flex', alignItems: 'center' }}>
                     <FiMail /> {taxpayer.email}
                   </div>
                 </div>
-                <div className="details-item">
-                  <div className="details-label">Phone</div>
-                  <div className="details-value with-icon">
+                <div className={styles.detailsItem}>
+                  <div className={styles.detailsLabel}>Phone</div>
+                  <div className={styles.detailsValue} style={{ display: 'flex', alignItems: 'center' }}>
                     <FiPhone /> {taxpayer.phone}
                   </div>
                 </div>
-                <div className="details-item full-width">
-                  <div className="details-label">Address</div>
-                  <div className="details-value with-icon">
+                <div className={styles.detailsItem} style={{ width: '100%' }}>
+                  <div className={styles.detailsLabel}>Address</div>
+                  <div className={styles.detailsValue} style={{ display: 'flex', alignItems: 'center' }}>
                     <FiMap /> {taxpayer.address.street}, {taxpayer.address.city}, {taxpayer.address.lga}, {taxpayer.address.state}
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="details-section">
+            <div className={styles.detailsSection}>
               <h2>Account Status</h2>
-              <div className="details-grid">
-                <div className="details-item">
-                  <div className="details-label">Status</div>
-                  <div className="details-value">
+              <div className={styles.detailsGrid}>
+                <div className={styles.detailsItem}>
+                  <div className={styles.detailsLabel}>Status</div>
+                  <div className={styles.detailsValue}>
                     <StatusBadge status={taxpayer.status} />
                   </div>
                 </div>
-                <div className="details-item">
-                  <div className="details-label">Last Updated</div>
-                  <div className="details-value with-icon">
+                <div className={styles.detailsItem}>
+                  <div className={styles.detailsLabel}>Last Updated</div>
+                  <div className={styles.detailsValue} style={{ display: 'flex', alignItems: 'center' }}>
                     <FiCalendar /> {formatDateTime(taxpayer.lastUpdated)}
                   </div>
                 </div>
-                <div className="details-item">
-                  <div className="details-label">Registration Date</div>
-                  <div className="details-value with-icon">
+                <div className={styles.detailsItem}>
+                  <div className={styles.detailsLabel}>Registration Date</div>
+                  <div className={styles.detailsValue} style={{ display: 'flex', alignItems: 'center' }}>
                     <FiCalendar /> {formatDate('2023-01-15')} {/* Mock data - should come from API */}
                   </div>
                 </div>
@@ -262,8 +262,8 @@ const IndividualDetails = () => {
         )}
 
         {activeTab === 'tax-returns' && (
-          <div className="tax-returns-tab">
-            <div className="placeholder-content">
+          <div className={styles.taxReturnsTab}>
+            <div className={styles.placeholderContent}>
               <FaMoneyBillWave size={48} />
               <h3>Tax Returns History</h3>
               <p>This taxpayer has no tax returns history yet. Tax returns for this individual will appear here once submitted.</p>
@@ -272,8 +272,8 @@ const IndividualDetails = () => {
         )}
 
         {activeTab === 'compliance' && (
-          <div className="compliance-tab">
-            <div className="placeholder-content">
+          <div className={styles.complianceTab}>
+            <div className={styles.placeholderContent}>
               <FiFlag size={48} />
               <h3>Compliance History</h3>
               <p>No compliance records found for this taxpayer. Compliance records will appear here if there are any issues or notices.</p>
@@ -282,8 +282,8 @@ const IndividualDetails = () => {
         )}
 
         {activeTab === 'transactions' && (
-          <div className="transactions-tab">
-            <div className="placeholder-content">
+          <div className={styles.transactionsTab}>
+            <div className={styles.placeholderContent}>
               <FaMoneyBillWave size={48} />
               <h3>Transaction History</h3>
               <p>No transaction records found for this taxpayer. Payment and transaction history will appear here once available.</p>

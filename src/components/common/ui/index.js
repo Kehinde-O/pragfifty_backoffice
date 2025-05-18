@@ -5,4 +5,5 @@ export { default as Select } from './Select';
 export { default as Table } from './Table';
 export { default as StatsCard } from './StatsCard';
 export { default as Container } from './Container';
-export { default as Pagination } from './Pagination'; 
+export { default as Pagination } from './Pagination';
+export { default as Alert } from './Alert'; 

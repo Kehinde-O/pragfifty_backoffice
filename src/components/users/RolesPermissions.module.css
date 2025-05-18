@@ -1,0 +1,115 @@
+.deleteButton {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+.deleteButton:hover {
+  background-color: rgba(239, 68, 68, 0.2);
+  transform: translateY(-1px);
+}
+
+/* Loading Indicator */
+.loadingIndicator {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem;
+  color: #64748b;
+  font-size: 1rem;
+}
+
+.spinning {
+  animation: spin 1s linear infinite;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Modal */
+.modalBackdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(15, 23, 42, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.modalContent {
+  background-color: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 600px;
+  padding: 2rem;
+  animation: slideUp 0.3s ease-out forwards;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  border: none;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modalContent h2 {
+  margin-top: 0;
+  color: #1e293b;
+  margin-bottom: 2rem;
+  font-size: 1.75rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.modalContent h2 svg {
+  color: #4f46e5;
+}
+
+/* Form Styles */
+.formGroup {
+  margin-bottom: 1.5rem;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #475569;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.formGroup input[type="text"],
+.formGroup select {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  transition: all 0.2s;
+  background-color: white;
+} 

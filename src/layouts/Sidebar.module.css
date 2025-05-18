@@ -1,4 +1,4 @@
-/* Sidebar.css */
+/* Sidebar.module.css */
 .sidebar {
   height: 100vh;
   background-color: #1f2937;
@@ -13,15 +13,15 @@
   transition: width 0.3s ease;
 }
 
-.sidebar.open {
+.open {
   width: 240px;
 }
 
-.sidebar.collapsed {
+.collapsed {
   width: 64px;
 }
 
-.sidebar-header {
+.sidebarHeader {
   height: 60px;
   display: flex;
   align-items: center;
@@ -29,7 +29,7 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.logo-container {
+.logoContainer {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -48,29 +48,29 @@
   font-size: 1rem;
 }
 
-.logo-text {
+.logoText {
   font-size: 1.125rem;
   font-weight: 600;
   color: #f3f4f6;
 }
 
-.sidebar-nav {
+.sidebarNav {
   flex: 1;
   overflow-y: auto;
   padding: 1rem 0;
 }
 
-.menu-list {
+.menuList {
   list-style-type: none;
   margin: 0;
   padding: 0;
 }
 
-.menu-item {
+.menuItem {
   margin-bottom: 0.25rem;
 }
 
-.menu-link {
+.menuLink {
   display: flex;
   align-items: center;
   padding: 0.75rem 1rem;
@@ -81,17 +81,17 @@
   margin: 0 0.5rem;
 }
 
-.menu-link:hover {
+.menuLink:hover {
   color: #f3f4f6;
   background-color: rgba(255, 255, 255, 0.1);
 }
 
-.menu-link.active {
+.active {
   color: #ffffff;
   background-color: #3b82f6;
 }
 
-.menu-icon {
+.menuIcon {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -100,7 +100,7 @@
   min-width: 1.5rem;
 }
 
-.menu-text {
+.menuText {
   margin-left: 0.75rem;
   font-size: 0.938rem;
   white-space: nowrap;
@@ -108,11 +108,11 @@
   text-overflow: ellipsis;
 }
 
-.menu-section {
+.menuSection {
   margin-bottom: 0.25rem;
 }
 
-.section-toggle {
+.sectionToggle {
   width: 100%;
   display: flex;
   align-items: center;
@@ -127,12 +127,12 @@
   margin: 0 0.5rem;
 }
 
-.section-toggle:hover {
+.sectionToggle:hover {
   color: #f3f4f6;
   background-color: rgba(255, 255, 255, 0.1);
 }
 
-.toggle-icon {
+.toggleIcon {
   margin-left: auto;
 }
 
@@ -145,7 +145,7 @@
   transition: max-height 0.3s ease-in-out;
 }
 
-.menu-section > button[aria-expanded="true"] + .submenu {
+.submenu.expanded {
   max-height: 1000px;
 }
 
@@ -153,7 +153,7 @@
   margin-bottom: 0.25rem;
 }
 
-.submenu a {
+.submenuLink {
   display: block;
   padding: 0.5rem 0.75rem;
   color: #d1d5db;
@@ -163,23 +163,23 @@
   border-radius: 0.25rem;
 }
 
-.submenu a:hover {
+.submenuLink:hover {
   color: #f3f4f6;
   background-color: rgba(255, 255, 255, 0.1);
 }
 
-.submenu a.active {
+.submenuActive {
   color: #ffffff;
   background-color: rgba(59, 130, 246, 0.5);
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-  .sidebar.open {
+  .open {
     width: 240px;
   }
   
-  .sidebar.collapsed {
+  .collapsed {
     width: 0;
   }
 } 

@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Card,
-  CardContent,
-  CardHeader,
   Typography,
   Tabs,
   Tab,
@@ -20,24 +17,26 @@ import {
   MenuItem,
   Select,
   FormControl,
-  InputLabel,
   IconButton,
   Divider,
   Alert,
   CircularProgress,
   InputAdornment,
-  Chip
+  Tooltip
 } from '@mui/material';
 import {
   Search as SearchIcon,
   Print as PrintIcon,
   Delete as DeleteIcon,
   Save as SaveIcon,
-  Refresh as RefreshIcon
+  Refresh as RefreshIcon,
+  ArrowUpward as ArrowUpwardIcon,
+  ArrowDownward as ArrowDownwardIcon,
+  Filter as FilterIcon,
+  Info as InfoIcon
 } from '@mui/icons-material';
-import axios from 'axios';
 import Swal from 'sweetalert2';
-import './ConsolidatedDemandNotice.css';
+import styles from './ConsolidatedDemandNotice.module.css';
 
 const ConsolidatedDemandNotice = () => {
   // State for active tab
@@ -60,6 +59,12 @@ const ConsolidatedDemandNotice = () => {
   
   // State for form values of unclassified entities
   const [formValues, setFormValues] = useState({});
+
+  // State for sorting table data
+  const [sortConfig, setSortConfig] = useState({
+    key: 'name',
+    direction: 'asc'
+  });
   
   // Initialize or update form values when unclassifiedData changes
   useEffect(() => {
@@ -70,8 +75,8 @@ const ConsolidatedDemandNotice = () => {
         newFormValues[item.id] = {
           classification: '',
           valueCategory: '',
-          address: item.address,
-          city: item.city
+          address: item.address || '',
+          city: item.city || ''
         };
       } else {
         // Keep existing values
@@ -148,6 +153,33 @@ const ConsolidatedDemandNotice = () => {
         [field]: value
       }
     }));
+  };
+  
+  // Handle sorting
+  const requestSort = (key) => {
+    let direction = 'asc';
+    if (sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+  };
+
+  // Sort data based on current sort configuration
+  const getSortedData = (data) => {
+    if (!sortConfig.key) return data;
+    
+    return [...data].sort((a, b) => {
+      const aValue = a[sortConfig.key];
+      const bValue = b[sortConfig.key];
+      
+      if (aValue < bValue) {
+        return sortConfig.direction === 'asc' ? -1 : 1;
+      }
+      if (aValue > bValue) {
+        return sortConfig.direction === 'asc' ? 1 : -1;
+      }
+      return 0;
+    });
   };
   
   // Mock function to load unclassified data (replace with actual API call)
@@ -314,197 +346,253 @@ const ConsolidatedDemandNotice = () => {
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
   };
+
+  // Render sort icons for table headers
+  const renderSortIcon = (key) => {
+    if (sortConfig.key !== key) {
+      return null;
+    }
+    return sortConfig.direction === 'asc' 
+      ? <ArrowUpwardIcon fontSize="small" sx={{ fontSize: 16, ml: 0.5 }} /> 
+      : <ArrowDownwardIcon fontSize="small" sx={{ fontSize: 16, ml: 0.5 }} />;
+  };
   
   return (
-    <Box className="cdn-container" sx={{ p: 3 }}>
+    <Box className={styles.container}>
       <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" component="h1" sx={{ fontWeight: 600, mb: 1 }}>
+        <Typography variant="h4" component="h1" className={styles.pageTitle}>
           Consolidated Demand Notice
         </Typography>
-        <Typography variant="body1" color="text.secondary">
+        <Typography variant="body1" className={styles.pageSubtitle}>
           Manage and generate consolidated demand notices for entities
         </Typography>
       </Box>
       
-      <Paper elevation={2} sx={{ borderRadius: 2, overflow: 'hidden' }}>
-        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+      <Paper elevation={2} sx={{ borderRadius: '0.75rem', overflow: 'hidden' }}>
+        <Box className={styles.tabs}>
           <Tabs 
             value={activeTab} 
             onChange={handleTabChange} 
             indicatorColor="primary"
             textColor="primary"
-            sx={{ 
-              '& .MuiTab-root': { 
-                fontWeight: 600, 
-                py: 2,
-                px: 3
-              } 
-            }}
           >
-            <Tab label="Unclassified Entities" value="unclassified" />
-            <Tab label="Classified Entities" value="classified" />
+            <Tab 
+              label="Unclassified Entities" 
+              value="unclassified" 
+              className={styles.tab}
+              classes={{ selected: styles.tabSelected }}
+            />
+            <Tab 
+              label="Classified Entities" 
+              value="classified" 
+              className={styles.tab}
+              classes={{ selected: styles.tabSelected }}
+            />
           </Tabs>
         </Box>
         
         <Box sx={{ p: 3 }}>
           {/* Search Card */}
-          <Paper elevation={0} variant="outlined" sx={{ mb: 4, borderRadius: 2 }}>
-            <Box sx={{ p: 2, bgcolor: 'background.default', borderTopLeftRadius: 8, borderTopRightRadius: 8 }}>
-              <Typography variant="h6" sx={{ fontWeight: 600 }}>Search Records</Typography>
+          <Paper className={styles.searchCard} elevation={0}>
+            <Box className={styles.searchCardHeader}>
+              <Typography variant="h6" className={styles.searchCardTitle}>
+                <FilterIcon fontSize="small" sx={{ mr: 1, verticalAlign: 'middle' }} />
+                Search Records
+              </Typography>
             </Box>
-            <Divider />
-            <Box component="form" onSubmit={handleSearch} sx={{ p: 3 }}>
-              <Grid container spacing={3}>
-                <Grid item xs={12} md={3}>
-                  <TextField
-                    fullWidth
-                    label="ODTIN"
-                    placeholder="Enter ODTIN"
-                    name="odtin"
-                    value={searchParams.odtin}
-                    onChange={handleSearchChange}
-                    variant="outlined"
-                    size="small"
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <SearchIcon fontSize="small" />
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={12} md={3}>
-                  <TextField
-                    fullWidth
-                    label="Organization Name"
-                    placeholder="Enter Organization Name"
-                    name="orgName"
-                    value={searchParams.orgName}
-                    onChange={handleSearchChange}
-                    variant="outlined"
-                    size="small"
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <SearchIcon fontSize="small" />
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={12} md={3}>
-                  <TextField
-                    fullWidth
-                    label="Phone Number"
-                    placeholder="Enter Phone Number"
-                    name="phone"
-                    value={searchParams.phone}
-                    onChange={handleSearchChange}
-                    variant="outlined"
-                    size="small"
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <SearchIcon fontSize="small" />
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={12} md={3} sx={{ display: 'flex', alignItems: 'center' }}>
-                  <Box sx={{ display: 'flex', gap: 1, width: '100%' }}>
-                    <Button
-                      variant="contained"
-                      type="submit"
-                      disabled={isLoading}
-                      startIcon={isLoading ? <CircularProgress size={20} /> : <SearchIcon />}
-                      sx={{ flex: 1 }}
-                    >
-                      {isLoading ? 'Searching' : 'Search'}
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      type="button"
-                      onClick={handleReset}
-                      startIcon={<RefreshIcon />}
-                      sx={{ flex: 1 }}
-                    >
-                      Reset
-                    </Button>
-                  </Box>
-                </Grid>
-              </Grid>
+            <Box component="form" onSubmit={handleSearch} className={styles.searchCardContent}>
+              <div className={styles.formGrid}>
+                <TextField
+                  fullWidth
+                  label="ODTIN"
+                  placeholder="Enter ODTIN"
+                  name="odtin"
+                  value={searchParams.odtin}
+                  onChange={handleSearchChange}
+                  variant="outlined"
+                  size="small"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SearchIcon fontSize="small" />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+                <TextField
+                  fullWidth
+                  label="Organization Name"
+                  placeholder="Enter Organization Name"
+                  name="orgName"
+                  value={searchParams.orgName}
+                  onChange={handleSearchChange}
+                  variant="outlined"
+                  size="small"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SearchIcon fontSize="small" />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+                <TextField
+                  fullWidth
+                  label="Phone Number"
+                  placeholder="Enter Phone Number"
+                  name="phone"
+                  value={searchParams.phone}
+                  onChange={handleSearchChange}
+                  variant="outlined"
+                  size="small"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SearchIcon fontSize="small" />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </div>
+              <div className={styles.formActions}>
+                <Button
+                  variant="contained"
+                  type="submit"
+                  disabled={isLoading}
+                  startIcon={isLoading ? <CircularProgress size={20} /> : <SearchIcon />}
+                  className={styles.searchButton}
+                >
+                  {isLoading ? 'Searching...' : 'Search'}
+                </Button>
+                <Button
+                  variant="outlined"
+                  type="button"
+                  onClick={handleReset}
+                  startIcon={<RefreshIcon />}
+                  className={styles.resetButton}
+                >
+                  Reset
+                </Button>
+              </div>
             </Box>
           </Paper>
           
           {/* Content based on active tab */}
           {activeTab === 'unclassified' ? (
-            <TableContainer component={Paper} variant="outlined" sx={{ borderRadius: 2 }}>
-              <Table sx={{ minWidth: 650 }} size="small">
-                <TableHead>
-                  <TableRow sx={{ bgcolor: 'background.default' }}>
-                    <TableCell sx={{ fontWeight: 600 }}>Name</TableCell>
-                    <TableCell sx={{ fontWeight: 600 }}>Phone</TableCell>
-                    <TableCell sx={{ fontWeight: 600 }}>Email</TableCell>
-                    <TableCell sx={{ fontWeight: 600 }}>ODTIN</TableCell>
-                    <TableCell sx={{ fontWeight: 600 }}>Address</TableCell>
-                    <TableCell sx={{ fontWeight: 600 }}>City</TableCell>
-                    <TableCell sx={{ fontWeight: 600 }}>LGA</TableCell>
-                    <TableCell sx={{ fontWeight: 600 }}>Classification</TableCell>
-                    <TableCell sx={{ fontWeight: 600 }}>Value Category</TableCell>
-                    <TableCell sx={{ fontWeight: 600 }}>Action</TableCell>
+            <TableContainer component={Paper} className={styles.tableContainer}>
+              <Table size="small">
+                <TableHead className={styles.tableHeader}>
+                  <TableRow>
+                    <TableCell className={styles.tableHeaderCell} onClick={() => requestSort('name')} sx={{ cursor: 'pointer' }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        Name {renderSortIcon('name')}
+                      </Box>
+                    </TableCell>
+                    <TableCell className={styles.tableHeaderCell} onClick={() => requestSort('phone')} sx={{ cursor: 'pointer' }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        Phone {renderSortIcon('phone')}
+                      </Box>
+                    </TableCell>
+                    <TableCell className={styles.tableHeaderCell} onClick={() => requestSort('email')} sx={{ cursor: 'pointer' }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        Email {renderSortIcon('email')}
+                      </Box>
+                    </TableCell>
+                    <TableCell className={styles.tableHeaderCell} onClick={() => requestSort('odtin')} sx={{ cursor: 'pointer' }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        ODTIN {renderSortIcon('odtin')}
+                      </Box>
+                    </TableCell>
+                    <TableCell className={styles.tableHeaderCell}>Address</TableCell>
+                    <TableCell className={styles.tableHeaderCell}>City</TableCell>
+                    <TableCell className={styles.tableHeaderCell} onClick={() => requestSort('lga')} sx={{ cursor: 'pointer' }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        LGA {renderSortIcon('lga')}
+                      </Box>
+                    </TableCell>
+                    <TableCell className={styles.tableHeaderCell}>
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        Classification
+                        <Tooltip title="Select appropriate business sector classification" arrow>
+                          <InfoIcon fontSize="small" sx={{ ml: 0.5, fontSize: 16, color: '#94a3b8' }} />
+                        </Tooltip>
+                      </Box>
+                    </TableCell>
+                    <TableCell className={styles.tableHeaderCell}>
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        Value Category
+                        <Tooltip title="Select based on location and value assessment" arrow>
+                          <InfoIcon fontSize="small" sx={{ ml: 0.5, fontSize: 16, color: '#94a3b8' }} />
+                        </Tooltip>
+                      </Box>
+                    </TableCell>
+                    <TableCell className={styles.tableHeaderCell}>Action</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {isLoading ? (
                     <TableRow>
-                      <TableCell colSpan={10} align="center" sx={{ py: 4 }}>
-                        <CircularProgress size={40} />
-                        <Typography variant="body2" sx={{ mt: 2 }}>Loading data...</Typography>
+                      <TableCell colSpan={10} align="center">
+                        <div className={styles.loadingContainer}>
+                          <CircularProgress size={40} sx={{ color: '#2563eb' }} />
+                          <Typography variant="body2" sx={{ mt: 2, color: '#6b7280' }}>Loading data...</Typography>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ) : unclassifiedData.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={10} align="center" sx={{ py: 4 }}>
-                        <Typography variant="body1">No unclassified entities found</Typography>
+                      <TableCell colSpan={10} align="center">
+                        <div className={styles.emptyState}>
+                          <Typography variant="body1">No unclassified entities found</Typography>
+                          <Typography variant="body2" sx={{ mt: 1, mb: 2 }}>Try a different search or reset filters</Typography>
+                          <Button 
+                            variant="outlined" 
+                            size="small" 
+                            startIcon={<RefreshIcon />}
+                            onClick={handleReset}
+                          >
+                            Reset Filters
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ) : (
-                    unclassifiedData.map(item => {
+                    getSortedData(unclassifiedData).map(item => {
                       const itemForm = formValues[item.id] || {
                         classification: '',
                         valueCategory: '',
-                        address: item.address,
-                        city: item.city
+                        address: item.address || '',
+                        city: item.city || ''
                       };
                       
                       return (
-                        <TableRow key={item.id} hover>
-                          <TableCell>{item.name}</TableCell>
-                          <TableCell>{item.phone}</TableCell>
-                          <TableCell>{item.email}</TableCell>
-                          <TableCell>{item.odtin}</TableCell>
-                          <TableCell>
+                        <TableRow key={item.id} className={styles.tableRow}>
+                          <TableCell className={styles.tableCell}>{item.name}</TableCell>
+                          <TableCell className={styles.tableCell}>{item.phone}</TableCell>
+                          <TableCell className={styles.tableCell}>{item.email}</TableCell>
+                          <TableCell className={styles.tableCell}>{item.odtin}</TableCell>
+                          <TableCell className={styles.tableCell}>
                             <TextField
                               fullWidth
                               value={itemForm.address}
                               onChange={(e) => handleFormChange(item.id, 'address', e.target.value)}
                               size="small"
                               variant="outlined"
+                              placeholder="Enter address"
                             />
                           </TableCell>
-                          <TableCell>
+                          <TableCell className={styles.tableCell}>
                             <TextField
                               fullWidth
                               value={itemForm.city}
                               onChange={(e) => handleFormChange(item.id, 'city', e.target.value)}
                               size="small"
                               variant="outlined"
+                              placeholder="Enter city"
                             />
                           </TableCell>
-                          <TableCell>{item.lga}</TableCell>
-                          <TableCell>
+                          <TableCell className={styles.tableCell}>{item.lga}</TableCell>
+                          <TableCell className={styles.tableCell}>
                             <FormControl fullWidth size="small">
                               <Select
                                 value={itemForm.classification}
@@ -522,7 +610,7 @@ const ConsolidatedDemandNotice = () => {
                               </Select>
                             </FormControl>
                           </TableCell>
-                          <TableCell>
+                          <TableCell className={styles.tableCell}>
                             <FormControl fullWidth size="small">
                               <Select
                                 value={itemForm.valueCategory}
@@ -541,15 +629,15 @@ const ConsolidatedDemandNotice = () => {
                               </Select>
                             </FormControl>
                           </TableCell>
-                          <TableCell>
+                          <TableCell className={styles.tableCell}>
                             <Button
                               variant="contained"
                               size="small"
                               disabled={!itemForm.classification || !itemForm.valueCategory}
                               onClick={() => handleClassify(item.id)}
                               startIcon={<SaveIcon />}
-                              color="primary"
-                              sx={{ whiteSpace: 'nowrap' }}
+                              className={`${styles.actionButton} ${styles.saveButton} ${(!itemForm.classification || !itemForm.valueCategory) ? styles.saveButtonDisabled : ''}`}
+                              disableElevation
                             >
                               Save
                             </Button>
@@ -562,83 +650,110 @@ const ConsolidatedDemandNotice = () => {
               </Table>
             </TableContainer>
           ) : (
-            <TableContainer component={Paper} variant="outlined" sx={{ borderRadius: 2 }}>
-              <Table sx={{ minWidth: 650 }} size="small">
-                <TableHead>
-                  <TableRow sx={{ bgcolor: 'background.default' }}>
-                    <TableCell sx={{ fontWeight: 600 }}>Name</TableCell>
-                    <TableCell sx={{ fontWeight: 600 }}>Phone</TableCell>
-                    <TableCell sx={{ fontWeight: 600 }}>Email</TableCell>
-                    <TableCell sx={{ fontWeight: 600 }}>ODTIN</TableCell>
-                    <TableCell sx={{ fontWeight: 600 }}>Address</TableCell>
-                    <TableCell sx={{ fontWeight: 600 }}>City</TableCell>
-                    <TableCell sx={{ fontWeight: 600 }}>LGA</TableCell>
-                    <TableCell sx={{ fontWeight: 600 }}>Classification</TableCell>
-                    <TableCell sx={{ fontWeight: 600 }}>Value Category</TableCell>
-                    <TableCell sx={{ fontWeight: 600 }}>Action</TableCell>
-                    <TableCell sx={{ fontWeight: 600 }}>Print CDN</TableCell>
+            <TableContainer component={Paper} className={styles.tableContainer}>
+              <Table size="small">
+                <TableHead className={styles.tableHeader}>
+                  <TableRow>
+                    <TableCell className={styles.tableHeaderCell} onClick={() => requestSort('name')} sx={{ cursor: 'pointer' }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        Name {renderSortIcon('name')}
+                      </Box>
+                    </TableCell>
+                    <TableCell className={styles.tableHeaderCell} onClick={() => requestSort('phone')} sx={{ cursor: 'pointer' }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        Phone {renderSortIcon('phone')}
+                      </Box>
+                    </TableCell>
+                    <TableCell className={styles.tableHeaderCell} onClick={() => requestSort('email')} sx={{ cursor: 'pointer' }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        Email {renderSortIcon('email')}
+                      </Box>
+                    </TableCell>
+                    <TableCell className={styles.tableHeaderCell} onClick={() => requestSort('odtin')} sx={{ cursor: 'pointer' }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        ODTIN {renderSortIcon('odtin')}
+                      </Box>
+                    </TableCell>
+                    <TableCell className={styles.tableHeaderCell}>Address</TableCell>
+                    <TableCell className={styles.tableHeaderCell}>City</TableCell>
+                    <TableCell className={styles.tableHeaderCell} onClick={() => requestSort('lga')} sx={{ cursor: 'pointer' }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        LGA {renderSortIcon('lga')}
+                      </Box>
+                    </TableCell>
+                    <TableCell className={styles.tableHeaderCell}>Classification</TableCell>
+                    <TableCell className={styles.tableHeaderCell}>Value Category</TableCell>
+                    <TableCell className={styles.tableHeaderCell}>Action</TableCell>
+                    <TableCell className={styles.tableHeaderCell}>Print CDN</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {isLoading ? (
                     <TableRow>
-                      <TableCell colSpan={11} align="center" sx={{ py: 4 }}>
-                        <CircularProgress size={40} />
-                        <Typography variant="body2" sx={{ mt: 2 }}>Loading data...</Typography>
+                      <TableCell colSpan={11} align="center">
+                        <div className={styles.loadingContainer}>
+                          <CircularProgress size={40} sx={{ color: '#2563eb' }} />
+                          <Typography variant="body2" sx={{ mt: 2, color: '#6b7280' }}>Loading data...</Typography>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ) : classifiedData.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={11} align="center" sx={{ py: 4 }}>
-                        <Typography variant="body1">No classified entities found</Typography>
+                      <TableCell colSpan={11} align="center">
+                        <div className={styles.emptyState}>
+                          <Typography variant="body1">No classified entities found</Typography>
+                          <Typography variant="body2" sx={{ mt: 1, mb: 2 }}>Try a different search or reset filters</Typography>
+                          <Button 
+                            variant="outlined" 
+                            size="small" 
+                            startIcon={<RefreshIcon />}
+                            onClick={handleReset}
+                          >
+                            Reset Filters
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ) : (
-                    classifiedData.map(item => (
-                      <TableRow key={item.id} hover>
-                        <TableCell>{item.name}</TableCell>
-                        <TableCell>{item.phone}</TableCell>
-                        <TableCell>{item.email}</TableCell>
-                        <TableCell>{item.odtin}</TableCell>
-                        <TableCell>{item.address}</TableCell>
-                        <TableCell>{item.city}</TableCell>
-                        <TableCell>{item.lga}</TableCell>
-                        <TableCell>
-                          <Chip 
-                            label={item.classification} 
-                            size="small" 
-                            color="primary" 
-                            variant="outlined"
-                          />
+                    getSortedData(classifiedData).map(item => (
+                      <TableRow key={item.id} className={styles.tableRow}>
+                        <TableCell className={styles.tableCell}>{item.name}</TableCell>
+                        <TableCell className={styles.tableCell}>{item.phone}</TableCell>
+                        <TableCell className={styles.tableCell}>{item.email}</TableCell>
+                        <TableCell className={styles.tableCell}>{item.odtin}</TableCell>
+                        <TableCell className={styles.tableCell}>{item.address}</TableCell>
+                        <TableCell className={styles.tableCell}>{item.city}</TableCell>
+                        <TableCell className={styles.tableCell}>{item.lga}</TableCell>
+                        <TableCell className={styles.tableCell}>
+                          <span className={`${styles.chip} ${styles.classificationChip}`}>
+                            {item.classification}
+                          </span>
                         </TableCell>
-                        <TableCell>
-                          <Chip 
-                            label={item.valueCategory} 
-                            size="small"
-                            color="secondary"
-                            variant="outlined"
-                          />
+                        <TableCell className={styles.tableCell}>
+                          <span className={`${styles.chip} ${styles.categoryChip}`}>
+                            {item.valueCategory}
+                          </span>
                         </TableCell>
-                        <TableCell>
+                        <TableCell className={styles.tableCell}>
                           <Button
                             variant="outlined"
                             size="small"
-                            color="error"
                             onClick={() => handleUnclassify(item.id)}
                             startIcon={<DeleteIcon />}
-                            sx={{ whiteSpace: 'nowrap' }}
+                            className={`${styles.actionButton} ${styles.removeButton}`}
                           >
                             Remove
                           </Button>
                         </TableCell>
-                        <TableCell>
+                        <TableCell className={styles.tableCell}>
                           <Button
                             variant="contained"
                             size="small"
-                            color="primary"
                             href={`/api/printlucbill?request=singleCDN&peoplersn=${item.rsn}`}
                             target="_blank"
                             startIcon={<PrintIcon />}
+                            className={`${styles.actionButton} ${styles.printButton}`}
+                            disableElevation
                           >
                             Print
                           </Button>

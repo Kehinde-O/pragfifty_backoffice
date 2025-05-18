@@ -1,5 +1,5 @@
 /* Button Component Styles */
-.ui-button {
+.button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -17,161 +17,159 @@
 }
 
 /* Button Sizes */
-.ui-button-xs {
+.button-xs {
   font-size: 0.75rem;
   padding: 0.25rem 0.5rem;
   height: 1.5rem;
 }
 
-.ui-button-sm {
+.button-sm {
   font-size: 0.875rem;
   padding: 0.375rem 0.75rem;
   height: 2rem;
 }
 
-.ui-button-md {
+.button-md {
   font-size: 0.875rem;
   padding: 0.5rem 1rem;
   height: 2.5rem;
 }
 
-.ui-button-lg {
+.button-lg {
   font-size: 1rem;
   padding: 0.625rem 1.25rem;
   height: 3rem;
 }
 
-.ui-button-xl {
+.button-xl {
   font-size: 1.125rem;
   padding: 0.75rem 1.5rem;
   height: 3.5rem;
 }
 
 /* Button Variants */
-.ui-button-primary {
+.button-primary {
   background-color: var(--color-primary);
   color: white;
   box-shadow: var(--shadow-sm);
 }
 
-.ui-button-primary:hover, .ui-button-primary:focus {
+.button-primary:hover, .button-primary:focus {
   background-color: var(--color-primary-dark);
   box-shadow: var(--shadow-md);
 }
 
-.ui-button-secondary {
+.button-secondary {
   background-color: var(--color-secondary);
   color: white;
   box-shadow: var(--shadow-sm);
 }
 
-.ui-button-secondary:hover, .ui-button-secondary:focus {
+.button-secondary:hover, .button-secondary:focus {
   background-color: var(--color-secondary-dark);
   box-shadow: var(--shadow-md);
 }
 
-.ui-button-tertiary {
+.button-tertiary {
   background-color: var(--color-gray-200);
   color: var(--color-gray-800);
 }
 
-.ui-button-tertiary:hover, .ui-button-tertiary:focus {
+.button-tertiary:hover, .button-tertiary:focus {
   background-color: var(--color-gray-300);
 }
 
-.ui-button-danger {
+.button-danger {
   background-color: var(--color-danger);
   color: white;
   box-shadow: var(--shadow-sm);
 }
 
-.ui-button-danger:hover, .ui-button-danger:focus {
+.button-danger:hover, .button-danger:focus {
   background-color: #dc2626;
   box-shadow: var(--shadow-md);
 }
 
-.ui-button-success {
+.button-success {
   background-color: var(--color-success);
   color: white;
   box-shadow: var(--shadow-sm);
 }
 
-.ui-button-success:hover, .ui-button-success:focus {
+.button-success:hover, .button-success:focus {
   background-color: #059669;
   box-shadow: var(--shadow-md);
 }
 
-.ui-button-warning {
+.button-warning {
   background-color: var(--color-warning);
   color: white;
   box-shadow: var(--shadow-sm);
 }
 
-.ui-button-warning:hover, .ui-button-warning:focus {
+.button-warning:hover, .button-warning:focus {
   background-color: #d97706;
   box-shadow: var(--shadow-md);
 }
 
-.ui-button-info {
+.button-info {
   background-color: var(--color-info);
   color: white;
   box-shadow: var(--shadow-sm);
 }
 
-.ui-button-info:hover, .ui-button-info:focus {
+.button-info:hover, .button-info:focus {
   background-color: #2563eb;
   box-shadow: var(--shadow-md);
 }
 
-.ui-button-outlined {
+.button-outlined {
   background-color: transparent;
   color: var(--color-primary);
   border: 1px solid var(--color-primary);
 }
 
-.ui-button-outlined:hover, .ui-button-outlined:focus {
+.button-outlined:hover, .button-outlined:focus {
   background-color: rgba(59, 130, 246, 0.05);
 }
 
-.ui-button-text {
+.button-text {
   background-color: transparent;
   color: var(--color-primary);
   padding-left: 0.5rem;
   padding-right: 0.5rem;
 }
 
-.ui-button-text:hover, .ui-button-text:focus {
+.button-text:hover, .button-text:focus {
   background-color: rgba(59, 130, 246, 0.05);
 }
 
 /* Full Width Button */
-.ui-button-full {
+.buttonFull {
   width: 100%;
 }
 
 /* Disabled State */
-.ui-button:disabled {
+.button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
   pointer-events: none;
 }
 
 /* Icon positioning */
-.ui-button-icon {
+.buttonIcon {
+  display: flex;
+  align-items: center;
+  margin-right: 0.5rem;
+}
+
+.buttonContent {
   display: flex;
   align-items: center;
 }
 
-.ui-button-start-icon {
-  margin-right: 0.5rem;
-}
-
-.ui-button-end-icon {
-  margin-left: 0.5rem;
-}
-
 /* Ripple Effect (Material Design) */
-.ui-button:after {
+.button:after {
   content: "";
   position: absolute;
   top: 50%;
@@ -185,7 +183,7 @@
   transform-origin: 50% 50%;
 }
 
-.ui-button:focus:not(:active)::after {
+.button:focus:not(:active)::after {
   animation: ripple 0.6s ease-out;
 }
 
@@ -199,7 +197,7 @@
     opacity: 0.3;
   }
   100% {
+    transform: scale(50, 50);
     opacity: 0;
-    transform: scale(40, 40);
   }
 } 

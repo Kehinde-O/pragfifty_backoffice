@@ -1,5 +1,5 @@
 /* StatsCard Styles */
-.ui-stats-card {
+.uiStatCard {
   position: relative;
   background-color: white;
   border-radius: 16px;
@@ -14,17 +14,17 @@
   border: 1px solid rgba(230, 235, 240, 0.8);
 }
 
-.ui-stats-card-clickable {
+.statsCardClickable {
   cursor: pointer;
 }
 
-.ui-stats-card-clickable:hover {
+.statsCardClickable:hover {
   transform: translateY(-3px);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.09);
 }
 
 /* Card Content Structure */
-.ui-stats-card-content {
+.statsCardContent {
   position: relative;
   z-index: 2;
   flex: 1;
@@ -32,14 +32,14 @@
   flex-direction: column;
 }
 
-.ui-stats-card-header {
+.statsCardHeader {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 1rem;
 }
 
-.ui-stats-card-title {
+.statsCardTitle {
   font-size: 0.95rem;
   font-weight: 500;
   color: #666;
@@ -47,7 +47,7 @@
   letter-spacing: 0.01em;
 }
 
-.ui-stats-card-body {
+.statsCardBody {
   margin-bottom: 0.5rem;
   flex: 1;
   display: flex;
@@ -55,7 +55,7 @@
   justify-content: center;
 }
 
-.ui-stats-card-value {
+.statsCardValue {
   font-size: 2rem;
   font-weight: 700;
   line-height: 1.2;
@@ -63,7 +63,7 @@
   margin-bottom: 0.75rem;
 }
 
-.ui-stats-card-change {
+.statsCardChange {
   display: flex;
   align-items: center;
   font-size: 0.875rem;
@@ -72,7 +72,7 @@
   gap: 0.25rem;
 }
 
-.ui-stats-card-change-arrow {
+.statsCardChangeArrow {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -80,29 +80,29 @@
   line-height: 1;
 }
 
-.ui-stats-card-change-value {
+.statsCardChangeValue {
   font-weight: 600;
 }
 
-.ui-stats-card-change-label {
+.statsCardChangeLabel {
   color: #666;
   font-weight: normal;
   margin-left: 0.25rem;
 }
 
-.ui-stats-card-change-positive {
+.statsCardChange-positive {
   color: #34A853;
 }
 
-.ui-stats-card-change-negative {
+.statsCardChange-negative {
   color: #EA4335;
 }
 
-.ui-stats-card-change-neutral {
+.statsCardChange-neutral {
   color: #666;
 }
 
-.ui-stats-card-footer {
+.statsCardFooter {
   font-size: 0.875rem;
   color: #777;
   border-top: 1px solid #eee;
@@ -111,7 +111,7 @@
 }
 
 /* Card Icons */
-.ui-stats-card-icon {
+.statsCardIcon {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -124,69 +124,69 @@
   transition: transform 0.2s ease;
 }
 
-.ui-stats-card-icon-primary {
+.statsCardIcon-primary {
   background-color: rgba(66, 133, 244, 0.12);
   color: #4285F4;
 }
 
-.ui-stats-card-icon-secondary {
+.statsCardIcon-secondary {
   background-color: rgba(16, 185, 129, 0.12);
   color: #10B981;
 }
 
-.ui-stats-card-icon-success {
+.statsCardIcon-success {
   background-color: rgba(52, 168, 83, 0.12);
   color: #34A853;
 }
 
-.ui-stats-card-icon-warning {
+.statsCardIcon-warning {
   background-color: rgba(251, 188, 5, 0.12);
   color: #FBBC05;
 }
 
-.ui-stats-card-icon-danger {
+.statsCardIcon-danger {
   background-color: rgba(234, 67, 53, 0.12);
   color: #EA4335;
 }
 
-.ui-stats-card-icon-info {
+.statsCardIcon-info {
   background-color: rgba(66, 133, 244, 0.12);
   color: #4285F4;
 }
 
 /* Card Color Variants */
-.ui-stats-card-primary {
+.statsCard-primary {
   border-left: none;
   border-top: 4px solid #4285F4;
 }
 
-.ui-stats-card-secondary {
+.statsCard-secondary {
   border-left: none;
   border-top: 4px solid #10B981;
 }
 
-.ui-stats-card-success {
+.statsCard-success {
   border-left: none;
   border-top: 4px solid #34A853;
 }
 
-.ui-stats-card-warning {
+.statsCard-warning {
   border-left: none;
   border-top: 4px solid #FBBC05;
 }
 
-.ui-stats-card-danger {
+.statsCard-danger {
   border-left: none;
   border-top: 4px solid #EA4335;
 }
 
-.ui-stats-card-info {
+.statsCard-info {
   border-left: none;
   border-top: 4px solid #4285F4;
 }
 
 /* Background Decoration */
-.ui-stats-card-background-decoration {
+.statsCardBackgroundDecoration {
   position: absolute;
   top: 0;
   right: 0;
@@ -198,75 +198,15 @@
     45deg,
     currentColor 25%,
     transparent 25%,
-    transparent 50%,
-    currentColor 50%,
-    currentColor 75%,
     transparent 75%,
-    transparent
+    currentColor 75%,
+    currentColor
   );
-  background-size: 60px 60px;
-}
-
-.ui-stats-card-primary .ui-stats-card-background-decoration {
-  color: #4285F4;
-}
-
-.ui-stats-card-secondary .ui-stats-card-background-decoration {
-  color: #10B981;
-}
-
-.ui-stats-card-success .ui-stats-card-background-decoration {
-  color: #34A853;
-}
-
-.ui-stats-card-warning .ui-stats-card-background-decoration {
-  color: #FBBC05;
-}
-
-.ui-stats-card-danger .ui-stats-card-background-decoration {
-  color: #EA4335;
-}
-
-.ui-stats-card-info .ui-stats-card-background-decoration {
-  color: #4285F4;
-}
-
-/* Loading/Skeleton State */
-.ui-stats-card-loading {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.ui-stats-card-skeleton-value {
-  height: 36px;
-  width: 120px;
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-  background-size: 200% 100%;
-  animation: loading 1.5s infinite;
-  border-radius: 4px;
-}
-
-.ui-stats-card-skeleton-change {
-  height: 18px;
-  width: 80px;
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-  background-size: 200% 100%;
-  animation: loading 1.5s infinite;
-  border-radius: 4px;
-}
-
-@keyframes loading {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
-  }
+  background-size: 10px 10px;
 }
 
 /* Animation Styles */
-.ui-stats-animate-pulse .ui-stats-card-icon {
+.statsAnimate-pulse .statsCardIcon {
   animation: pulse 2s infinite;
 }
 
@@ -282,8 +222,8 @@
   }
 }
 
-.ui-stats-animate-fade {
-  animation: fadeIn 0.6s ease-out;
+.statsAnimate-fade {
+  animation: fadeIn 0.5s ease-in;
 }
 
 @keyframes fadeIn {
@@ -297,7 +237,7 @@
   }
 }
 
-.ui-stats-animate-slide .ui-stats-card-value {
+.statsAnimate-slide .statsCardValue {
   animation: slideUp 0.5s ease-out;
 }
 
@@ -312,19 +252,51 @@
   }
 }
 
-/* Responsive Adjustments */
+/* Loading State */
+.statsCardLoading {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.statsCardSkeletonValue {
+  height: 2.5rem;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+  border-radius: 4px;
+}
+
+.statsCardSkeletonChange {
+  height: 1rem;
+  width: 60%;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+  border-radius: 4px;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Responsive Styles */
 @media (max-width: 768px) {
-  .ui-stats-card {
-    padding: 1rem;
+  .uiStatCard {
+    padding: 1.25rem;
   }
-  
-  .ui-stats-card-value {
-    font-size: 1.5rem;
+
+  .statsCardValue {
+    font-size: 1.75rem;
   }
-  
-  .ui-stats-card-icon {
-    width: 36px;
-    height: 36px;
-    font-size: 1rem;
+
+  .statsCardIcon {
+    width: 40px;
+    height: 40px;
   }
 } 

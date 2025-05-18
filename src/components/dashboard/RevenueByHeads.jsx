@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Card } from '../common/ui';
-import { FaChartBar } from 'react-icons/fa';
+import { FaChartBar, FaArrowRight } from 'react-icons/fa';
+import styles from './Dashboard.module.css';
 
-const RevenueByHeads = () => {
+const RevenueByHeads = ({ period }) => {
   const [revenueData, setRevenueData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [viewMode, setViewMode] = useState('state'); // 'state' or 'lga'
@@ -39,7 +39,7 @@ const RevenueByHeads = () => {
         setTimeout(() => {
           setRevenueData(viewMode === 'state' ? stateRevenueData : lgaRevenueData);
           setIsLoading(false);
-        }, 1200);
+        }, 800);
       } catch (error) {
         console.error('Error fetching revenue data:', error);
         setIsLoading(false);
@@ -47,7 +47,7 @@ const RevenueByHeads = () => {
     };
     
     fetchRevenueData();
-  }, [viewMode]);
+  }, [viewMode, period]);
   
   // Format amount as currency
   const formatCurrency = (amount) => {
@@ -58,80 +58,111 @@ const RevenueByHeads = () => {
     }).format(amount);
   };
   
-  // Handle view mode change
-  const handleViewModeChange = (mode) => {
-    if (mode !== viewMode) {
-      setViewMode(mode);
-    }
+  // Get total revenue
+  const getTotalRevenue = () => {
+    return revenueData.reduce((total, item) => total + item.amount, 0);
+  };
+  
+  // Helper function to get bar colors
+  const getBarColor = (index) => {
+    const colors = [
+      '#4285F4', '#34A853', '#FBBC05', '#EA4335', 
+      '#8E24AA', '#0097A7', '#689F38', '#F57C00'
+    ];
+    return colors[index % colors.length];
+  };
+  
+  // Returns gradient for hover effect
+  const getBarGradient = (color) => {
+    return `linear-gradient(90deg, ${color} 0%, ${color}dd 100%)`;
   };
   
   return (
-    <Card>
-      <div className="section-header">
-        <div className="section-title-wrapper">
-          <FaChartBar className="section-icon" />
-          <h2 className="section-title">Revenue By Heads</h2>
-        </div>
-        <div className="section-actions">
-          <div className="view-toggle">
-            <button 
-              className={`toggle-btn ${viewMode === 'state' ? 'active' : ''}`}
-              onClick={() => handleViewModeChange('state')}
-            >
-              State
-            </button>
-            <button 
-              className={`toggle-btn ${viewMode === 'lga' ? 'active' : ''}`}
-              onClick={() => handleViewModeChange('lga')}
-            >
-              LGA
-            </button>
-          </div>
+    <>
+      <div className={styles.sectionHeader}>
+        <h3 className={styles.cardContentTitle}>
+          <FaChartBar /> Revenue By {viewMode === 'state' ? 'State' : 'LGA'} Heads
+        </h3>
+        <div className={styles.tabButtons}>
+          <button 
+            className={`${styles.tabButton} ${viewMode === 'state' ? styles.tabButtonActive : ''}`}
+            onClick={() => setViewMode('state')}
+          >
+            State
+          </button>
+          <button 
+            className={`${styles.tabButton} ${viewMode === 'lga' ? styles.tabButtonActive : ''}`}
+            onClick={() => setViewMode('lga')}
+          >
+            LGA
+          </button>
         </div>
       </div>
       
       {isLoading ? (
-        <div className="skeleton-loader" style={{ width: '100%', height: '250px' }}></div>
+        <div className={styles.loadingState}>
+          <div className={styles.loadingIcon}>
+            <FaChartBar />
+          </div>
+          <div>Loading revenue data...</div>
+        </div>
       ) : (
-        <div className="revenue-bars">
-          {revenueData.map((item, index) => (
-            <div key={index} className="revenue-bar-item">
-              <div className="revenue-name-container">
-                <div className="revenue-name">{item.name}</div>
-                <div className="revenue-percentage">{item.percentage}%</div>
-              </div>
-              <div className="revenue-bar-container">
-                <div 
-                  className="revenue-bar"
-                  style={{ 
-                    width: `${item.percentage}%`,
-                    backgroundColor: getBarColor(index)
-                  }}
-                >
-                  <span className="revenue-bar-tooltip">{formatCurrency(item.amount)}</span>
-                </div>
+        <>
+          <div className={styles.revenueSummary}>
+            <div className={styles.revenueTotalCard}>
+              <div className={styles.revenueTotalLabel}>Total Revenue</div>
+              <div className={styles.revenueTotalValue}>
+                {formatCurrency(getTotalRevenue())}
               </div>
             </div>
-          ))}
-        </div>
+          </div>
+          
+          <div className={styles.revenueChartContainer}>
+            {revenueData.map((item, index) => (
+              <div key={index} className={styles.revenueBarRow}>
+                <div className={styles.revenueRowHeader}>
+                  <div className={styles.revenueRowName}>
+                    <div 
+                      className={styles.revenueColorIndicator} 
+                      style={{ backgroundColor: getBarColor(index) }}
+                    />
+                    <span>{item.name}</span>
+                  </div>
+                  <div className={styles.revenueRowValue}>
+                    {formatCurrency(item.amount)}
+                  </div>
+                </div>
+                
+                <div className={styles.revenueBarWrapper}>
+                  <div 
+                    className={styles.revenueBar}
+                    style={{ 
+                      width: `${item.percentage}%`,
+                      background: getBarGradient(getBarColor(index))
+                    }}
+                    title={`${item.percentage}% - ${formatCurrency(item.amount)}`}
+                  >
+                    {item.percentage >= 7 && (
+                      <span className={styles.revenueBarLabel}>{item.percentage}%</span>
+                    )}
+                  </div>
+                  {item.percentage < 7 && (
+                    <span className={styles.revenueBarOutsideLabel}>{item.percentage}%</span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
       )}
       
-      <div className="card-footer">
-        <a href={`/dashboard/revenue-heads/${viewMode}`} className="card-link">
-          View Revenue Head Details
+      <div className={styles.viewAllLink}>
+        <a href={`/dashboard/revenue-heads/${viewMode}`}>
+          View Revenue Head Details <FaArrowRight />
         </a>
       </div>
-    </Card>
+    </>
   );
-};
-
-// Helper function to get bar colors
-const getBarColor = (index) => {
-  const colors = [
-    '#4285F4', '#34A853', '#FBBC05', '#EA4335', 
-    '#8E24AA', '#0097A7', '#689F38', '#F57C00'
-  ];
-  return colors[index % colors.length];
 };
 
 export default RevenueByHeads; 

@@ -1,25 +1,36 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Card, Button, Select } from '../common/ui';
+import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { Card, Button, Alert, Select } from '../common/ui';
 import { 
-  FaArrowLeft, 
-  FaInfoCircle, 
-  FaReceipt, 
-  FaCalendarAlt, 
+  FaUser, 
+  FaIdCard, 
+  FaPhone, 
+  FaEnvelope, 
+  FaBuilding, 
+  FaMapMarkerAlt, 
   FaMoneyBillWave, 
+  FaBriefcase, 
+  FaRegCalendarAlt,
+  FaCalendarAlt, 
+  FaFilePdf, 
   FaUpload, 
-  FaFileAlt, 
-  FaTrashAlt, 
+  FaPaperclip, 
   FaCheckCircle, 
-  FaExclamationTriangle,
-  FaBuilding,
-  FaIdCard,
-  FaChevronRight,
-  FaChevronDown,
+  FaExclamationTriangle, 
+  FaInfoCircle, 
+  FaFileContract, 
+  FaFile, 
+  FaTrash,
+  FaSearch,
+  FaReceipt,
   FaQuestionCircle,
-  FaUser
+  FaTrashAlt,
+  FaArrowLeft,
+  FaChevronDown,
+  FaChevronRight,
+  FaFileAlt
 } from 'react-icons/fa';
-import './TCC.css';
+import styles from './TCC.module.css';
 
 // Progress steps for the application process
 const formSteps = [
@@ -33,18 +44,18 @@ const formSteps = [
 // Step progress indicator component
 const StepIndicator = ({ currentStep, steps, onChange }) => {
   return (
-    <div className="step-indicator">
+    <div className={styles['step-indicator']}>
       {steps.map((step, index) => (
         <div 
           key={step.id}
-          className={`step ${currentStep >= index ? 'active' : ''} ${currentStep === index ? 'current' : ''}`}
+          className={`${styles.step} ${currentStep >= index ? styles.active : ''} ${currentStep === index ? styles.current : ''}`}
           onClick={() => onChange(index)}
         >
-          <div className="step-icon">
+          <div className={styles['step-icon']}>
             {step.icon}
           </div>
-          <div className="step-label">{step.label}</div>
-          {index < steps.length - 1 && <div className="step-connector"></div>}
+          <div className={styles['step-label']}>{step.label}</div>
+          {index < steps.length - 1 && <div className={styles['step-connector']}></div>}
         </div>
       ))}
     </div>
@@ -99,7 +110,7 @@ const TCCApplicationCreate = () => {
     setExpandedSections(newExpandedSections);
     
     // Scroll to top of the form
-    document.querySelector('.tcc-form').scrollIntoView({ behavior: 'smooth' });
+    document.querySelector(`.${styles['tcc-form']}`).scrollIntoView({ behavior: 'smooth' });
   };
   
   // Mock data for dropdowns - in a real application, these would come from API calls
@@ -285,7 +296,7 @@ const TCCApplicationCreate = () => {
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       // Scroll to the first error
-      const firstErrorElement = document.querySelector('.error-message');
+      const firstErrorElement = document.querySelector(`.${styles['error-message']}`);
       if (firstErrorElement) {
         firstErrorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
@@ -361,695 +372,331 @@ const TCCApplicationCreate = () => {
   };
   
   return (
-    <div className="tcc-application-container">
-      <div className="page-header">
-        <div className="page-title-section">
-          <Button 
-            variant="outline" 
-            size="md" 
+    <div className={styles.tccApplicationContainer}>
+      <div className={styles.tccDetailsHeader}>
+        <div className={styles.tccHeaderLeft}>
+          <button 
+            className={styles.tccBackButton}
             onClick={handleBackToList}
-            leadingIcon={<FaArrowLeft />}
-            className="back-button"
             aria-label="Go back to TCC applications list"
           >
-            Back
-          </Button>
+            <FaArrowLeft />
+          </button>
           <div>
-            <h1 className="page-title">Create TCC Application</h1>
-            <p className="page-subtitle">Apply for a new Tax Clearance Certificate for the past three years</p>
+            <h1 className={styles.tccTitle}>Create TCC Application</h1>
+            <p className={styles.tccPageSubtitle}>Apply for a new Tax Clearance Certificate for the past three years</p>
           </div>
         </div>
       </div>
       
-      <Card className="stepper-card">
-        <StepIndicator 
-          currentStep={activeStep} 
-          steps={formSteps} 
-          onChange={handleStepChange} 
-        />
-      </Card>
+      {/* Step Indicator */}
+      <StepIndicator 
+        currentStep={activeStep} 
+        steps={formSteps} 
+        onChange={handleStepChange} 
+      />
       
-      <Card>
-        <form className="tcc-form" onSubmit={handleSubmit}>
-          {/* Taxpayer Information Section */}
-          <div className={`tcc-form-section ${!expandedSections.taxpayerInfo ? 'collapsed' : ''} ${activeStep === 0 ? 'active-section' : ''}`}>
-            <div className="section-header" onClick={() => toggleSection('taxpayerInfo')}>
-              <h2 className="tcc-form-section-title">
-                <FaIdCard className="section-icon" />
-                Taxpayer Information
-              </h2>
-              <div className="section-toggle">
-                {expandedSections.taxpayerInfo ? <FaChevronDown /> : <FaChevronRight />}
-              </div>
+      <form className={styles['tcc-form']} onSubmit={handleSubmit}>
+        {/* Taxpayer Information Section */}
+        <div className={`${styles['tcc-form-section']} ${!expandedSections.taxpayerInfo ? styles.collapsed : ''} ${activeStep === 0 ? styles['active-section'] : ''}`}>
+          <div className={styles['section-header']} onClick={() => toggleSection('taxpayerInfo')}>
+            <h2 className={styles['tcc-form-section-title']}>
+              <FaIdCard className={styles['section-icon']} />
+              Taxpayer Information
+            </h2>
+            <div className={styles['section-toggle']}>
+              {expandedSections.taxpayerInfo ? <FaChevronDown /> : <FaChevronRight />}
             </div>
-            
-            {expandedSections.taxpayerInfo && (
-              <div className="section-content">
-                <div className="tcc-form-row">
-                  <div className="tcc-form-field">
-                    <label>Taxpayer Identification Number (TIN)</label>
-                    <input
-                      type="text"
-                      value={formData.taxpayerInfo.tin}
-                      readOnly
-                      className="read-only"
-                    />
-                  </div>
-                  <div className="tcc-form-field">
-                    <label>Taxpayer Name</label>
-                    <input
-                      type="text"
-                      value={formData.taxpayerInfo.name}
-                      readOnly
-                      className="read-only"
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
           
-          {/* Source of Income */}
-          <div className={`tcc-form-section ${!expandedSections.sourceOfIncome ? 'collapsed' : ''} ${activeStep === 1 ? 'active-section' : ''}`}>
-            <div className="section-header" onClick={() => toggleSection('sourceOfIncome')}>
-              <h2 className="tcc-form-section-title">
-                <FaMoneyBillWave className="section-icon" />
-                Source of Income
-              </h2>
-              <div className="section-toggle">
-                {expandedSections.sourceOfIncome ? <FaChevronDown /> : <FaChevronRight />}
-              </div>
-            </div>
-            
-            {expandedSections.sourceOfIncome && (
-              <div className="section-content">
-                <div className="tcc-form-row">
-                  <div className={`tcc-form-field ${hasError('sourceOfIncome') ? 'error' : ''}`}>
-                    <label>
-                      Source of Income <span className="required">*</span>
-                      <span className="tooltip-icon">
-                        <FaQuestionCircle data-tooltip="Select your primary source of income" />
-                      </span>
-                    </label>
-                    <Select
-                      id="sourceOfIncome"
-                      value={formData.sourceOfIncome}
-                      onChange={(e) => handleInputChange('sourceOfIncome', null, null, null, e)}
-                      required
-                    >
-                      <option value="">-- Select Source of Income --</option>
-                      {sourcesOfIncome.map((source) => (
-                        <option key={source.code} value={source.code}>
-                          {source.description}
-                        </option>
-                      ))}
-                    </Select>
-                    {hasError('sourceOfIncome') && (
-                      <div className="error-message">{errors.sourceOfIncome}</div>
-                    )}
-                  </div>
+          {expandedSections.taxpayerInfo && (
+            <div className={styles['section-content']}>
+              <div className={styles['tcc-form-row']}>
+                <div className={styles['tcc-form-field']}>
+                  <label>Taxpayer Identification Number (TIN)</label>
+                  <input
+                    type="text"
+                    value={formData.taxpayerInfo.tin}
+                    readOnly
+                    className={styles['read-only']}
+                  />
                 </div>
-                
-                <div className="tcc-form-row">
-                  <div className="tcc-form-field">
-                    <label className="highlight-label">
-                      Was payment made on PragFifty?
-                      <span className="tooltip-icon">
-                        <FaQuestionCircle data-tooltip="PragFifty is the Online Revenue Assessment System" />
-                      </span>
-                    </label>
-                    <div className="radio-group modern">
-                      <label className={`radio-card ${formData.paymentMethod === "Y" ? 'selected' : ''}`}>
-                        <input
-                          type="radio"
-                          name="paymentMethod"
-                          value="Y"
-                          checked={formData.paymentMethod === "Y"}
-                          onChange={handlePaymentMethodChange}
-                        />
-                        <div className="radio-content">
-                          <FaCheckCircle className="radio-icon" />
-                          <span>Yes</span>
-                        </div>
-                      </label>
-                      <label className={`radio-card ${formData.paymentMethod === "N" ? 'selected' : ''}`}>
-                        <input
-                          type="radio"
-                          name="paymentMethod"
-                          value="N"
-                          checked={formData.paymentMethod === "N"}
-                          onChange={handlePaymentMethodChange}
-                        />
-                        <div className="radio-content">
-                          <FaExclamationTriangle className="radio-icon" />
-                          <span>No</span>
-                        </div>
-                      </label>
-                    </div>
-                  </div>
+                <div className={styles['tcc-form-field']}>
+                  <label>Taxpayer Name</label>
+                  <input
+                    type="text"
+                    value={formData.taxpayerInfo.name}
+                    readOnly
+                    className={styles['read-only']}
+                  />
                 </div>
-                
-                {formData.paymentMethod === "N" && (
-                  <div className="form-note">
-                    <FaExclamationTriangle className="note-icon warning" />
-                    <p>If no, kindly provide us with your evidence of payment by uploading the receipt below.</p>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-          
-          {/* Income Details Section */}
-          <div className={`tcc-form-section ${!expandedSections.incomeDetails ? 'collapsed' : ''} ${activeStep === 1 ? 'active-section' : ''}`}>
-            <div className="section-header" onClick={() => toggleSection('incomeDetails')}>
-              <h2 className="tcc-form-section-title">
-                <FaMoneyBillWave className="section-icon" />
-                Total Income
-              </h2>
-              <div className="section-toggle">
-                {expandedSections.incomeDetails ? <FaChevronDown /> : <FaChevronRight />}
-              </div>
-            </div>
-            
-            {expandedSections.incomeDetails && (
-              <div className="section-content">
-                <div className="tcc-form-cards">
-                  {[currentYear - 1, currentYear - 2, currentYear - 3].map((year) => (
-                    <div key={`income-${year}`} className="year-card">
-                      <div className="year-card-header">
-                        <h3>{year}</h3>
-                      </div>
-                      <div className="year-card-body">
-                        <div className="tcc-form-field">
-                          <label>
-                            Income <span className="required">*</span>
-                          </label>
-                          <div className="input-with-prefix">
-                            <span className="input-prefix">₦</span>
-                            <input
-                              type="text"
-                              id={`income-${year}`}
-                              value={formData.incomeDetails[year].income}
-                              onChange={(e) => handleInputChange('incomeDetails', year, 'income', null, e)}
-                              className="numeric-input"
-                              required
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-          
-          {/* Assessment Tax Paid Section */}
-          <div className={`tcc-form-section ${!expandedSections.assessmentTax ? 'collapsed' : ''} ${activeStep === 2 ? 'active-section' : ''}`}>
-            <div className="section-header" onClick={() => toggleSection('assessmentTax')}>
-              <h2 className="tcc-form-section-title">
-                <FaReceipt className="section-icon" />
-                Assessment Tax Paid
-              </h2>
-              <div className="section-toggle">
-                {expandedSections.assessmentTax ? <FaChevronDown /> : <FaChevronRight />}
-              </div>
-            </div>
-            
-            {expandedSections.assessmentTax && (
-              <div className="section-content">
-                <div className="tcc-form-cards">
-                  {[currentYear - 1, currentYear - 2, currentYear - 3].map((year) => (
-                    <div key={`assessment-${year}`} className="year-card">
-                      <div className="year-card-header">
-                        <h3>{year}</h3>
-                      </div>
-                      <div className="year-card-body">
-                        <div className={`tcc-form-field ${hasError(`assessment_${year}_rctNo`) ? 'error' : ''}`}>
-                          <label>
-                            Receipt No.
-                          </label>
-                          <input
-                            type="text"
-                            id={`tax-rctno-${year}`}
-                            value={formData.incomeDetails[year].assessment.rctNo}
-                            onChange={(e) => handleInputChange('incomeDetails', year, 'assessment', 'rctNo', e)}
-                          />
-                          {hasError(`assessment_${year}_rctNo`) && (
-                            <div className="error-message">{errors[`assessment_${year}_rctNo`]}</div>
-                          )}
-                        </div>
-                        
-                        <div className="tcc-form-field">
-                          <label>
-                            Amount <span className="required">*</span>
-                          </label>
-                          <div className="input-with-prefix">
-                            <span className="input-prefix">₦</span>
-                            <input
-                              type="text"
-                              id={`tax-paid-${year}`}
-                              value={formData.incomeDetails[year].assessment.amount}
-                              onChange={(e) => handleInputChange('incomeDetails', year, 'assessment', 'amount', e)}
-                              className="numeric-input"
-                              required
-                            />
-                          </div>
-                        </div>
-                        
-                        <div className={`tcc-form-field ${hasError(`assessment_${year}_rctDate`) ? 'error' : ''}`}>
-                          <label>
-                            Receipt Date
-                          </label>
-                          <div className="date-field">
-                            <input
-                              type="date"
-                              id={`tax-rctdt-${year}`}
-                              value={formData.incomeDetails[year].assessment.rctDate}
-                              onChange={(e) => handleInputChange('incomeDetails', year, 'assessment', 'rctDate', e)}
-                            />
-                            <FaCalendarAlt className="date-icon" />
-                          </div>
-                          {hasError(`assessment_${year}_rctDate`) && (
-                            <div className="error-message">{errors[`assessment_${year}_rctDate`]}</div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-          
-          {/* Outstanding Tax Section */}
-          <div className={`tcc-form-section ${!expandedSections.outstandingTax ? 'collapsed' : ''} ${activeStep === 2 ? 'active-section' : ''}`}>
-            <div className="section-header" onClick={() => toggleSection('outstandingTax')}>
-              <h2 className="tcc-form-section-title">
-                <FaExclamationTriangle className="section-icon" />
-                Total Outstanding Tax
-              </h2>
-              <div className="section-toggle">
-                {expandedSections.outstandingTax ? <FaChevronDown /> : <FaChevronRight />}
-              </div>
-            </div>
-            
-            {expandedSections.outstandingTax && (
-              <div className="section-content">
-                <div className="tcc-form-cards">
-                  {[currentYear - 1, currentYear - 2, currentYear - 3].map((year) => (
-                    <div key={`outstanding-${year}`} className="year-card">
-                      <div className="year-card-header">
-                        <h3>{year}</h3>
-                      </div>
-                      <div className="year-card-body">
-                        <div className="tcc-form-field">
-                          <label>
-                            Outstanding <span className="required">*</span>
-                          </label>
-                          <div className="input-with-prefix">
-                            <span className="input-prefix">₦</span>
-                            <input
-                              type="text"
-                              id={`outstanding-${year}`}
-                              value={formData.incomeDetails[year].outstanding}
-                              onChange={(e) => handleInputChange('incomeDetails', year, 'outstanding', null, e)}
-                              className="numeric-input"
-                              required
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-          
-          {/* Development Levy Section */}
-          <div className={`tcc-form-section ${!expandedSections.developmentLevy ? 'collapsed' : ''} ${activeStep === 2 ? 'active-section' : ''}`}>
-            <div className="section-header" onClick={() => toggleSection('developmentLevy')}>
-              <h2 className="tcc-form-section-title">
-                <FaReceipt className="section-icon" />
-                Development Levy Paid
-              </h2>
-              <div className="section-toggle">
-                {expandedSections.developmentLevy ? <FaChevronDown /> : <FaChevronRight />}
-              </div>
-            </div>
-            
-            {expandedSections.developmentLevy && (
-              <div className="section-content">
-                <div className="tcc-form-cards">
-                  {[currentYear - 1, currentYear - 2, currentYear - 3].map((year) => (
-                    <div key={`devlevy-${year}`} className="year-card">
-                      <div className="year-card-header">
-                        <h3>{year}</h3>
-                      </div>
-                      <div className="year-card-body">
-                        <div className={`tcc-form-field ${hasError(`devLevy_${year}_rctNo`) ? 'error' : ''}`}>
-                          <label>Receipt No.</label>
-                          <input
-                            type="text"
-                            id={`dl-rctno-${year}`}
-                            value={formData.developmentLevy[year].rctNo}
-                            onChange={(e) => handleInputChange('developmentLevy', year, 'rctNo', null, e)}
-                          />
-                          {hasError(`devLevy_${year}_rctNo`) && (
-                            <div className="error-message">{errors[`devLevy_${year}_rctNo`]}</div>
-                          )}
-                        </div>
-                        
-                        <div className="tcc-form-field">
-                          <label>Amount</label>
-                          <div className="input-with-prefix">
-                            <span className="input-prefix">₦</span>
-                            <input
-                              type="text"
-                              id={`dl-paid-${year}`}
-                              value={formData.developmentLevy[year].amount}
-                              onChange={(e) => handleInputChange('developmentLevy', year, 'amount', null, e)}
-                              className="numeric-input"
-                            />
-                          </div>
-                        </div>
-                        
-                        <div className={`tcc-form-field ${hasError(`devLevy_${year}_rctDate`) ? 'error' : ''}`}>
-                          <label>Receipt Date</label>
-                          <div className="date-field">
-                            <input
-                              type="date"
-                              id={`dl-rctdt-${year}`}
-                              value={formData.developmentLevy[year].rctDate}
-                              onChange={(e) => handleInputChange('developmentLevy', year, 'rctDate', null, e)}
-                            />
-                            <FaCalendarAlt className="date-icon" />
-                          </div>
-                          {hasError(`devLevy_${year}_rctDate`) && (
-                            <div className="error-message">{errors[`devLevy_${year}_rctDate`]}</div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-          
-          {/* Land Use Charge Section */}
-          <div className={`tcc-form-section ${!expandedSections.landUseCharge ? 'collapsed' : ''} ${activeStep === 2 ? 'active-section' : ''}`}>
-            <div className="section-header" onClick={() => toggleSection('landUseCharge')}>
-              <h2 className="tcc-form-section-title">
-                <FaBuilding className="section-icon" />
-                Land Use Charge (LUC)
-              </h2>
-              <div className="section-toggle">
-                {expandedSections.landUseCharge ? <FaChevronDown /> : <FaChevronRight />}
-              </div>
-            </div>
-            
-            {expandedSections.landUseCharge && (
-              <div className="section-content">
-                <div className="tcc-form-cards">
-                  {[currentYear - 1, currentYear - 2, currentYear - 3].map((year) => (
-                    <div key={`luc-${year}`} className="year-card">
-                      <div className="year-card-header">
-                        <h3>{year}</h3>
-                      </div>
-                      <div className="year-card-body">
-                        <div className={`tcc-form-field ${hasError(`luc_${year}_rctNo`) ? 'error' : ''}`}>
-                          <label>Receipt No.</label>
-                          <input
-                            type="text"
-                            id={`luc-rctno-${year}`}
-                            value={formData.landUseCharge[year].rctNo}
-                            onChange={(e) => handleInputChange('landUseCharge', year, 'rctNo', null, e)}
-                          />
-                          {hasError(`luc_${year}_rctNo`) && (
-                            <div className="error-message">{errors[`luc_${year}_rctNo`]}</div>
-                          )}
-                        </div>
-                        
-                        <div className="tcc-form-field">
-                          <label>Amount</label>
-                          <div className="input-with-prefix">
-                            <span className="input-prefix">₦</span>
-                            <input
-                              type="text"
-                              id={`luc-paid-${year}`}
-                              value={formData.landUseCharge[year].amount}
-                              onChange={(e) => handleInputChange('landUseCharge', year, 'amount', null, e)}
-                              className="numeric-input"
-                            />
-                          </div>
-                        </div>
-                        
-                        <div className={`tcc-form-field ${hasError(`luc_${year}_rctDate`) ? 'error' : ''}`}>
-                          <label>Receipt Date</label>
-                          <div className="date-field">
-                            <input
-                              type="date"
-                              id={`luc-rctdt-${year}`}
-                              value={formData.landUseCharge[year].rctDate}
-                              onChange={(e) => handleInputChange('landUseCharge', year, 'rctDate', null, e)}
-                            />
-                            <FaCalendarAlt className="date-icon" />
-                          </div>
-                          {hasError(`luc_${year}_rctDate`) && (
-                            <div className="error-message">{errors[`luc_${year}_rctDate`]}</div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-          
-          {/* Previous TCC Section */}
-          <div className={`tcc-form-section ${!expandedSections.previousTcc ? 'collapsed' : ''} ${activeStep === 3 ? 'active-section' : ''}`}>
-            <div className="section-header" onClick={() => toggleSection('previousTcc')}>
-              <h2 className="tcc-form-section-title">
-                <FaFileAlt className="section-icon" />
-                TCC For Previous Years (if any)
-              </h2>
-              <div className="section-toggle">
-                {expandedSections.previousTcc ? <FaChevronDown /> : <FaChevronRight />}
-              </div>
-            </div>
-            
-            {expandedSections.previousTcc && (
-              <div className="section-content">
-                <div className="tcc-form-cards">
-                  {[currentYear - 1, currentYear - 2, currentYear - 3].map((year) => (
-                    <div key={`tcc-${year}`} className="year-card">
-                      <div className="year-card-header">
-                        <h3>{year}</h3>
-                      </div>
-                      <div className="year-card-body">
-                        <div className="tcc-form-row">
-                          <div className="tcc-form-field">
-                            <label>TCC Number</label>
-                            <input
-                              type="text"
-                              id={`tcc-${year}`}
-                              value={formData.previousTcc[year].tccNo}
-                              onChange={(e) => handleInputChange('previousTcc', year, 'tccNo', null, e)}
-                            />
-                          </div>
-                          
-                          <div className={`tcc-form-field ${hasError(`tcc_${year}_issueDate`) ? 'error' : ''}`}>
-                            <label>Issue Date</label>
-                            <div className="date-field">
-                              <input
-                                type="date"
-                                id={`tcc-dt-${year}`}
-                                value={formData.previousTcc[year].issueDate}
-                                onChange={(e) => handleInputChange('previousTcc', year, 'issueDate', null, e)}
-                              />
-                              <FaCalendarAlt className="date-icon" />
-                            </div>
-                            {hasError(`tcc_${year}_issueDate`) && (
-                              <div className="error-message">{errors[`tcc_${year}_issueDate`]}</div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-          
-          {/* Supporting Documents Section */}
-          <div className={`tcc-form-section ${!expandedSections.supportDocuments ? 'collapsed' : ''} ${activeStep === 3 ? 'active-section' : ''}`}>
-            <div className="section-header" onClick={() => toggleSection('supportDocuments')}>
-              <h2 className="tcc-form-section-title">
-                <FaUpload className="section-icon" />
-                Supporting Documents (if any)
-              </h2>
-              <div className="section-toggle">
-                {expandedSections.supportDocuments ? <FaChevronDown /> : <FaChevronRight />}
-              </div>
-            </div>
-            
-            {expandedSections.supportDocuments && (
-              <div className="section-content">
-                <div className="tcc-form-row">
-                  <div className={`tcc-form-field ${hasError('document') ? 'error' : ''}`}>
-                    <label>Document Type</label>
-                    <Select
-                      id="docType"
-                      value={selectedDocType}
-                      onChange={handleDocTypeChange}
-                    >
-                      <option value="">-- Select Document Type --</option>
-                      {documentTypes.map((type) => (
-                        <option key={type.code} value={type.code}>
-                          {type.description}
-                        </option>
-                      ))}
-                    </Select>
-                  </div>
-                  
-                  <div className={`tcc-form-field ${hasError('document') ? 'error' : ''}`}>
-                    <label>Select File</label>
-                    <div className="file-input-container">
-                      <input
-                        type="file"
-                        id="supportDoc"
-                        onChange={handleFileChange}
-                        style={{ display: 'none' }}
-                      />
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => document.getElementById('supportDoc').click()}
-                        leadingIcon={<FaUpload />}
-                      >
-                        {selectedFile ? 'Change File' : 'Select File'}
-                      </Button>
-                      {selectedFile && (
-                        <span className="selected-file-name">
-                          {selectedFile.name}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  
-                  <div className="tcc-form-field">
-                    <label>&nbsp;</label>
-                    <Button
-                      type="button"
-                      variant="primary"
-                      onClick={handleAddDocument}
-                      disabled={!selectedFile || !selectedDocType}
-                    >
-                      Add Document
-                    </Button>
-                  </div>
-                </div>
-                
-                {hasError('document') && (
-                  <div className="error-message document-error">{errors.document}</div>
-                )}
-                
-                {/* Document List */}
-                <div className={`document-list ${formData.supportDocuments.length === 0 ? 'empty' : ''}`}>
-                  {formData.supportDocuments.length === 0 ? (
-                    <div className="no-documents">
-                      <FaFileAlt className="no-docs-icon" />
-                      <p>No documents selected</p>
-                    </div>
-                  ) : (
-                    <div className="document-cards">
-                      {formData.supportDocuments.map((doc) => (
-                        <div key={doc.id} className="document-card">
-                          <div className="document-card-header">
-                            <div className="document-type">
-                              <FaFileAlt className="document-icon" />
-                              <span className="document-type-name">{doc.typeName}</span>
-                            </div>
-                            <Button
-                              type="button"
-                              variant="icon"
-                              onClick={() => handleRemoveDocument(doc.id)}
-                              aria-label="Remove document"
-                            >
-                              <FaTrashAlt />
-                            </Button>
-                          </div>
-                          <div className="document-card-body">
-                            <p className="document-name">{doc.fileName}</p>
-                            <p className="document-size">{formatFileSize(doc.fileSize)}</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-          
-          {/* Navigation Buttons */}
-          <div className="step-navigation">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => activeStep > 0 && handleStepChange(activeStep - 1)}
-              disabled={activeStep === 0}
-              size="lg"
-            >
-              Previous
-            </Button>
-            
-            {activeStep < formSteps.length - 1 ? (
-              <Button
-                type="button"
-                variant="primary"
-                onClick={() => handleStepChange(activeStep + 1)}
-                size="lg"
-              >
-                Next
-              </Button>
-            ) : (
-              <Button
-                type="submit"
-                variant="primary"
-                size="lg"
-                leadingIcon={<FaCheckCircle />}
-              >
-                Submit Application
-              </Button>
-            )}
-          </div>
-          
-          {/* Only show the declaration on the final step */}
-          {activeStep === formSteps.length - 1 && (
-            <div className="declaration-box">
-              <div className="declaration-header">
-                <FaInfoCircle className="declaration-icon" />
-                <h3>Declaration</h3>
-              </div>
-              <p>
-                I declare that the information provided in this application is true and correct to the best of my knowledge.
-                I understand that providing false information may result in the rejection of my application and potential legal consequences.
-              </p>
-              <div className="declaration-checkbox">
-                <input type="checkbox" id="declaration" required />
-                <label htmlFor="declaration">
-                  I agree to the above declaration
-                </label>
               </div>
             </div>
           )}
-        </form>
-      </Card>
+        </div>
+        
+        {/* Source of Income */}
+        <div className={`${styles['tcc-form-section']} ${!expandedSections.sourceOfIncome ? styles.collapsed : ''} ${activeStep === 1 ? styles['active-section'] : ''}`}>
+          <div className={styles['section-header']} onClick={() => toggleSection('sourceOfIncome')}>
+            <h2 className={styles['tcc-form-section-title']}>
+              <FaMoneyBillWave className={styles['section-icon']} />
+              Source of Income
+            </h2>
+            <div className={styles['section-toggle']}>
+              {expandedSections.sourceOfIncome ? <FaChevronDown /> : <FaChevronRight />}
+            </div>
+          </div>
+          
+          {expandedSections.sourceOfIncome && (
+            <div className={styles['section-content']}>
+              <div className={styles['tcc-form-row']}>
+                <div className={`${styles['tcc-form-field']} ${hasError('sourceOfIncome') ? styles.error : ''}`}>
+                  <label>
+                    Source of Income <span className={styles.required}>*</span>
+                    <span className={styles['tooltip-icon']}>
+                      <FaQuestionCircle data-tooltip="Select your primary source of income" />
+                    </span>
+                  </label>
+                  <Select
+                    id="sourceOfIncome"
+                    value={formData.sourceOfIncome}
+                    onChange={(e) => handleInputChange('sourceOfIncome', null, null, null, e)}
+                    required
+                  >
+                    <option value="">-- Select Source of Income --</option>
+                    {sourcesOfIncome.map((source) => (
+                      <option key={source.code} value={source.code}>
+                        {source.description}
+                      </option>
+                    ))}
+                  </Select>
+                  {hasError('sourceOfIncome') && (
+                    <div className={styles['error-message']}>{errors.sourceOfIncome}</div>
+                  )}
+                </div>
+              </div>
+              
+              <div className={styles['tcc-form-row']}>
+                <div className={styles['tcc-form-field']}>
+                  <label className={styles['highlight-label']}>
+                    Was payment made on PragFifty?
+                    <span className={styles['tooltip-icon']}>
+                      <FaQuestionCircle data-tooltip="PragFifty is the Online Revenue Assessment System" />
+                    </span>
+                  </label>
+                  <div className={`${styles['radio-group']} ${styles.modern}`}>
+                    <label className={`${styles['radio-card']} ${formData.paymentMethod === "Y" ? styles.selected : ''}`}>
+                      <input
+                        type="radio"
+                        name="paymentMethod"
+                        value="Y"
+                        checked={formData.paymentMethod === "Y"}
+                        onChange={handlePaymentMethodChange}
+                      />
+                      <div className={styles['radio-content']}>
+                        <FaCheckCircle className={styles['radio-icon']} />
+                        <span>Yes</span>
+                      </div>
+                    </label>
+                    <label className={`${styles['radio-card']} ${formData.paymentMethod === "N" ? styles.selected : ''}`}>
+                      <input
+                        type="radio"
+                        name="paymentMethod"
+                        value="N"
+                        checked={formData.paymentMethod === "N"}
+                        onChange={handlePaymentMethodChange}
+                      />
+                      <div className={styles['radio-content']}>
+                        <FaExclamationTriangle className={styles['radio-icon']} />
+                        <span>No</span>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              
+              {formData.paymentMethod === "N" && (
+                <div className={styles['form-note']}>
+                  <FaExclamationTriangle className={`${styles['note-icon']} ${styles.warning}`} />
+                  <p>If no, kindly provide us with your evidence of payment by uploading the receipt below.</p>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+        
+        {/* Income Details Section */}
+        <div className={`${styles['tcc-form-section']} ${!expandedSections.incomeDetails ? styles.collapsed : ''} ${activeStep === 1 ? styles['active-section'] : ''}`}>
+          <div className={styles['section-header']} onClick={() => toggleSection('incomeDetails')}>
+            <h2 className={styles['tcc-form-section-title']}>
+              <FaMoneyBillWave className={styles['section-icon']} />
+              Total Income
+            </h2>
+            <div className={styles['section-toggle']}>
+              {expandedSections.incomeDetails ? <FaChevronDown /> : <FaChevronRight />}
+            </div>
+          </div>
+          
+          {expandedSections.incomeDetails && (
+            <div className={styles['section-content']}>
+              <div className={styles['tccTaxYearsGrid']}>
+                {[currentYear - 1, currentYear - 2, currentYear - 3].map((year) => (
+                  <div key={`income-${year}`} className={styles.tccTaxYearCard}>
+                    <div className={styles.tccTaxYearHeader}>
+                      <h3 className={styles.tccTaxYearTitle}>{year}</h3>
+                    </div>
+                    <div className={styles.tccTaxYearBody}>
+                      <div className={styles['tcc-form-field']}>
+                        <label>
+                          Income <span className={styles.required}>*</span>
+                        </label>
+                        <div className={styles['input-with-prefix']}>
+                          <span className={styles['input-prefix']}>₦</span>
+                          <input
+                            type="text"
+                            id={`income-${year}`}
+                            value={formData.incomeDetails[year].income}
+                            onChange={(e) => handleInputChange('incomeDetails', year, 'income', null, e)}
+                            className={styles['numeric-input']}
+                            required
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+        
+        {/* Assessment Tax Paid Section */}
+        <div className={`${styles['tcc-form-section']} ${!expandedSections.assessmentTax ? styles.collapsed : ''} ${activeStep === 2 ? styles['active-section'] : ''}`}>
+          <div className={styles['section-header']} onClick={() => toggleSection('assessmentTax')}>
+            <h2 className={styles['tcc-form-section-title']}>
+              <FaReceipt className={styles['section-icon']} />
+              Assessment Tax Paid
+            </h2>
+            <div className={styles['section-toggle']}>
+              {expandedSections.assessmentTax ? <FaChevronDown /> : <FaChevronRight />}
+            </div>
+          </div>
+          
+          {expandedSections.assessmentTax && (
+            <div className={styles['section-content']}>
+              <div className={styles.tccTaxYearsGrid}>
+                {[currentYear - 1, currentYear - 2, currentYear - 3].map((year) => (
+                  <div key={`assessment-${year}`} className={styles.tccTaxYearCard}>
+                    <div className={styles.tccTaxYearHeader}>
+                      <h3 className={styles.tccTaxYearTitle}>{year}</h3>
+                    </div>
+                    <div className={styles.tccTaxYearBody}>
+                      <div className={`${styles['tcc-form-field']} ${hasError(`assessment_${year}_rctNo`) ? styles.error : ''}`}>
+                        <label>Receipt No.</label>
+                        <input
+                          type="text"
+                          id={`tax-rctno-${year}`}
+                          value={formData.incomeDetails[year].assessment.rctNo}
+                          onChange={(e) => handleInputChange('incomeDetails', year, 'assessment', 'rctNo', e)}
+                        />
+                        {hasError(`assessment_${year}_rctNo`) && (
+                          <div className={styles['error-message']}>{errors[`assessment_${year}_rctNo`]}</div>
+                        )}
+                      </div>
+                      
+                      <div className={styles['tcc-form-field']}>
+                        <label>Amount <span className={styles.required}>*</span></label>
+                        <div className={styles['input-with-prefix']}>
+                          <span className={styles['input-prefix']}>₦</span>
+                          <input
+                            type="text"
+                            id={`tax-paid-${year}`}
+                            value={formData.incomeDetails[year].assessment.amount}
+                            onChange={(e) => handleInputChange('incomeDetails', year, 'assessment', 'amount', e)}
+                            className={styles['numeric-input']}
+                            required
+                          />
+                        </div>
+                      </div>
+                      
+                      <div className={`${styles['tcc-form-field']} ${hasError(`assessment_${year}_rctDate`) ? styles.error : ''}`}>
+                        <label>Receipt Date</label>
+                        <div className={styles['date-field']}>
+                          <input
+                            type="date"
+                            id={`tax-rctdt-${year}`}
+                            value={formData.incomeDetails[year].assessment.rctDate}
+                            onChange={(e) => handleInputChange('incomeDetails', year, 'assessment', 'rctDate', e)}
+                          />
+                          <FaCalendarAlt className={styles['date-icon']} />
+                        </div>
+                        {hasError(`assessment_${year}_rctDate`) && (
+                          <div className={styles['error-message']}>{errors[`assessment_${year}_rctDate`]}</div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+        
+        {/* Navigation Buttons */}
+        <div className={styles['tccFormActions']}>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => activeStep > 0 && handleStepChange(activeStep - 1)}
+            disabled={activeStep === 0}
+            size="lg"
+          >
+            Previous
+          </Button>
+          
+          {activeStep < formSteps.length - 1 ? (
+            <Button
+              type="button"
+              variant="primary"
+              onClick={() => handleStepChange(activeStep + 1)}
+              size="lg"
+              className={styles.tccActionButtonPrimary}
+            >
+              Next
+            </Button>
+          ) : (
+            <Button
+              type="submit"
+              variant="primary"
+              size="lg"
+              className={styles.tccActionButtonPrimary}
+              leadingIcon={<FaCheckCircle />}
+            >
+              Submit Application
+            </Button>
+          )}
+        </div>
+        
+        {/* Only show the declaration on the final step */}
+        {activeStep === formSteps.length - 1 && (
+          <div className={styles['declaration-box']}>
+            <div className={styles['declaration-header']}>
+              <FaInfoCircle className={styles['declaration-icon']} />
+              <h3>Declaration</h3>
+            </div>
+            <p>
+              I declare that the information provided in this application is true and correct to the best of my knowledge.
+              I understand that providing false information may result in the rejection of my application and potential legal consequences.
+            </p>
+            <div className={styles['declaration-checkbox']}>
+              <input type="checkbox" id="declaration" required />
+              <label htmlFor="declaration">
+                I agree to the above declaration
+              </label>
+            </div>
+          </div>
+        )}
+      </form>
     </div>
   );
 };

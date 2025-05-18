@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Table } from '../common/ui';
+import { Table } from '../common/ui';
+import { FaExchangeAlt, FaArrowRight, FaCheck, FaClock, FaTimes } from 'react-icons/fa';
+import styles from './Dashboard.module.css';
 
-const RecentTransactions = () => {
+const RecentTransactions = ({ period }) => {
   const [transactions, setTransactions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   
@@ -63,7 +65,7 @@ const RecentTransactions = () => {
         setTimeout(() => {
           setTransactions(mockTransactions);
           setIsLoading(false);
-        }, 1200);
+        }, 800);
       } catch (error) {
         console.error('Error fetching transactions:', error);
         setIsLoading(false);
@@ -71,7 +73,7 @@ const RecentTransactions = () => {
     };
     
     fetchTransactions();
-  }, []);
+  }, [period]);
   
   // Format amount as currency
   const formatCurrency = (amount) => {
@@ -82,18 +84,46 @@ const RecentTransactions = () => {
     }).format(amount);
   };
   
+  // Format date
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('en-NG', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    });
+  };
+  
+  // Get status icon
+  const getStatusIcon = (status) => {
+    switch (status.toLowerCase()) {
+      case 'completed':
+        return <FaCheck />;
+      case 'pending':
+        return <FaClock />;
+      case 'failed':
+        return <FaTimes />;
+      default:
+        return null;
+    }
+  };
+  
   // Get the status badge class
   const getStatusBadgeClass = (status) => {
     switch (status.toLowerCase()) {
       case 'completed':
-        return 'badge-approved';
+        return styles.statusSuccess;
       case 'pending':
-        return 'badge-pending';
+        return styles.statusWarning;
       case 'failed':
-        return 'badge-rejected';
+        return styles.statusDanger;
       default:
         return '';
     }
+  };
+  
+  // Calculate total amount
+  const calculateTotal = () => {
+    return transactions.reduce((total, transaction) => total + transaction.amount, 0);
   };
   
   // Table columns configuration
@@ -102,58 +132,93 @@ const RecentTransactions = () => {
       header: 'Transaction ID',
       accessor: 'id',
       cell: (row) => (
-        <a href={`/dashboard/transactions/${row.id}`} className="card-link">
+        <div className={styles.transactionId}>
           {row.id}
-        </a>
+        </div>
       )
     },
     {
       header: 'Date',
       accessor: 'date',
-      cell: (row) => new Date(row.date).toLocaleDateString('en-NG')
+      cell: (row) => <div className={styles.transactionDate}>{formatDate(row.date)}</div>
     },
     {
       header: 'Taxpayer',
-      accessor: 'taxpayer'
+      accessor: 'taxpayer',
+      cell: (row) => (
+        <div className={styles.transactionTaxpayer} title={row.taxpayer}>
+          {row.taxpayer}
+        </div>
+      )
     },
     {
       header: 'Revenue Head',
-      accessor: 'revenueHead'
+      accessor: 'revenueHead',
+      cell: (row) => (
+        <div className={styles.transactionRevenue}>{row.revenueHead}</div>
+      )
     },
     {
       header: 'Amount',
       accessor: 'amount',
-      cell: (row) => formatCurrency(row.amount)
+      cell: (row) => (
+        <div className={styles.transactionAmount}>
+          {formatCurrency(row.amount)}
+        </div>
+      ),
+      align: 'right'
     },
     {
       header: 'Status',
       accessor: 'status',
       cell: (row) => (
-        <span className={`status-badge ${getStatusBadgeClass(row.status)}`}>
-          {row.status}
-        </span>
-      )
+        <div className={`${styles.transactionStatus} ${getStatusBadgeClass(row.status)}`}>
+          {getStatusIcon(row.status)} {row.status}
+        </div>
+      ),
+      align: 'center'
     }
   ];
   
   return (
-    <Card>
-      <div className="section-header">
-        <h2 className="section-title">Recent Transactions</h2>
-        <div className="section-actions">
-          <a href="/dashboard/transactions" className="card-link">
-            View All
-          </a>
-        </div>
+    <>
+      <div className={styles.sectionHeader}>
+        <h3 className={styles.cardContentTitle}>
+          <FaExchangeAlt /> Recent Transactions
+        </h3>
+        {!isLoading && transactions.length > 0 && (
+          <div className={styles.transactionSummary}>
+            <div className={styles.transactionTotal}>
+              {formatCurrency(calculateTotal())}
+            </div>
+            <div className={styles.transactionTotalLabel}>
+              Total Value
+            </div>
+          </div>
+        )}
       </div>
       
-      <Table
-        columns={columns}
-        data={transactions}
-        isLoading={isLoading}
-        emptyMessage="No recent transactions found"
-      />
-    </Card>
+      {/* <div className={styles.tableWrapper}> */}
+        <Table
+          columns={columns}
+          data={transactions}
+          loading={isLoading}
+          hoverable={true}
+          striped={false}
+          bordered={false}
+          size="sm"
+          emptyMessage="No recent transactions found"
+          className={styles.customTable}
+          paginated={false}
+        />
+      {/* </div> */}
+      
+      <div className={styles.viewAllLink}>
+        <a href="/dashboard/transactions">
+          View All Transactions <FaArrowRight />
+        </a>
+      </div>
+    </>
   );
 };
 

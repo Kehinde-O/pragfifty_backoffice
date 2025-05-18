@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { StatsCard, Card } from '../common/ui';
 import { FaMoneyBillWave, FaFileInvoiceDollar, FaHourglassHalf, FaUsers } from 'react-icons/fa';
+import styles from './RevenueOverview.module.css';
 
 const RevenueOverview = () => {
   const [revenueData, setRevenueData] = useState({
@@ -67,7 +68,7 @@ const RevenueOverview = () => {
   };
   
   return (
-    <div className="stats-container">
+    <div className={styles.statsContainer}>
       <StatsCard
         title="Total Revenue Collected"
         value={formatCurrency(revenueData.totalRevenue)}
@@ -79,14 +80,14 @@ const RevenueOverview = () => {
         isLoading={isLoading}
         animationStyle="fade"
         footer={
-          <div className="revenue-progress">
-            <div className="progress-bar-container">
+          <div className={styles.revenueProgress}>
+            <div className={styles.progressBarContainer}>
               <div 
-                className="progress-bar" 
+                className={styles.progressBar} 
                 style={{width: `${targetPercentage}%`}}
               ></div>
             </div>
-            <div className="progress-label">{targetPercentage}% of annual target</div>
+            <div className={styles.progressLabel}>{targetPercentage}% of annual target</div>
           </div>
         }
       />

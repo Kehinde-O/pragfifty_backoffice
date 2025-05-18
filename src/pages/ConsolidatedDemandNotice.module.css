@@ -1,0 +1,232 @@
+.container {
+  padding: 2rem;
+  background-color: #f9fafb;
+  min-height: 100%;
+}
+
+.pageTitle {
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: #111827;
+}
+
+.pageSubtitle {
+  color: #6B7280;
+  margin-bottom: 2rem;
+}
+
+/* Tab styling */
+.tabs {
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.tab {
+  text-transform: none;
+  font-weight: 600;
+  font-size: 1rem;
+  min-width: 160px;
+  transition: all 0.2s ease;
+}
+
+.tabSelected {
+  color: #2563eb !important;
+}
+
+/* Cards and paper components */
+.searchCard {
+  margin-bottom: 2rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+}
+
+.searchCardHeader {
+  padding: 1rem 1.5rem;
+  background-color: #f8fafc;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.searchCardTitle {
+  font-weight: 600;
+  color: #374151;
+}
+
+.searchCardContent {
+  padding: 1.5rem;
+}
+
+/* Form styling */
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.formActions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.searchButton {
+  background-color: #2563eb;
+  color: white;
+  transition: background-color 0.2s;
+}
+
+.searchButton:hover {
+  background-color: #1d4ed8;
+}
+
+.resetButton {
+  border-color: #d1d5db;
+  color: #4b5563;
+}
+
+.resetButton:hover {
+  background-color: #f9fafb;
+  border-color: #9ca3af;
+}
+
+/* Table styling */
+.tableContainer {
+  border-radius: 0.75rem;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.tableHeader {
+  background-color: #f8fafc;
+}
+
+.tableHeaderCell {
+  font-weight: 600;
+  color: #374151;
+  padding: 0.75rem 1rem;
+  border-bottom: 2px solid #e5e7eb;
+  text-transform: none;
+  font-size: 0.875rem;
+}
+
+.tableRow {
+  transition: background-color 0.15s ease;
+}
+
+.tableRow:hover {
+  background-color: #f8fafc;
+}
+
+.tableCell {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 0.875rem;
+}
+
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 0;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 3rem 0;
+  color: #6b7280;
+}
+
+/* Button styling */
+.actionButton {
+  text-transform: none;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  font-size: 0.875rem;
+  padding: 0.375rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+}
+
+.saveButton {
+  background-color: #2563eb;
+  color: white;
+}
+
+.saveButton:hover {
+  background-color: #1d4ed8;
+}
+
+.saveButtonDisabled {
+  background-color: #bfdbfe;
+  color: #3b82f6;
+}
+
+.removeButton {
+  border: 1px solid #f87171;
+  color: #ef4444;
+}
+
+.removeButton:hover {
+  background-color: #fee2e2;
+}
+
+.printButton {
+  background-color: #059669;
+  color: white;
+}
+
+.printButton:hover {
+  background-color: #047857;
+}
+
+/* Chip styling */
+.chip {
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  display: inline-flex;
+  align-items: center;
+}
+
+.classificationChip {
+  color: #2563eb;
+  background-color: #dbeafe;
+  border: 1px solid #93c5fd;
+}
+
+.categoryChip {
+  color: #7c3aed;
+  background-color: #ede9fe;
+  border: 1px solid #c4b5fd;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+  
+  .searchCardContent {
+    padding: 1rem;
+  }
+  
+  .formGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .formActions {
+    flex-direction: column;
+  }
+  
+  .tab {
+    min-width: auto;
+    padding: 0.75rem 1rem;
+  }
+} 

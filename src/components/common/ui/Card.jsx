@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import './Card.css';
+import styles from './Card.module.css';
 
 const Card = ({
   children,
@@ -10,27 +10,46 @@ const Card = ({
   footer,
   variant = 'default',
   elevation = 'md',
+  accent,
   className = '',
+  isFullWidth = false,
   ...props
 }) => {
+  const getAccentClass = () => {
+    if (!accent) return '';
+    return typeof accent === 'boolean' 
+      ? styles.cardAccent 
+      : styles[`cardAccent${accent.charAt(0).toUpperCase() + accent.slice(1)}`];
+  };
+
   return (
-    <div className={`ui-card ui-card-${variant} ui-card-elevation-${elevation} ${className}`} {...props}>
+    <div 
+      className={`
+        ${styles.card} 
+        ${styles[`card${variant.charAt(0).toUpperCase() + variant.slice(1)}`]} 
+        ${styles[`cardElevation${elevation.charAt(0).toUpperCase() + elevation.slice(1)}`]} 
+        ${getAccentClass()}
+        ${styles[`${isFullWidth ? 'cardFullWidth' : ''}`]}
+        ${className}
+      `} 
+      {...props}
+    >
       {(title || actions) && (
-        <div className="ui-card-header">
-          <div className="ui-card-header-content">
-            {title && <h2 className="ui-card-title">{title}</h2>}
-            {subtitle && <div className="ui-card-subtitle">{subtitle}</div>}
+        <div className={styles.cardHeader}>
+          <div className={styles.cardHeaderContent}>
+            {title && <h2 className={styles.cardTitle}>{title}</h2>}
+            {subtitle && <div className={styles.cardSubtitle}>{subtitle}</div>}
           </div>
-          {actions && <div className="ui-card-actions">{actions}</div>}
+          {actions && <div className={styles.cardActions}>{actions}</div>}
         </div>
       )}
       
-      <div className="ui-card-body">
+      <div className={styles.cardBody}>
         {children}
       </div>
       
       {footer && (
-        <div className="ui-card-footer">
+        <div className={styles.cardFooter}>
           {footer}
         </div>
       )}
@@ -46,6 +65,10 @@ Card.propTypes = {
   footer: PropTypes.node,
   variant: PropTypes.oneOf(['default', 'outline', 'flat']),
   elevation: PropTypes.oneOf(['none', 'sm', 'md', 'lg']),
+  accent: PropTypes.oneOfType([
+    PropTypes.bool,
+    PropTypes.oneOf(['primary', 'success', 'warning', 'danger', 'info'])
+  ]),
   className: PropTypes.string,
 };
 

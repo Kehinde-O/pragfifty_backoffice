@@ -10,6 +10,9 @@ import TaxpayerProfiling from './components/taxpayers/TaxpayerProfiling';
 import Individuals from './components/taxpayers/Individuals';
 import TaxpayerBusinesses from './components/taxpayers/TaxpayerBusinesses';
 import TaxpayerDetails from './components/taxpayers/TaxpayerDetails';
+import TaxpayerReturns from './components/taxpayers/TaxpayerReturns';
+import TaxReturnDetails from './components/taxpayers/TaxReturnDetails';
+import TaxReturnProcess from './components/taxpayers/TaxReturnProcess';
 import {
   TCCApplicationList,
   TCCApplicationCreate,
@@ -21,11 +24,6 @@ import BulkLUCGeneration from './pages/BulkLUCGeneration';
 import {
   TaxpayerVerification,
 } from './components/taxpayers/index.jsx';
-import {
-  TaxpayerReturns,
-  TaxReturnDetails,
-  TaxReturnProcess
-} from './components/returns/index.jsx';
 import {
   RevenueHeads,
   StateRevenueHeads,

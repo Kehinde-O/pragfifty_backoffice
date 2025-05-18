@@ -1,0 +1,134 @@
+.alert {
+  display: flex;
+  align-items: flex-start;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease;
+  position: relative;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.alert:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.iconContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  margin-right: 16px;
+  flex-shrink: 0;
+  font-size: 1.125rem;
+}
+
+.content {
+  flex: 1;
+}
+
+.title {
+  margin: 0 0 8px;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.message {
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+.closeButton {
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  margin-left: 12px;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 50%;
+}
+
+.closeButton:hover {
+  opacity: 1;
+}
+
+/* Alert types */
+.info {
+  background-color: #e8f4fd;
+  border: 1px solid #d0e8ff;
+  color: #1565c0;
+}
+
+.info .iconContainer {
+  color: #1976d2;
+}
+
+.info .closeButton {
+  color: #1976d2;
+}
+
+.success {
+  background-color: #e8f5e9;
+  border: 1px solid #c8e6c9;
+  color: #2e7d32;
+}
+
+.success .iconContainer {
+  color: #43a047;
+}
+
+.success .closeButton {
+  color: #43a047;
+}
+
+.warning {
+  background-color: #fff8e1;
+  border: 1px solid #ffecb3;
+  color: #f57c00;
+}
+
+.warning .iconContainer {
+  color: #ffa000;
+}
+
+.warning .closeButton {
+  color: #ffa000;
+}
+
+.error,
+.danger {
+  background-color: #fdecea;
+  border: 1px solid #fed7d7;
+  color: #c53030;
+}
+
+.error .iconContainer,
+.danger .iconContainer {
+  color: #e53e3e;
+}
+
+.error .closeButton,
+.danger .closeButton {
+  color: #e53e3e;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+} 

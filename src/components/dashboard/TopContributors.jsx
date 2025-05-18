@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Card } from '../common/ui';
-import { FaBuilding, FaUniversity } from 'react-icons/fa';
+import { FaBuilding, FaUniversity, FaChartPie } from 'react-icons/fa';
+import styles from './Dashboard.module.css';
 
-const TopContributors = () => {
+const TopContributors = ({ period }) => {
   const [contributorsData, setContributorsData] = useState({
     topBanks: [],
     topMDAs: []
@@ -38,7 +38,7 @@ const TopContributors = () => {
         setTimeout(() => {
           setContributorsData(mockData);
           setIsLoading(false);
-        }, 1000);
+        }, 800);
       } catch (error) {
         console.error('Error fetching contributors data:', error);
         setIsLoading(false);
@@ -46,7 +46,7 @@ const TopContributors = () => {
     };
     
     fetchContributorsData();
-  }, []);
+  }, [period]);
   
   // Format amount as currency
   const formatCurrency = (amount) => {
@@ -61,85 +61,74 @@ const TopContributors = () => {
     return activeTab === 'banks' ? contributorsData.topBanks : contributorsData.topMDAs;
   };
   
+  // Helper function to get contributor colors
+  const getContributorColor = (index) => {
+    const colors = ['#4285F4', '#34A853', '#FBBC05', '#EA4335', '#8E24AA'];
+    return colors[index % colors.length];
+  };
+  
   return (
-    <Card>
-      <div className="section-header">
-        <h2 className="section-title">
-          Top Contributors
-        </h2>
-        <div className="section-actions">
-          <div className="view-toggle">
-            <button 
-              className={`toggle-btn ${activeTab === 'banks' ? 'active' : ''}`}
-              onClick={() => setActiveTab('banks')}
-            >
-              Banks
-            </button>
-            <button 
-              className={`toggle-btn ${activeTab === 'mdas' ? 'active' : ''}`}
-              onClick={() => setActiveTab('mdas')}
-            >
-              MDAs
-            </button>
-          </div>
-        </div>
-      </div>
-      
-      <div className="tab-header">
-        <div className="tab-icon">
-          {activeTab === 'banks' ? 
-            <FaUniversity className="tab-icon-svg" /> : 
-            <FaBuilding className="tab-icon-svg" />
-          }
-        </div>
-        <h3 className="tab-title">
-          {activeTab === 'banks' ? 'Top 5 Banks' : 'Top 5 MDAs'}
+    <>
+      <div className={styles.sectionHeader}>
+        <h3 className={styles.cardContentTitle}>
+          <FaChartPie /> Top {activeTab === 'banks' ? 'Banks' : 'MDAs'} by Revenue
         </h3>
+        <div className={styles.tabButtons}>
+          <button 
+            className={`${styles.tabButton} ${activeTab === 'banks' ? styles.tabButtonActive : ''}`}
+            onClick={() => setActiveTab('banks')}
+          >
+            Banks
+          </button>
+          <button 
+            className={`${styles.tabButton} ${activeTab === 'mdas' ? styles.tabButtonActive : ''}`}
+            onClick={() => setActiveTab('mdas')}
+          >
+            MDAs
+          </button>
+        </div>
       </div>
       
       {isLoading ? (
-        <div className="skeleton-loader" style={{ width: '100%', height: '250px' }}></div>
+        <div className={styles.loadingState}>
+          <div className={styles.loadingIcon}>
+            {activeTab === 'banks' ? <FaUniversity /> : <FaBuilding />}
+          </div>
+          <div>Loading...</div>
+        </div>
       ) : (
-        <div className="contributors-list">
+        <div className={styles.contributorsRanking}>
           {getActiveData().map((item, index) => (
-            <div key={index} className="contributor-item">
-              <div className="contributor-rank">{index + 1}</div>
-              <div className="contributor-details">
-                <div className="contributor-name">{item.name}</div>
-                <div className="contributor-bar-container">
-                  <div 
-                    className="contributor-bar"
-                    style={{ 
-                      width: `${item.percentage}%`,
-                      backgroundColor: getContributorColor(index)
-                    }}
-                  ></div>
-                </div>
+            <div key={index} className={styles.rankItem}>
+              <div className={styles.rankPosition} style={{ backgroundColor: getContributorColor(index) }}>
+                {index + 1}
               </div>
-              <div className="contributor-stats">
-                <div className="contributor-amount">{formatCurrency(item.amount)}</div>
-                <div className="contributor-percentage">{item.percentage}%</div>
+              <div className={styles.rankInfo}>
+                <div className={styles.rankName}>{item.name}</div>
+                <div className={styles.rankAmount}>{formatCurrency(item.amount)}</div>
+              </div>
+              <div className={styles.rankPercentage}>{item.percentage}%</div>
+              <div className={styles.rankBarContainer}>
+                <div 
+                  className={styles.rankBar}
+                  style={{ 
+                    width: `${item.percentage}%`,
+                    backgroundColor: getContributorColor(index)
+                  }}
+                />
               </div>
             </div>
           ))}
         </div>
       )}
       
-      <div className="card-footer">
-        <a href={`/dashboard/contributors/${activeTab}`} className="card-link">
-          View All {activeTab === 'banks' ? 'Banks' : 'MDAs'}
-        </a>
-      </div>
-    </Card>
+      {!isLoading && (
+        <div className={styles.viewAllLink}>
+          <a href={`/reports/contributors/${activeTab}`}>View All {activeTab === 'banks' ? 'Banks' : 'MDAs'} →</a>
+        </div>
+      )}
+    </>
   );
-};
-
-// Helper function to get contributor colors
-const getContributorColor = (index) => {
-  const colors = [
-    '#4285F4', '#34A853', '#FBBC05', '#EA4335', '#8E24AA'
-  ];
-  return colors[index % colors.length];
 };
 
 export default TopContributors; 

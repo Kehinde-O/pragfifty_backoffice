@@ -1,0 +1,27 @@
+/* App.module.css */
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.mainContent {
+  flex: 1;
+  margin-left: 240px;
+  padding: 1rem;
+  transition: margin-left 0.3s ease;
+}
+
+.mainContentCollapsed {
+  margin-left: 64px;
+}
+
+@media (max-width: 768px) {
+  .mainContent {
+    margin-left: 0;
+  }
+  
+  .mainContentCollapsed {
+    margin-left: 0;
+  }
+} 

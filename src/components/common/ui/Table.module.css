@@ -1,10 +1,10 @@
 /* Table Component Styles */
-.ui-table-container {
+.tableContainer {
   width: 100%;
   margin-bottom: var(--space-6);
 }
 
-.ui-table-responsive {
+.tableResponsive {
   width: 100%;
   overflow-x: auto;
   margin-bottom: var(--space-4);
@@ -12,7 +12,7 @@
   box-shadow: var(--shadow-sm);
 }
 
-.ui-table {
+.table {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
@@ -21,11 +21,11 @@
 }
 
 /* Header Styles */
-.ui-table-header {
+.tableHeader {
   background-color: var(--color-gray-50);
 }
 
-.ui-table-th {
+.tableTh {
   padding: var(--space-4);
   font-weight: var(--font-weight-semibold);
   color: var(--color-gray-700);
@@ -41,7 +41,11 @@
 }
 
 /* Body Styles */
-.ui-table-td {
+.tableBody {
+  background-color: white;
+}
+
+.tableTd {
   padding: var(--space-4);
   color: var(--color-gray-700);
   border-bottom: 1px solid var(--color-gray-200);
@@ -49,56 +53,56 @@
 }
 
 /* Table Sizes */
-.ui-table-sm .ui-table-th,
-.ui-table-sm .ui-table-td {
+.table-sm .tableTh,
+.table-sm .tableTd {
   padding: var(--space-2);
   font-size: 0.75rem;
 }
 
-.ui-table-md .ui-table-th,
-.ui-table-md .ui-table-td {
+.table-md .tableTh,
+.table-md .tableTd {
   padding: var(--space-3) var(--space-4);
   font-size: 0.875rem;
 }
 
-.ui-table-lg .ui-table-th,
-.ui-table-lg .ui-table-td {
+.table-lg .tableTh,
+.table-lg .tableTd {
   padding: var(--space-5) var(--space-6);
   font-size: 1rem;
 }
 
 /* Striped rows */
-.ui-table-striped .ui-table-row:nth-child(even) {
+.tableStriped .tableRow:nth-child(even) {
   background-color: var(--color-gray-50);
 }
 
 /* Hoverable rows */
-.ui-table-hover .ui-table-row:hover {
+.tableHover .tableRow:hover {
   background-color: var(--color-gray-100);
 }
 
 /* Bordered table */
-.ui-table-bordered {
+.tableBordered {
   border: 1px solid var(--color-gray-200);
 }
 
-.ui-table-bordered .ui-table-th,
-.ui-table-bordered .ui-table-td {
+.tableBordered .tableTh,
+.tableBordered .tableTd {
   border-right: 1px solid var(--color-gray-200);
 }
 
-.ui-table-bordered .ui-table-th:last-child,
-.ui-table-bordered .ui-table-td:last-child {
+.tableBordered .tableTh:last-child,
+.tableBordered .tableTd:last-child {
   border-right: none;
 }
 
 /* Loading state */
-.ui-table-loading-cell {
+.tableLoadingCell {
   padding: var(--space-10) !important;
   text-align: center;
 }
 
-.ui-table-loading-indicator {
+.tableLoadingIndicator {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -107,7 +111,7 @@
   color: var(--color-gray-500);
 }
 
-.ui-table-spinner {
+.tableSpinner {
   width: 30px;
   height: 30px;
   border: 3px solid rgba(59, 130, 246, 0.1);
@@ -123,7 +127,7 @@
 }
 
 /* Empty state */
-.ui-table-empty-cell {
+.tableEmptyCell {
   padding: var(--space-10) !important;
   text-align: center;
   color: var(--color-gray-500);
@@ -131,18 +135,18 @@
 }
 
 /* Clickable rows */
-.ui-table-row-clickable {
+.tableRowClickable {
   cursor: pointer;
 }
 
-.ui-table-row-clickable:hover {
+.tableRowClickable:hover {
   background-color: var(--color-gray-100);
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-  .ui-table-th,
-  .ui-table-td {
+  .tableTh,
+  .tableTd {
     padding: var(--space-2) var(--space-3);
     font-size: 0.75rem;
   }

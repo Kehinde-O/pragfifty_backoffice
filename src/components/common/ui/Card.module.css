@@ -1,0 +1,174 @@
+/* Card.module.css */
+.card {
+  background-color: white;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.02);
+  position: relative;
+  border: 1px solid rgba(237, 242, 247, 0.9);
+  /* flex:0 0 calc(50% - 0.75rem); */
+  /* box-sizing: border-box; */
+}
+
+.cardFullWidth{
+  width: 100% !important;
+}
+
+.card:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.03);
+  transform: translateY(-2px);
+}
+
+/* Card Header */
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 1.25rem 1.5rem 0.75rem;
+  border-bottom: 1px solid rgba(237, 242, 247, 0.9);
+  position: relative;
+}
+
+.cardHeaderContent {
+  flex: 1;
+}
+
+.cardTitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 0.25rem 0;
+  line-height: 1.3;
+}
+
+.cardSubtitle {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin-top: 0.25rem;
+}
+
+.cardActions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+/* Card Body */
+.cardBody {
+  padding: 1.5rem;
+  flex: 1;
+  position: relative;
+}
+
+/* When there's a header, adjust body padding */
+.cardHeader + .cardBody {
+  padding-top: 1rem;
+}
+
+/* Card Footer */
+.cardFooter {
+  padding: 1.25rem 1.5rem;
+  border-top: 1px solid rgba(237, 242, 247, 0.9);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f8fafc;
+}
+
+/* Variants */
+.cardDefault {
+  background-color: white;
+  border: 1px solid rgba(237, 242, 247, 0.9);
+}
+
+.cardOutline {
+  background-color: white;
+  border: 1px solid #e2e8f0;
+  box-shadow: none;
+}
+
+.cardFlat {
+  background-color: #f8fafc;
+  border: 1px solid rgba(237, 242, 247, 0.9);
+  box-shadow: none;
+}
+
+.cardAccent {
+  border-top: 3px solid #4285F4;
+}
+
+.cardAccentPrimary {
+  border-top: 3px solid #4285F4;
+}
+
+.cardAccentSuccess {
+  border-top: 3px solid #34A853;
+}
+
+.cardAccentWarning {
+  border-top: 3px solid #FBBC05;
+}
+
+.cardAccentDanger {
+  border-top: 3px solid #EA4335;
+}
+
+.cardAccentInfo {
+  border-top: 3px solid #36C5F0;
+}
+
+/* Elevations */
+.cardElevationNone {
+  box-shadow: none;
+}
+
+.cardElevationSm {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.cardElevationMd {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+.cardElevationLg {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.03);
+}
+
+/* Animation */
+.card {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .cardHeader {
+    padding: 1rem 1.25rem 0.75rem;
+  }
+  
+  .cardBody {
+    padding: 1.25rem;
+  }
+  
+  .cardFooter {
+    padding: 0.75rem 1.25rem;
+  }
+  
+  .cardHeader + .cardBody {
+    padding-top: 0.75rem;
+  }
+} 

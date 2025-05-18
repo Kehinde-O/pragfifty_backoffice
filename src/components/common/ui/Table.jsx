@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Pagination from './Pagination';
-import './Table.css';
+import styles from './Table.module.css';
 
 const Table = ({
   columns = [],
@@ -25,23 +25,23 @@ const Table = ({
   ...props
 }) => {
   return (
-    <div className={`ui-table-container ${className}`} {...props}>
-      <div className="ui-table-responsive">
+    <div className={`${styles.tableContainer} ${className}`} {...props}>
+      <div className={styles.tableResponsive}>
         <table 
           className={`
-            ui-table 
-            ui-table-${size} 
-            ${striped ? 'ui-table-striped' : ''} 
-            ${hoverable ? 'ui-table-hover' : ''} 
-            ${bordered ? 'ui-table-bordered' : ''}
+            ${styles.table}
+            ${styles[`table-${size}`]}
+            ${striped ? styles.tableStriped : ''} 
+            ${hoverable ? styles.tableHover : ''} 
+            ${bordered ? styles.tableBordered : ''}
           `}
         >
-          <thead className="ui-table-header">
+          <thead className={styles.tableHeader}>
             <tr>
               {columns.map((column, index) => (
                 <th 
                   key={column.accessor || index}
-                  className={`ui-table-th ${column.className || ''}`}
+                  className={`${styles.tableTh} ${column.className || ''}`}
                   style={{ 
                     width: column.width, 
                     textAlign: column.align || 'left',
@@ -53,19 +53,19 @@ const Table = ({
               ))}
             </tr>
           </thead>
-          <tbody className="ui-table-body">
+          <tbody className={styles.tableBody}>
             {loading ? (
-              <tr className="ui-table-loading-row">
-                <td colSpan={columns.length} className="ui-table-loading-cell">
-                  <div className="ui-table-loading-indicator">
-                    <div className="ui-table-spinner"></div>
+              <tr className={styles.tableLoadingRow}>
+                <td colSpan={columns.length} className={styles.tableLoadingCell}>
+                  <div className={styles.tableLoadingIndicator}>
+                    <div className={styles.tableSpinner}></div>
                     <span>Loading...</span>
                   </div>
                 </td>
               </tr>
             ) : data.length === 0 ? (
-              <tr className="ui-table-empty-row">
-                <td colSpan={columns.length} className="ui-table-empty-cell">
+              <tr className={styles.tableEmptyRow}>
+                <td colSpan={columns.length} className={styles.tableEmptyCell}>
                   {emptyMessage}
                 </td>
               </tr>
@@ -73,13 +73,13 @@ const Table = ({
               data.map((row, rowIndex) => (
                 <tr 
                   key={row.id || rowIndex}
-                  className={`ui-table-row ${onRowClick ? 'ui-table-row-clickable' : ''}`}
+                  className={`${styles.tableRow} ${onRowClick ? styles.tableRowClickable : ''}`}
                   onClick={() => onRowClick && onRowClick(row, rowIndex)}
                 >
                   {columns.map((column, colIndex) => (
                     <td 
                       key={column.accessor || colIndex} 
-                      className={`ui-table-td ${column.cellClassName || ''}`}
+                      className={`${styles.tableTd} ${column.cellClassName || ''}`}
                       style={{ 
                         textAlign: column.align || 'left',
                         ...column.cellStyle 

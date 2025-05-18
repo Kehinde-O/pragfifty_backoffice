@@ -1,0 +1,123 @@
+.closeButton {
+  background-color: #64748b;
+  color: white;
+}
+
+.closeButton:hover:not(:disabled) {
+  background-color: #475569;
+}
+
+/* Loading and Empty States */
+.loadingIndicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  color: #64748b;
+  flex: 1;
+}
+
+.loadingIndicator p {
+  margin-top: 1rem;
+  font-size: 0.875rem;
+}
+
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.noResults {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  color: #64748b;
+  text-align: center;
+  flex: 1;
+}
+
+.noResults p {
+  margin: 0.75rem 0;
+  font-size: 0.875rem;
+}
+
+.noResultsIcon {
+  color: #94a3b8;
+  margin-bottom: 0.75rem;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.875rem 1rem;
+  border-top: 1px solid #e2e8f0;
+  background-color: #f8fafc;
+  flex-wrap: wrap;
+  gap: 1rem;
+  font-size: 0.875rem;
+}
+
+.paginationInfo {
+  color: #64748b;
+}
+
+.paginationControls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.itemsPerPage {
+  position: relative;
+  margin-right: 1rem;
+}
+
+.paginationButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+  height: 2rem;
+  border-radius: 0.25rem;
+  padding: 0 0.5rem;
+  font-size: 0.875rem;
+  color: #64748b;
+  background-color: #fff;
+  border: 1px solid #e2e8f0;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.paginationButton:hover:not(:disabled) {
+  background-color: #f1f5f9;
+  color: #334155;
+}
+
+.paginationButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.paginationPageInfo {
+  margin: 0 0.5rem;
+  color: #64748b;
+}
+
+.pageNumber {
+  font-weight: 600;
+  color: #334155;
+} 

@@ -1,5 +1,5 @@
 /* Pagination Component Styles */
-.ui-pagination {
+.pagination {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -8,19 +8,19 @@
 }
 
 /* Row per page selection */
-.ui-pagination-info {
+.paginationInfo {
   display: flex;
   align-items: center;
 }
 
-.ui-pagination-rows-per-page {
+.paginationRowsPerPage {
   display: flex;
   align-items: center;
   gap: var(--space-2);
   color: var(--color-gray-600);
 }
 
-.ui-pagination-select {
+.paginationSelect {
   background-color: var(--color-gray-50);
   border: 1px solid var(--color-gray-300);
   border-radius: var(--radius-md);
@@ -31,20 +31,20 @@
   transition: all var(--transition-fast);
 }
 
-.ui-pagination-select:focus {
+.paginationSelect:focus {
   border-color: var(--color-primary);
   box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
 }
 
 /* Controls container */
-.ui-pagination-controls {
+.paginationControls {
   display: flex;
   align-items: center;
   gap: var(--space-1);
 }
 
 /* Navigation buttons */
-.ui-pagination-button {
+.paginationButton {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -58,23 +58,23 @@
   transition: all var(--transition-fast);
 }
 
-.ui-pagination-button:hover:not(:disabled) {
+.paginationButton:hover:not(:disabled) {
   background-color: var(--color-gray-200);
 }
 
-.ui-pagination-button:disabled {
+.paginationButton:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
 /* Page number buttons */
-.ui-pagination-pages {
+.paginationPages {
   display: flex;
   align-items: center;
   gap: var(--space-1);
 }
 
-.ui-pagination-page {
+.paginationPage {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -90,17 +90,17 @@
   transition: all var(--transition-fast);
 }
 
-.ui-pagination-page:hover:not(.ui-pagination-page-active) {
+.paginationPage:hover:not(.paginationPageActive) {
   background-color: var(--color-gray-200);
 }
 
-.ui-pagination-page-active {
+.paginationPageActive {
   background-color: var(--color-primary);
   color: white;
   font-weight: var(--font-weight-medium);
 }
 
-.ui-pagination-ellipsis {
+.paginationEllipsis {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -112,18 +112,18 @@
 
 /* Responsive styles */
 @media (max-width: 640px) {
-  .ui-pagination {
+  .pagination {
     flex-direction: column;
     gap: var(--space-4);
   }
   
-  .ui-pagination-info {
+  .paginationInfo {
     order: 2;
     width: 100%;
     justify-content: center;
   }
   
-  .ui-pagination-controls {
+  .paginationControls {
     order: 1;
     width: 100%;
     justify-content: center;
