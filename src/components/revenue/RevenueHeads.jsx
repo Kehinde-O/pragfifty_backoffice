@@ -5,7 +5,7 @@ import {
   FiFileText, FiFilter, FiRefreshCw, FiChevronRight,
   FiMapPin, FiPackage, FiBarChart2, FiActivity
 } from 'react-icons/fi';
-import './RevenueHeads.css';
+import styles from './RevenueHeads.module.css';
 
 const RevenueHeads = () => {
   const [stats, setStats] = useState({
@@ -69,67 +69,67 @@ const RevenueHeads = () => {
   };
 
   return (
-    <div className="revenue-heads-container">
-      <div className="page-header">
-        <h1><FiDollarSign className="page-header-icon" /> Revenue Heads Management</h1>
+    <div className={styles.revenueHeadsContainer}>
+      <div className={styles.pageHeader}>
+        <h1><FiDollarSign className={styles.pageHeaderIcon} /> Revenue Heads Management</h1>
       </div>
 
       {loading ? (
-        <div className="loading-indicator">
-          <FiRefreshCw className="spinning" />
+        <div className={styles.loadingIndicator}>
+          <FiRefreshCw className={styles.spinning} />
           <p>Loading revenue data...</p>
         </div>
       ) : (
         <>
           {/* Stats Cards */}
-          <div className="stats-grid">
-            <div className="stat-card">
-              <div className="stat-icon state-icon">
+          <div className={styles.statsGrid}>
+            <div className={styles.statCard}>
+              <div className={`${styles.statIcon} ${styles.stateIcon}`}>
                 <FiDollarSign size={24} />
               </div>
-              <div className="stat-content">
+              <div className={styles.statContent}>
                 <h3>State Revenue Heads</h3>
-                <p className="stat-value">{stats.stateRevenueHeads}</p>
-                <Link to="/dashboard/revenue-heads/state" className="stat-link">
+                <p className={styles.statValue}>{stats.stateRevenueHeads}</p>
+                <Link to="/dashboard/revenue-heads/state" className={styles.statLink}>
                   Manage <FiChevronRight size={16} />
                 </Link>
               </div>
             </div>
 
-            <div className="stat-card">
-              <div className="stat-icon lga-icon">
+            <div className={styles.statCard}>
+              <div className={`${styles.statIcon} ${styles.lgaIcon}`}>
                 <FiMapPin size={24} />
               </div>
-              <div className="stat-content">
+              <div className={styles.statContent}>
                 <h3>LGA Revenue Heads</h3>
-                <p className="stat-value">{stats.lgaRevenueHeads}</p>
-                <Link to="/dashboard/revenue-heads/lga" className="stat-link">
+                <p className={styles.statValue}>{stats.lgaRevenueHeads}</p>
+                <Link to="/dashboard/revenue-heads/lga" className={styles.statLink}>
                   Manage <FiChevronRight size={16} />
                 </Link>
               </div>
             </div>
 
-            <div className="stat-card">
-              <div className="stat-icon items-icon">
+            <div className={styles.statCard}>
+              <div className={`${styles.statIcon} ${styles.itemsIcon}`}>
                 <FiPackage size={24} />
               </div>
-              <div className="stat-content">
+              <div className={styles.statContent}>
                 <h3>Revenue Items</h3>
-                <p className="stat-value">{stats.revenueItems}</p>
-                <Link to="/dashboard/revenue-heads/items" className="stat-link">
+                <p className={styles.statValue}>{stats.revenueItems}</p>
+                <Link to="/dashboard/revenue-heads/items" className={styles.statLink}>
                   Manage <FiChevronRight size={16} />
                 </Link>
               </div>
             </div>
 
-            <div className="stat-card">
-              <div className="stat-icon revenue-icon">
+            <div className={styles.statCard}>
+              <div className={`${styles.statIcon} ${styles.revenueIcon}`}>
                 <FiBarChart2 size={24} />
               </div>
-              <div className="stat-content">
+              <div className={styles.statContent}>
                 <h3>Total Revenue</h3>
-                <p className="stat-value">{formatCurrency(stats.totalRevenue)}</p>
-                <Link to="/dashboard/reports/collections" className="stat-link">
+                <p className={styles.statValue}>{formatCurrency(stats.totalRevenue)}</p>
+                <Link to="/dashboard/reports/collections" className={styles.statLink}>
                   View Reports <FiChevronRight size={16} />
                 </Link>
               </div>
@@ -137,15 +137,15 @@ const RevenueHeads = () => {
           </div>
 
           {/* Top Revenue Heads */}
-          <div className="section">
-            <div className="section-header">
-              <h2><FiBarChart2 className="section-icon" /> Top Revenue Heads</h2>
-              <Link to="/dashboard/reports/top-revenue" className="view-all-link">
+          <div className={styles.section}>
+            <div className={styles.sectionHeader}>
+              <h2><FiBarChart2 className={styles.sectionIcon} /> Top Revenue Heads</h2>
+              <Link to="/dashboard/reports/top-revenue" className={styles.viewAllLink}>
                 View All <FiArrowRight size={14} />
               </Link>
             </div>
-            <div className="table-container">
-              <table className="revenue-heads-table">
+            <div className={styles.tableContainer}>
+              <table className={styles.revenueHeadsTable}>
                 <thead>
                   <tr>
                     <th>Name</th>
@@ -171,25 +171,25 @@ const RevenueHeads = () => {
           </div>
 
           {/* Recent Activity */}
-          <div className="section">
-            <div className="section-header">
-              <h2><FiActivity className="section-icon" /> Recent Activity</h2>
-              <Link to="/dashboard/reports/audit-trail" className="view-all-link">
+          <div className={styles.section}>
+            <div className={styles.sectionHeader}>
+              <h2><FiActivity className={styles.sectionIcon} /> Recent Activity</h2>
+              <Link to="/dashboard/reports/audit-trail" className={styles.viewAllLink}>
                 View All <FiArrowRight size={14} />
               </Link>
             </div>
-            <div className="activity-list">
+            <div className={styles.activityList}>
               {recentActivity.map(activity => (
-                <div key={activity.id} className="activity-item">
-                  <div className="activity-icon">
+                <div key={activity.id} className={styles.activityItem}>
+                  <div className={styles.activityIcon}>
                     <FiDollarSign />
                   </div>
-                  <div className="activity-content">
+                  <div className={styles.activityContent}>
                     <h4>{activity.action}</h4>
-                    <p className="activity-description">{activity.description}</p>
-                    <div className="activity-meta">
-                      <span className="activity-user">{activity.user}</span>
-                      <span className="activity-date">{formatDateTime(activity.date)}</span>
+                    <p className={styles.activityDescription}>{activity.description}</p>
+                    <div className={styles.activityMeta}>
+                      <span className={styles.activityUser}>{activity.user}</span>
+                      <span className={styles.activityDate}>{formatDateTime(activity.date)}</span>
                     </div>
                   </div>
                 </div>
@@ -198,14 +198,14 @@ const RevenueHeads = () => {
           </div>
 
           {/* Quick Actions */}
-          <div className="quick-actions">
-            <Link to="/dashboard/revenue-heads/state" className="action-button">
+          <div className={styles.quickActions}>
+            <Link to="/dashboard/revenue-heads/state" className={styles.actionButton}>
               <FiPlus size={16} /> Add State Revenue Head
             </Link>
-            <Link to="/dashboard/revenue-heads/lga" className="action-button">
+            <Link to="/dashboard/revenue-heads/lga" className={styles.actionButton}>
               <FiPlus size={16} /> Add LGA Revenue Head
             </Link>
-            <Link to="/dashboard/revenue-heads/items" className="action-button">
+            <Link to="/dashboard/revenue-heads/items" className={styles.actionButton}>
               <FiPlus size={16} /> Add Revenue Item
             </Link>
           </div>

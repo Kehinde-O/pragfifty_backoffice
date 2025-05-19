@@ -1,0 +1,385 @@
+/* AssessmentDashboard.module.css */
+.dashboardContainer {
+  padding: 1.5rem;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Page Header */
+.pageHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.pageHeader h1 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+  display: flex;
+  align-items: center;
+}
+
+.pageHeaderIcon {
+  margin-right: 0.75rem;
+  color: #0891b2; /* Cyan-600 */
+}
+
+/* Stats Grid */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.statCard {
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 1.25rem;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.statCard:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.statIcon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pendingIcon {
+  background-color: rgba(245, 158, 11, 0.1);
+  color: #f59e0b; /* Amber-500 */
+}
+
+.approvedIcon {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: #10b981; /* Emerald-500 */
+}
+
+.issuedIcon {
+  background-color: rgba(14, 165, 233, 0.1);
+  color: #0ea5e9; /* Sky-500 */
+}
+
+.paidIcon {
+  background-color: rgba(139, 92, 246, 0.1); 
+  color: #8b5cf6; /* Violet-500 */
+}
+
+.statContent {
+  flex: 1;
+}
+
+.statContent h3 {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #64748b;
+  margin: 0 0 0.5rem 0;
+}
+
+.statValue {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 0.75rem 0;
+}
+
+.statLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #0891b2; /* Cyan-600 */
+  text-decoration: none;
+}
+
+.statLink:hover {
+  text-decoration: underline;
+}
+
+/* Section Styles */
+.section {
+  margin-bottom: 1.5rem;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.sectionHeader h2 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sectionIcon {
+  color: #0891b2; /* Cyan-600 */
+}
+
+.viewAllLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #0891b2; /* Cyan-600 */
+  text-decoration: none;
+}
+
+.viewAllLink:hover {
+  text-decoration: underline;
+}
+
+/* Assessment Cards */
+.assessmentCards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.assessmentCard {
+  background-color: #ffffff;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  padding: 1rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.assessmentCard:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+}
+
+.cardTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+}
+
+.cardSubtitle {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin: 0.25rem 0 0 0;
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.statusDraft {
+  background-color: rgba(100, 116, 139, 0.1);
+  color: #64748b; /* Slate-500 */
+}
+
+.statusPending {
+  background-color: rgba(245, 158, 11, 0.1);
+  color: #f59e0b; /* Amber-500 */
+}
+
+.statusApproved {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: #10b981; /* Emerald-500 */
+}
+
+.statusIssued {
+  background-color: rgba(14, 165, 233, 0.1);
+  color: #0ea5e9; /* Sky-500 */
+}
+
+.statusPaid {
+  background-color: rgba(139, 92, 246, 0.1);
+  color: #8b5cf6; /* Violet-500 */
+}
+
+.statusRejected {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #ef4444; /* Red-500 */
+}
+
+.cardAmount {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0.5rem 0;
+}
+
+.cardDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.detailItem {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
+.detailLabel {
+  font-weight: 500;
+}
+
+.cardActions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.cardActionButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.primaryButton {
+  background-color: #0891b2; /* Cyan-600 */
+  color: white;
+}
+
+.primaryButton:hover {
+  background-color: #0e7490; /* Cyan-700 */
+}
+
+.secondaryButton {
+  background-color: white;
+  color: #0891b2; /* Cyan-600 */
+  border: 1px solid #0891b2; /* Cyan-600 */
+}
+
+.secondaryButton:hover {
+  background-color: rgba(8, 145, 178, 0.05);
+}
+
+/* Quick Actions */
+.quickActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.actionButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  background-color: #f8fafc;
+  color: #0f172a;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  text-decoration: none;
+  transition: all 0.15s ease-in-out;
+}
+
+.actionButton:hover {
+  background-color: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.createButton {
+  background-color: #0891b2; /* Cyan-600 */
+  color: white;
+  border: none;
+}
+
+.createButton:hover {
+  background-color: #0e7490; /* Cyan-700 */
+}
+
+/* Loading indicator */
+.loadingIndicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  gap: 1rem;
+}
+
+.loadingIndicator p {
+  color: #64748b;
+  font-size: 0.875rem;
+}
+
+.spinning {
+  animation: spin 1s linear infinite;
+  color: #0891b2; /* Cyan-600 */
+  font-size: 1.5rem;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .statsGrid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+  
+  .assessmentCards {
+    grid-template-columns: 1fr;
+  }
+  
+  .quickActions {
+    flex-direction: column;
+  }
+  
+  .actionButton {
+    width: 100%;
+  }
+} 

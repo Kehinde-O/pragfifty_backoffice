@@ -193,7 +193,7 @@ function Sidebar({ open }) {
               <ul className={`${styles.submenu} ${expandedSections.taxpayers ? styles.expanded : ''}`}>
                 <li><Link to="/dashboard/taxpayers/individuals" className={`${styles.submenuLink} ${isActive('/dashboard/taxpayers/individuals') ? styles.submenuActive : ''}`}>Individuals</Link></li>
                 <li><Link to="/dashboard/taxpayers/businesses" className={`${styles.submenuLink} ${isActive('/dashboard/taxpayers/businesses') ? styles.submenuActive : ''}`}>Businesses</Link></li>
-                <li><Link to="/dashboard/taxpayers/verification" className={`${styles.submenuLink} ${isActive('/dashboard/taxpayers/verification') ? styles.submenuActive : ''}`}>Account Verification</Link></li>
+                {/* <li><Link to="/dashboard/taxpayers/verification" className={`${styles.submenuLink} ${isActive('/dashboard/taxpayers/verification') ? styles.submenuActive : ''}`}>Account Verification</Link></li> */}
                 <li><Link to="/dashboard/taxpayers/profiling" className={`${styles.submenuLink} ${isActive('/dashboard/taxpayers/profiling') ? styles.submenuActive : ''}`}>Taxpayer Profiling</Link></li>
               </ul>
             )}
@@ -275,9 +275,8 @@ function Sidebar({ open }) {
             {open && expandedSections.assessments && (
               <ul className={`${styles.submenu} ${expandedSections.assessments ? styles.expanded : ''}`}>
                 <li><Link to="/dashboard/assessments/create" className={`${styles.submenuLink} ${isActive('/dashboard/assessments/create') ? styles.submenuActive : ''}`}>Create Assessment</Link></li>
-                <li><Link to="/dashboard/assessments/pending" className={`${styles.submenuLink} ${isActive('/dashboard/assessments/pending') ? styles.submenuActive : ''}`}>Pending Assessments</Link></li>
-                <li><Link to="/dashboard/assessments/self" className={`${styles.submenuLink} ${isActive('/dashboard/assessments/self') ? styles.submenuActive : ''}`}>Self-Assessment Review</Link></li>
-                <li><Link to="/dashboard/assessments/manage" className={`${styles.submenuLink} ${isActive('/dashboard/assessments/manage') ? styles.submenuActive : ''}`}>Manage Assessments</Link></li>
+                <li><Link to="/dashboard/assessments" className={`${styles.submenuLink} ${isActive('/dashboard/assessments') && !isPartOfRoute('/dashboard/assessments/') ? styles.submenuActive : ''}`}>All Assessments</Link></li>
+                <li><Link to="/dashboard/assessments/approval" className={`${styles.submenuLink} ${isActive('/dashboard/assessments/approval') ? styles.submenuActive : ''}`}>Pending Approvals</Link></li>
               </ul>
             )}
           </li>

@@ -8,7 +8,7 @@ import RolesPermissions from './components/users/RolesPermissions';
 import UserActivity from './components/users/UserActivity';
 import TaxpayerProfiling from './components/taxpayers/TaxpayerProfiling';
 import Individuals from './components/taxpayers/Individuals';
-import TaxpayerBusinesses from './components/taxpayers/TaxpayerBusinesses';
+import Businesses from './components/taxpayers/Businesses';
 import TaxpayerDetails from './components/taxpayers/TaxpayerDetails';
 import TaxpayerReturns from './components/taxpayers/TaxpayerReturns';
 import TaxReturnDetails from './components/taxpayers/TaxReturnDetails';
@@ -31,12 +31,12 @@ import {
   RevenueItems
 } from './components/revenue/index.jsx';
 import {
+  AssessmentDashboard,
   AssessmentList,
-  CreateAssessment,
-  PendingAssessments,
-  SelfAssessmentReview,
-  ManageAssessment
-} from './components/assessments';
+  AssessmentDetail,
+  AssessmentCreate,
+  AssessmentApproval
+} from './components/assessment';
 import './App.css';
 
 function App() {
@@ -72,7 +72,7 @@ function App() {
             <Route index element={<Navigate to="individuals" replace />} />
             <Route path="individuals" element={<Individuals />} />
             <Route path="individuals/:id" element={<TaxpayerDetails type="individual" />} />
-            <Route path="businesses" element={<TaxpayerBusinesses />} />
+            <Route path="businesses" element={<Businesses />} />
             <Route path="businesses/:id" element={<TaxpayerDetails type="business" />} />
             <Route path="verification" element={<TaxpayerVerification />} />
             <Route path="profiling" element={<TaxpayerProfiling />} />
@@ -96,10 +96,11 @@ function App() {
           {/* Assessments Module */}
           <Route path="assessments">
             <Route index element={<AssessmentList />} />
-            <Route path="create" element={<CreateAssessment />} />
-            <Route path="pending" element={<PendingAssessments />} />
-            <Route path="self" element={<SelfAssessmentReview />} />
-            <Route path="manage" element={<ManageAssessment />} />
+            <Route path="create" element={<AssessmentCreate />} />
+            <Route path="approval" element={<AssessmentApproval />} />
+            <Route path=":id" element={<AssessmentDetail />} />
+            <Route path=":id/approve" element={<AssessmentApproval />} />
+            <Route path=":id/edit" element={<AssessmentCreate />} />
           </Route>
           
           <Route path="transactions/*" element={<div>Transactions Management</div>} />

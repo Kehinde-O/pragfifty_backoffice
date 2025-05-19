@@ -3,7 +3,7 @@ import {
   FiDollarSign, FiSearch, FiPlus, FiEdit2, FiTrash2, FiCheckCircle, FiXCircle,
   FiFileText, FiFilter, FiRefreshCw, FiLink
 } from 'react-icons/fi';
-import './RevenueHeads.css';
+import styles from './RevenueItems.module.css';
 
 const RevenueItems = () => {
   const [revenueItems, setRevenueItems] = useState([]);
@@ -191,14 +191,14 @@ const RevenueItems = () => {
   };
 
   return (
-    <div className="revenue-heads-container">
-      <div className="page-header">
-        <h1><FiDollarSign className="page-header-icon" /> Revenue Items</h1>
+    <div className={styles.revenueItemsContainer}>
+      <div className={styles.pageHeader}>
+        <h1><FiDollarSign className={styles.pageHeaderIcon} /> Revenue Items</h1>
       </div>
 
-      <div className="header-actions">
-        <div className="search-box">
-          <FiSearch className="search-icon" />
+      <div className={styles.headerActions}>
+        <div className={styles.searchBox}>
+          <FiSearch className={styles.searchIcon} />
           <input
             type="text"
             placeholder="Search revenue items..."
@@ -207,49 +207,50 @@ const RevenueItems = () => {
           />
         </div>
 
-        <div className="filter-dropdown">
-          <label htmlFor="revenueHeadFilter" className="filter-label">
-            <FiLink /> Revenue Head:
-          </label>
-          <select
-            id="revenueHeadFilter"
-            value={revenueHeadFilter}
-            onChange={(e) => setRevenueHeadFilter(e.target.value)}
-          >
-            <option value="all">All Revenue Heads</option>
-            {revenueHeads.map(head => (
-              <option key={head.id} value={head.id}>{head.name} ({head.category})</option>
-            ))}
-          </select>
+        <div className={styles.filterControls}>
+          <div className={styles.filterGroup}>
+            <label htmlFor="revenueHeadFilter" className={styles.filterLabel}>
+              <FiLink /> Revenue Head:
+            </label>
+            <select
+              id="revenueHeadFilter"
+              value={revenueHeadFilter}
+              onChange={(e) => setRevenueHeadFilter(e.target.value)}
+            >
+              <option value="all">All Revenue Heads</option>
+              {revenueHeads.map(head => (
+                <option key={head.id} value={head.id}>{head.name}</option>
+              ))}
+            </select>
+          </div>
         </div>
 
-        <button className="add-button" onClick={openAddModal}>
+        <button className={styles.addButton} onClick={openAddModal}>
           <FiPlus /> Add Revenue Item
         </button>
       </div>
 
-      <div className="table-container">
+      <div className={styles.tableContainer}>
         {loading && revenueItems.length === 0 ? (
-          <div className="loading-indicator">
-            <FiRefreshCw className="spinning" />
+          <div className={styles.loadingIndicator}>
+            <FiRefreshCw className={styles.spinning} />
             <p>Loading revenue items...</p>
           </div>
         ) : filteredRevenueItems.length === 0 ? (
-          <div className="no-results">
+          <div className={styles.noResults}>
             <FiFileText size={48} style={{ marginBottom: '1rem', color: '#94a3b8' }}/>
             <p>No revenue items found.</p>
             {(searchTerm || revenueHeadFilter !== 'all') && <p>Try adjusting your search or filter criteria.</p>}
           </div>
         ) : (
-          <table className="revenue-heads-table">
+          <table className={styles.revenueItemsTable}>
             <thead>
               <tr>
                 <th>Name</th>
                 <th>Code</th>
                 <th>Revenue Head</th>
-                <th>Price</th>
+                <th>Price/Rate</th>
                 <th>Unit</th>
-                <th>Additional Fields</th>
                 <th>Status</th>
                 <th>Last Updated</th>
                 <th>Actions</th>
@@ -259,45 +260,34 @@ const RevenueItems = () => {
               {filteredRevenueItems.map(item => (
                 <tr key={item.id}>
                   <td>
-                    <div className="revenue-name">
-                      <span>{item.name}</span>
-                      <small className="revenue-description">{item.description}</small>
+                    <div className={styles.itemName}>
+                      <span className={styles.itemNameText}>{item.name}</span>
+                      <small className={styles.itemDescription}>{item.description}</small>
                     </div>
                   </td>
                   <td>{item.code}</td>
                   <td>{item.revenueHead}</td>
-                  <td>
-                    {item.unit === 'Percentage' ? 
-                      `${parseFloat(item.price).toFixed(2)}%` : 
-                      formatCurrency(item.price)}
-                    {item.minPrice !== item.maxPrice && (
-                      <small className="range">
-                        Range: {item.unit === 'Percentage' ? 
-                          `${parseFloat(item.minPrice).toFixed(2)}% - ${parseFloat(item.maxPrice).toFixed(2)}%` : 
-                          `${formatCurrency(item.minPrice)} - ${formatCurrency(item.maxPrice)}`}
-                      </small>
+                  <td className={styles.price}>
+                    {item.unit === 'Percentage' ? `${item.price}%` : formatCurrency(item.price)}
+                    {(item.unit === 'Range' && (item.minPrice !== item.price || item.maxPrice !== item.price)) && (
+                      <span className={styles.range}>
+                        <small>{formatCurrency(item.minPrice)} - {formatCurrency(item.maxPrice)}</small>
+                      </span>
                     )}
                   </td>
                   <td>{item.unit}</td>
                   <td>
-                    <div className="additional-fields">
-                      {item.additionalFields.split(',').map((field, index) => (
-                        <span key={index} className="field-tag">{field.trim()}</span>
-                      ))}
-                    </div>
-                  </td>
-                  <td>
-                    <span className={`status-badge ${item.status === 'active' ? 'status-active' : 'status-inactive'}`}>
+                    <span className={`${styles.statusBadge} ${item.status === 'active' ? styles.statusActive : styles.statusInactive}`}>
                       {item.status === 'active' ? <FiCheckCircle /> : <FiXCircle />}
                       {item.status === 'active' ? 'Active' : 'Inactive'}
                     </span>
                   </td>
                   <td>{formatDateTime(item.lastUpdated)}</td>
-                  <td className="action-buttons">
-                    <button className="edit-button" title="Edit" onClick={() => openEditModal(item)}>
+                  <td className={styles.actionButtons}>
+                    <button className={styles.editButton} title="Edit" onClick={() => openEditModal(item)}>
                       <FiEdit2 />
                     </button>
-                    <button className="delete-button" title="Delete" onClick={() => handleDelete(item.id)}>
+                    <button className={styles.deleteButton} title="Delete" onClick={() => handleDelete(item.id)}>
                       <FiTrash2 />
                     </button>
                   </td>
@@ -309,105 +299,106 @@ const RevenueItems = () => {
       </div>
 
       {showModal && (
-        <div className="modal-backdrop">
-          <div className="modal-content">
+        <div className={styles.modalBackdrop}>
+          <div className={styles.modalContent}>
             <h2>
               {editingRevenueItem ? <><FiEdit2 /> Edit Revenue Item</> : <><FiPlus /> Add New Revenue Item</>}
             </h2>
             <form onSubmit={handleSubmit}>
-              <div className="form-group">
-                <label htmlFor="name">Revenue Item Name</label>
+              <div className={styles.formGroup}>
+                <label htmlFor="name">Item Name</label>
                 <input type="text" id="name" name="name" value={formData.name} onChange={handleInputChange} required />
               </div>
               
-              <div className="form-row">
-                <div className="form-group">
+              <div className={styles.formRow}>
+                <div className={styles.formGroup}>
                   <label htmlFor="code">Item Code</label>
                   <input type="text" id="code" name="code" value={formData.code} onChange={handleInputChange} required />
                 </div>
-                <div className="form-group">
+                <div className={styles.formGroup}>
                   <label htmlFor="revenueHeadId">Revenue Head</label>
-                  <select id="revenueHeadId" name="revenueHeadId" value={formData.revenueHeadId} onChange={handleInputChange} required>
+                  <select 
+                    id="revenueHeadId" 
+                    name="revenueHeadId" 
+                    value={formData.revenueHeadId} 
+                    onChange={handleInputChange} 
+                    required
+                  >
                     <option value="">Select Revenue Head</option>
                     {revenueHeads.map(head => (
-                      <option key={head.id} value={head.id}>{head.name} ({head.category})</option>
+                      <option key={head.id} value={head.id}>{head.name}</option>
                     ))}
                   </select>
                 </div>
               </div>
 
-              <div className="form-group">
+              <div className={styles.formGroup}>
                 <label htmlFor="description">Description</label>
                 <textarea id="description" name="description" value={formData.description} onChange={handleInputChange} required />
               </div>
 
-              <div className="form-row">
-                <div className="form-group">
+              <div className={styles.formRow}>
+                <div className={styles.formGroup}>
                   <label htmlFor="unit">Unit</label>
                   <select id="unit" name="unit" value={formData.unit} onChange={handleInputChange} required>
-                    <option value="Fixed">Fixed Amount</option>
+                    <option value="Fixed">Fixed</option>
                     <option value="Percentage">Percentage</option>
-                    <option value="Per Unit">Per Unit</option>
                     <option value="Range">Range</option>
                   </select>
                 </div>
-                <div className="form-group">
-                  <label htmlFor="price">Price/Rate</label>
-                  <input 
-                    type="number" 
-                    id="price" 
-                    name="price" 
-                    value={formData.price} 
-                    onChange={handleInputChange} 
-                    step="0.01"
-                    min="0"
-                    required 
-                  />
-                </div>
+                
+                {formData.unit === 'Range' ? (
+                  <>
+                    <div className={styles.formGroup}>
+                      <label htmlFor="minPrice">Min Price (₦)</label>
+                      <input 
+                        type="number" 
+                        id="minPrice" 
+                        name="minPrice" 
+                        value={formData.minPrice} 
+                        onChange={handleInputChange} 
+                        step="0.01"
+                        min="0"
+                        required 
+                      />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <label htmlFor="maxPrice">Max Price (₦)</label>
+                      <input 
+                        type="number" 
+                        id="maxPrice" 
+                        name="maxPrice" 
+                        value={formData.maxPrice} 
+                        onChange={handleInputChange} 
+                        step="0.01"
+                        min="0"
+                        required 
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <div className={styles.formGroup}>
+                    <label htmlFor="price">{formData.unit === 'Percentage' ? 'Rate (%)' : 'Price (₦)'}</label>
+                    <input 
+                      type="number" 
+                      id="price" 
+                      name="price" 
+                      value={formData.price} 
+                      onChange={handleInputChange} 
+                      step="0.01"
+                      min="0"
+                      required 
+                    />
+                  </div>
+                )}
               </div>
 
-              <div className="form-row">
-                <div className="form-group">
-                  <label htmlFor="minPrice">Minimum Price/Rate</label>
-                  <input 
-                    type="number" 
-                    id="minPrice" 
-                    name="minPrice" 
-                    value={formData.minPrice} 
-                    onChange={handleInputChange} 
-                    step="0.01"
-                    min="0"
-                    required 
-                  />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="maxPrice">Maximum Price/Rate</label>
-                  <input 
-                    type="number" 
-                    id="maxPrice" 
-                    name="maxPrice" 
-                    value={formData.maxPrice} 
-                    onChange={handleInputChange} 
-                    step="0.01"
-                    min="0"
-                    required 
-                  />
-                </div>
+              <div className={styles.formGroup}>
+                <label htmlFor="additionalFields">Additional Required Fields (comma separated)</label>
+                <input type="text" id="additionalFields" name="additionalFields" value={formData.additionalFields} onChange={handleInputChange} />
               </div>
 
-              <div className="form-group">
-                <label htmlFor="additionalFields">Additional Fields (comma separated)</label>
-                <input 
-                  type="text" 
-                  id="additionalFields" 
-                  name="additionalFields" 
-                  value={formData.additionalFields} 
-                  onChange={handleInputChange}
-                  placeholder="e.g. Income, Business Type, Location"
-                />
-              </div>
-
-              <div className="form-group">
+              <div className={styles.formGroup}>
                 <label htmlFor="status">Status</label>
                 <select id="status" name="status" value={formData.status} onChange={handleInputChange} required>
                   <option value="active">Active</option>
@@ -415,9 +406,9 @@ const RevenueItems = () => {
                 </select>
               </div>
 
-              <div className="modal-actions">
-                <button type="button" className="cancel-button" onClick={closeModal}>Cancel</button>
-                <button type="submit" className="save-button">
+              <div className={styles.modalActions}>
+                <button type="button" className={styles.cancelButton} onClick={closeModal}>Cancel</button>
+                <button type="submit" className={styles.saveButton}>
                   {editingRevenueItem ? 'Update Revenue Item' : 'Add Revenue Item'}
                 </button>
               </div>

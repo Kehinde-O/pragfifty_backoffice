@@ -3,7 +3,7 @@ import {
   FiDollarSign, FiSearch, FiPlus, FiEdit2, FiTrash2, FiCheckCircle, FiXCircle,
   FiFileText, FiFilter, FiRefreshCw
 } from 'react-icons/fi';
-import './RevenueHeads.css';
+import styles from './StateRevenueHeads.module.css';
 
 const StateRevenueHeads = () => {
   const [revenueHeads, setRevenueHeads] = useState([]);
@@ -168,14 +168,14 @@ const StateRevenueHeads = () => {
   };
 
   return (
-    <div className="revenue-heads-container">
-      <div className="page-header">
-        <h1><FiDollarSign className="page-header-icon" /> State Revenue Heads</h1>
+    <div className={styles.revenueHeadsContainer}>
+      <div className={styles.pageHeader}>
+        <h1><FiDollarSign className={styles.pageHeaderIcon} /> State Revenue Heads</h1>
       </div>
 
-      <div className="header-actions">
-        <div className="search-box">
-          <FiSearch className="search-icon" />
+      <div className={styles.headerActions}>
+        <div className={styles.searchBox}>
+          <FiSearch className={styles.searchIcon} />
           <input
             type="text"
             placeholder="Search state revenue heads..."
@@ -184,8 +184,8 @@ const StateRevenueHeads = () => {
           />
         </div>
 
-        <div className="filter-dropdown">
-          <label htmlFor="typeFilter" className="filter-label">
+        <div className={styles.filterDropdown}>
+          <label htmlFor="typeFilter" className={styles.filterLabel}>
             <FiFilter /> Type:
           </label>
           <select
@@ -200,25 +200,25 @@ const StateRevenueHeads = () => {
           </select>
         </div>
 
-        <button className="add-button" onClick={openAddModal}>
+        <button className={styles.addButton} onClick={openAddModal}>
           <FiPlus /> Add State Revenue Head
         </button>
       </div>
 
-      <div className="table-container">
+      <div className={styles.tableContainer}>
         {loading && revenueHeads.length === 0 ? (
-          <div className="loading-indicator">
-            <FiRefreshCw className="spinning" />
+          <div className={styles.loadingIndicator}>
+            <FiRefreshCw className={styles.spinning} />
             <p>Loading state revenue heads...</p>
           </div>
         ) : filteredRevenueHeads.length === 0 ? (
-          <div className="no-results">
+          <div className={styles.noResults}>
             <FiFileText size={48} style={{ marginBottom: '1rem', color: '#94a3b8' }}/>
             <p>No state revenue heads found.</p>
             {(searchTerm || typeFilter !== 'all') && <p>Try adjusting your search or filter criteria.</p>}
           </div>
         ) : (
-          <table className="revenue-heads-table">
+          <table className={styles.revenueHeadsTable}>
             <thead>
               <tr>
                 <th>Name</th>
@@ -236,9 +236,9 @@ const StateRevenueHeads = () => {
               {filteredRevenueHeads.map(revenueHead => (
                 <tr key={revenueHead.id}>
                   <td>
-                    <div className="revenue-name">
-                      <span>{revenueHead.name}</span>
-                      <small className="revenue-description">{revenueHead.description}</small>
+                    <div className={styles.itemName}>
+                      <span className={styles.itemNameText}>{revenueHead.name}</span>
+                      <small className={styles.itemDescription}>{revenueHead.description}</small>
                     </div>
                   </td>
                   <td>{revenueHead.code}</td>
@@ -247,17 +247,17 @@ const StateRevenueHeads = () => {
                   <td>{formatCurrency(revenueHead.baseAmount)}</td>
                   <td>{revenueHead.glAccountCode}</td>
                   <td>
-                    <span className={`status-badge ${revenueHead.status === 'active' ? 'status-active' : 'status-inactive'}`}>
+                    <span className={`${styles.statusBadge} ${revenueHead.status === 'active' ? styles.statusActive : styles.statusInactive}`}>
                       {revenueHead.status === 'active' ? <FiCheckCircle /> : <FiXCircle />}
                       {revenueHead.status === 'active' ? 'Active' : 'Inactive'}
                     </span>
                   </td>
                   <td>{formatDateTime(revenueHead.lastUpdated)}</td>
-                  <td className="action-buttons">
-                    <button className="edit-button" title="Edit" onClick={() => openEditModal(revenueHead)}>
+                  <td className={styles.actionButtons}>
+                    <button className={styles.editButton} title="Edit" onClick={() => openEditModal(revenueHead)}>
                       <FiEdit2 />
                     </button>
-                    <button className="delete-button" title="Delete" onClick={() => handleDelete(revenueHead.id)}>
+                    <button className={styles.deleteButton} title="Delete" onClick={() => handleDelete(revenueHead.id)}>
                       <FiTrash2 />
                     </button>
                   </td>
@@ -269,23 +269,23 @@ const StateRevenueHeads = () => {
       </div>
 
       {showModal && (
-        <div className="modal-backdrop">
-          <div className="modal-content">
+        <div className={styles.modalBackdrop}>
+          <div className={styles.modalContent}>
             <h2>
               {editingRevenueHead ? <><FiEdit2 /> Edit State Revenue Head</> : <><FiPlus /> Add New State Revenue Head</>}
             </h2>
             <form onSubmit={handleSubmit}>
-              <div className="form-group">
+              <div className={styles.formGroup}>
                 <label htmlFor="name">Revenue Head Name</label>
                 <input type="text" id="name" name="name" value={formData.name} onChange={handleInputChange} required />
               </div>
               
-              <div className="form-row">
-                <div className="form-group">
+              <div className={styles.formRow}>
+                <div className={styles.formGroup}>
                   <label htmlFor="code">Revenue Code</label>
                   <input type="text" id="code" name="code" value={formData.code} onChange={handleInputChange} required />
                 </div>
-                <div className="form-group">
+                <div className={styles.formGroup}>
                   <label htmlFor="type">Type</label>
                   <select id="type" name="type" value={formData.type} onChange={handleInputChange} required>
                     <option value="Tax">Tax</option>
@@ -295,13 +295,13 @@ const StateRevenueHeads = () => {
                 </div>
               </div>
 
-              <div className="form-group">
+              <div className={styles.formGroup}>
                 <label htmlFor="description">Description</label>
                 <textarea id="description" name="description" value={formData.description} onChange={handleInputChange} required />
               </div>
 
-              <div className="form-row">
-                <div className="form-group">
+              <div className={styles.formRow}>
+                <div className={styles.formGroup}>
                   <label htmlFor="pricingLogic">Pricing Logic</label>
                   <select id="pricingLogic" name="pricingLogic" value={formData.pricingLogic} onChange={handleInputChange} required>
                     <option value="Fixed">Fixed</option>
@@ -310,7 +310,7 @@ const StateRevenueHeads = () => {
                     <option value="Formula">Formula</option>
                   </select>
                 </div>
-                <div className="form-group">
+                <div className={styles.formGroup}>
                   <label htmlFor="baseAmount">Base Amount (₦)</label>
                   <input 
                     type="number" 
@@ -325,12 +325,12 @@ const StateRevenueHeads = () => {
                 </div>
               </div>
 
-              <div className="form-row">
-                <div className="form-group">
+              <div className={styles.formRow}>
+                <div className={styles.formGroup}>
                   <label htmlFor="glAccountCode">GL Account Code</label>
                   <input type="text" id="glAccountCode" name="glAccountCode" value={formData.glAccountCode} onChange={handleInputChange} required />
                 </div>
-                <div className="form-group">
+                <div className={styles.formGroup}>
                   <label htmlFor="status">Status</label>
                   <select id="status" name="status" value={formData.status} onChange={handleInputChange} required>
                     <option value="active">Active</option>
@@ -339,9 +339,9 @@ const StateRevenueHeads = () => {
                 </div>
               </div>
 
-              <div className="modal-actions">
-                <button type="button" className="cancel-button" onClick={closeModal}>Cancel</button>
-                <button type="submit" className="save-button">
+              <div className={styles.modalActions}>
+                <button type="button" className={styles.cancelButton} onClick={closeModal}>Cancel</button>
+                <button type="submit" className={styles.saveButton}>
                   {editingRevenueHead ? 'Update Revenue Head' : 'Add Revenue Head'}
                 </button>
               </div>

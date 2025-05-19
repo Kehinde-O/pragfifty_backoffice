@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import './TaxpayerReturns.css';
+import styles from './TaxReturnProcess.module.css';
 import { 
   FiUser, FiCalendar, FiDollarSign, FiClock, 
   FiCheckCircle, FiAlertCircle, FiArrowLeft, FiDownload,
@@ -271,580 +271,405 @@ const TaxReturnProcess = () => {
   };
 
   return (
-    <div className="taxpayer-returns-container">
-      <div className="details-header">
-        <button className="back-button" onClick={handleBack}>
-          <FiArrowLeft className="btn-icon-sm" /> Back to Details
-        </button>
-        <h1><FiFileText /> Process Tax Return</h1>
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <div className={styles.titleContainer}>
+          <button className={styles.backButton} onClick={handleBack}>
+            <FiArrowLeft />
+          </button>
+          <div className={styles.title}>
+            Process Tax Return
+            <span className={styles.returnId}>{returnData?.returnNumber}</span>
+          </div>
+        </div>
       </div>
 
       {loading ? (
-        <div className="loading-section">
-          <div className="spinner"></div>
-          <p>Loading tax return details...</p>
+        <div className={styles.card}>
+          <div className={styles.loadingSection}>
+            <div className={styles.spinner}></div>
+            <p>Loading tax return details...</p>
+          </div>
         </div>
       ) : returnData ? (
-        <div className="process-content">
-          {/* Return Summary */}
-          <div className="process-summary">
-            <div className="summary-left">
-              <div className="return-badge">{returnData.returnNumber}</div>
-              <div className="summary-taxpayer">{returnData.taxpayer}</div>
-              <div className="summary-type">{returnData.type} • {returnData.year}</div>
-            </div>
-            <div className="summary-right">
-              <div className="summary-amount">
-                <div className="amount-label">Tax Due</div>
-                <div className="amount-value">{formatCurrency(returnData.amounts.taxDue)}</div>
-              </div>
-              <div className="summary-submission">
-                Submitted: {formatDateTime(returnData.submissionDate)}
-              </div>
-            </div>
-          </div>
-
-          {/* Progress Stepper */}
-          <div className="process-stepper">
+        <>
+          {/* Process steps navigation */}
+          <div className={styles.stepsContainer}>
             {Array.from({ length: totalSteps }, (_, i) => i + 1).map(step => (
               <div 
-                key={step} 
-                className={`step-item ${step === currentStep ? 'active' : ''} ${
-                  stepStatus[step].completed ? 'completed' : ''
-                } ${stepStatus[step].validated ? 'validated' : ''}`}
-                onClick={() => step < currentStep && setCurrentStep(step)}
+                key={step}
+                className={`${styles.step} ${
+                  currentStep === step ? styles.stepActive : ''
+                } ${
+                  stepStatus[step].completed ? styles.stepCompleted : ''
+                } ${
+                  stepStatus[step].completed && !stepStatus[step].validated ? styles.stepInvalid : ''
+                }`}
+                onClick={() => stepStatus[step].completed && setCurrentStep(step)}
               >
-                <div className="step-number">
-                  {stepStatus[step].completed ? <FiCheckCircle /> : step}
+                <div className={styles.stepNumber}>
+                  {step}
                 </div>
-                <div className="step-label">{getStepLabel(step)}</div>
-                {step < totalSteps && <div className="step-connector"></div>}
+                <div className={styles.stepLabel}>{getStepLabel(step)}</div>
               </div>
             ))}
           </div>
 
-          {/* Step Content */}
-          <div className="step-content">
-            {/* Step 1: Document Verification */}
-            {currentStep === 1 && (
-              <div className="step-container">
-                <div className="step-header">
-                  <h2>
-                    <FiClipboard /> Document Verification
-                    <span className="step-subtitle">
-                      Verify all required documents are properly submitted and accurate
-                    </span>
-                  </h2>
+          {/* Step 1: Document Verification */}
+          {currentStep === 1 && (
+            <div className={styles.stepContent}>
+              <div className={styles.card}>
+                <div className={styles.cardHeader}>
+                  <div className={styles.cardIcon}>
+                    <FiClipboard />
+                  </div>
+                  <h3 className={styles.cardTitle}>Document Verification</h3>
                 </div>
-
-                <div className="documents-checklist">
+                
+                <div className={styles.documentGrid}>
                   {documentChecklist.map(doc => (
-                    <div key={doc.id} className="document-item">
-                      <div className="document-info">
-                        <span className="document-name">
-                          {doc.name} {doc.required && <span className="required-badge">Required</span>}
-                        </span>
-                        <span className="document-status">
-                          {returnData.documents.some(d => d.name === doc.name) 
-                            ? 'Submitted on ' + formatDateTime(returnData.documents.find(d => d.name === doc.name).dateUploaded)
-                            : 'Not submitted'}
-                        </span>
+                    <div key={doc.id} className={styles.documentItem}>
+                      <div className={styles.documentInfo}>
+                        <div className={styles.documentName}>
+                          <FiFileText /> {doc.name}
+                        </div>
+                        {doc.required && (
+                          <div className={styles.documentRequired}>Required</div>
+                        )}
+                        {returnData.documents.find(d => d.name === doc.name) && (
+                          <div className={styles.documentMeta}>
+                            Size: {returnData.documents.find(d => d.name === doc.name).size} | 
+                            Uploaded: {formatDateTime(returnData.documents.find(d => d.name === doc.name).dateUploaded)}
+                          </div>
+                        )}
                       </div>
-                      <div className="document-actions">
-                        {returnData.documents.some(d => d.name === doc.name) && (
+                      <div className={styles.documentActions}>
+                        {returnData.documents.find(d => d.name === doc.name) && (
                           <button 
-                            className="preview-button"
+                            className={styles.previewButton} 
                             onClick={() => handleDocumentPreview(doc.name)}
                           >
                             <FiEye /> Preview
                           </button>
                         )}
                         <button 
-                          className={`verify-button ${doc.verified ? 'verified' : ''}`}
+                          className={`${styles.verifyButton} ${doc.verified ? styles.verified : ''}`}
                           onClick={() => handleDocumentVerify(doc.id)}
                         >
-                          {doc.verified ? <><FiCheckCircle /> Verified</> : 'Verify'}
+                          {doc.verified ? (
+                            <>
+                              <FiCheckCircle /> Verified
+                            </>
+                          ) : (
+                            <>
+                              <FiCheckSquare /> Verify
+                            </>
+                          )}
                         </button>
                       </div>
                     </div>
                   ))}
                 </div>
 
-                <div className="document-verification-notes">
+                <div className={styles.documentVerificationNotes}>
                   <h3><FiMessageSquare /> Verification Notes</h3>
-                  <textarea 
-                    placeholder="Enter any notes or observations about the submitted documents..."
+                  <textarea
+                    placeholder="Add any notes about document verification here..."
                     value={stepStatus[1].notes}
                     onChange={(e) => handleStepNoteChange(1, e.target.value)}
                     rows={4}
-                  />
+                  ></textarea>
                 </div>
 
-                <div className="verification-summary">
+                <div className={styles.verificationSummary}>
                   <h3><FiInfo /> Verification Summary</h3>
-                  <div className="verification-stats">
-                    <div className="stat-item">
-                      <div className="stat-label">Total Documents</div>
-                      <div className="stat-value">{documentChecklist.length}</div>
+                  <div className={styles.verificationStats}>
+                    <div className={styles.statItem}>
+                      <div className={styles.statLabel}>Total Documents</div>
+                      <div className={styles.statValue}>{documentChecklist.length}</div>
                     </div>
-                    <div className="stat-item">
-                      <div className="stat-label">Verified</div>
-                      <div className="stat-value">{documentChecklist.filter(d => d.verified).length}</div>
-                    </div>
-                    <div className="stat-item">
-                      <div className={`stat-label ${documentChecklist.filter(d => d.required && !d.verified).length > 0 ? 'text-red' : ''}`}>
-                        Required Missing
+                    <div className={styles.statItem}>
+                      <div className={styles.statLabel}>Verified</div>
+                      <div className={styles.statValue}>
+                        {documentChecklist.filter(doc => doc.verified).length}
                       </div>
-                      <div className={`stat-value ${documentChecklist.filter(d => d.required && !d.verified).length > 0 ? 'text-red' : ''}`}>
-                        {documentChecklist.filter(d => d.required && !d.verified).length}
+                    </div>
+                    <div className={styles.statItem}>
+                      <div className={styles.statLabel}>Required Verified</div>
+                      <div className={`${styles.statValue} ${
+                        documentChecklist.filter(doc => doc.required && !doc.verified).length > 0 
+                          ? styles.textRed 
+                          : ''
+                      }`}>
+                        {documentChecklist.filter(doc => doc.required && doc.verified).length} / {documentChecklist.filter(doc => doc.required).length}
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-            )}
+            </div>
+          )}
 
-            {/* Step 2: Assessment */}
-            {currentStep === 2 && (
-              <div className="step-container">
-                <div className="step-header">
-                  <h2>
-                    <FiDollarSign /> Assessment
-                    <span className="step-subtitle">
-                      Review and confirm financial details and tax assessment
-                    </span>
-                  </h2>
+          {/* Step 2: Assessment */}
+          {currentStep === 2 && (
+            <div className={styles.stepContent}>
+              <div className={styles.card}>
+                <div className={styles.cardHeader}>
+                  <div className={styles.cardIcon}>
+                    <FiDollarSign />
+                  </div>
+                  <h3 className={styles.cardTitle}>Assessment</h3>
                 </div>
-
-                <div className="assessment-form">
-                  <div className="assessment-field">
+                
+                <div className={styles.assessmentForm}>
+                  <div className={styles.assessmentField}>
                     <label>Gross Income</label>
                     <input 
                       type="text" 
                       value={formatCurrency(assessmentData.grossIncome)}
-                      onChange={(e) => handleAmountChange('grossIncome', e.target.value)} 
+                      onChange={(e) => handleAmountChange('grossIncome', e.target.value)}
                     />
                   </div>
-                  <div className="assessment-field">
+                  <div className={styles.assessmentField}>
                     <label>Total Deductions</label>
                     <input 
                       type="text" 
                       value={formatCurrency(assessmentData.totalDeductions)}
-                      onChange={(e) => handleAmountChange('totalDeductions', e.target.value)} 
+                      onChange={(e) => handleAmountChange('totalDeductions', e.target.value)}
                     />
                   </div>
-                  <div className="assessment-field">
+                  <div className={styles.assessmentField}>
                     <label>Taxable Income</label>
                     <input 
                       type="text" 
                       value={formatCurrency(assessmentData.taxableIncome)}
-                      readOnly
-                      className="read-only-field"
+                      disabled
                     />
                   </div>
-                  <div className="assessment-field">
+                  <div className={styles.assessmentField}>
                     <label>Tax Due</label>
                     <input 
                       type="text" 
                       value={formatCurrency(assessmentData.taxDue)}
-                      onChange={(e) => handleAmountChange('taxDue', e.target.value)} 
+                      onChange={(e) => handleAmountChange('taxDue', e.target.value)}
                     />
                   </div>
-                  <div className="assessment-field">
+                  <div className={styles.assessmentField}>
                     <label>Tax Paid</label>
                     <input 
                       type="text" 
                       value={formatCurrency(assessmentData.taxPaid)}
-                      onChange={(e) => handleAmountChange('taxPaid', e.target.value)} 
+                      onChange={(e) => handleAmountChange('taxPaid', e.target.value)}
                     />
                   </div>
-                  <div className="assessment-field">
-                    <label>Balance Due</label>
+                  <div className={styles.assessmentField}>
+                    <label>Balance</label>
                     <input 
                       type="text" 
                       value={formatCurrency(assessmentData.balance)}
-                      readOnly
-                      className={`read-only-field ${assessmentData.balance > 0 ? 'negative-value' : 'positive-value'}`}
+                      disabled
                     />
                   </div>
-                  <div className="assessment-field full-width">
+                  <div className={`${styles.assessmentField} ${styles.fullWidth}`}>
                     <label>Assessment Remarks</label>
-                    <textarea 
-                      placeholder="Enter any remarks about the assessment..."
+                    <textarea
+                      placeholder="Add any remarks or notes about the assessment here..."
                       value={assessmentData.remarks}
-                      onChange={(e) => setAssessmentData(prev => ({ ...prev, remarks: e.target.value }))}
-                      rows={3}
-                    />
-                  </div>
-                </div>
-
-                <div className="assessment-summary">
-                  <div className="assessment-changes">
-                    {assessmentData.adjustmentsApplied && (
-                      <div className="changes-badge">
-                        <FiEdit /> Adjustments Applied
-                      </div>
-                    )}
-                  </div>
-                  <div className="assessment-actions">
-                    <button className="process-button" onClick={() => {
-                      setStepStatus(prev => ({
-                        ...prev,
-                        [currentStep]: { ...prev[currentStep], completed: true, validated: true }
-                      }));
-                    }}>
-                      <FiCheckCircle /> Confirm Assessment
-                    </button>
+                      onChange={(e) => setAssessmentData({...assessmentData, remarks: e.target.value})}
+                      rows={4}
+                    ></textarea>
                   </div>
                 </div>
               </div>
-            )}
+            </div>
+          )}
 
-            {/* Step 3: Review */}
-            {currentStep === 3 && (
-              <div className="step-container">
-                <div className="step-header">
-                  <h2>
-                    <FiCheckSquare /> Review
-                    <span className="step-subtitle">
-                      Review all information and assess the tax return for accuracy
-                    </span>
-                  </h2>
+          {/* Step 3: Review */}
+          {currentStep === 3 && (
+            <div className={styles.stepContent}>
+              <div className={styles.card}>
+                <div className={styles.cardHeader}>
+                  <div className={styles.cardIcon}>
+                    <FiCheckSquare />
+                  </div>
+                  <h3 className={styles.cardTitle}>Return Review</h3>
                 </div>
-
-                <div className="review-content">
-                  <div className="review-sections">
-                    <div className="review-section">
-                      <h3><FiUser /> Taxpayer Information</h3>
-                      <div className="review-grid">
-                        <div className="review-item">
-                          <div className="review-label">Name</div>
-                          <div className="review-value">{returnData.taxpayer}</div>
-                        </div>
-                        <div className="review-item">
-                          <div className="review-label">Taxpayer ID</div>
-                          <div className="review-value">{returnData.taxpayerId}</div>
-                        </div>
-                        <div className="review-item">
-                          <div className="review-label">Contact</div>
-                          <div className="review-value">{returnData.contactInfo.phone}</div>
-                        </div>
-                        <div className="review-item">
-                          <div className="review-label">Email</div>
-                          <div className="review-value">{returnData.contactInfo.email}</div>
-                        </div>
-                      </div>
+                
+                <div className={styles.reviewOptions}>
+                  <div 
+                    className={`${styles.reviewOption} ${reviewDecision.isCorrect === true ? styles.selected : ''}`}
+                    onClick={() => handleReviewDecisionChange('isCorrect', true)}
+                  >
+                    <div className={`${styles.reviewOptionIcon} ${styles.correct}`}>
+                      <FiCheckCircle />
                     </div>
-
-                    <div className="review-section">
-                      <h3><FiFileText /> Return Information</h3>
-                      <div className="review-grid">
-                        <div className="review-item">
-                          <div className="review-label">Return Number</div>
-                          <div className="review-value">{returnData.returnNumber}</div>
-                        </div>
-                        <div className="review-item">
-                          <div className="review-label">Tax Type</div>
-                          <div className="review-value">{returnData.type}</div>
-                        </div>
-                        <div className="review-item">
-                          <div className="review-label">Year</div>
-                          <div className="review-value">{returnData.year}</div>
-                        </div>
-                        <div className="review-item">
-                          <div className="review-label">Submission Date</div>
-                          <div className="review-value">{formatDateTime(returnData.submissionDate)}</div>
-                        </div>
-                      </div>
+                    <div className={styles.reviewOptionLabel}>Return is Correct</div>
+                    <div className={styles.reviewOptionDesc}>
+                      All information provided in the return appears to be accurate and complete
                     </div>
-
-                    <div className="review-section">
-                      <h3><FiDollarSign /> Financial Assessment</h3>
-                      <div className="review-grid">
-                        <div className="review-item">
-                          <div className="review-label">Gross Income</div>
-                          <div className="review-value">{formatCurrency(assessmentData.grossIncome)}</div>
-                        </div>
-                        <div className="review-item">
-                          <div className="review-label">Total Deductions</div>
-                          <div className="review-value">{formatCurrency(assessmentData.totalDeductions)}</div>
-                        </div>
-                        <div className="review-item">
-                          <div className="review-label">Taxable Income</div>
-                          <div className="review-value">{formatCurrency(assessmentData.taxableIncome)}</div>
-                        </div>
-                        <div className="review-item">
-                          <div className="review-label">Tax Due</div>
-                          <div className="review-value highlight">{formatCurrency(assessmentData.taxDue)}</div>
-                        </div>
-                        <div className="review-item">
-                          <div className="review-label">Tax Paid</div>
-                          <div className="review-value">{formatCurrency(assessmentData.taxPaid)}</div>
-                        </div>
-                        <div className="review-item">
-                          <div className="review-label">Balance</div>
-                          <div className={`review-value ${assessmentData.balance > 0 ? 'negative' : ''}`}>
-                            {formatCurrency(assessmentData.balance)}
-                          </div>
-                        </div>
-                      </div>
-                      
-                      {assessmentData.remarks && (
-                        <div className="review-remarks">
-                          <div className="remarks-label">Assessment Remarks:</div>
-                          <div className="remarks-content">{assessmentData.remarks}</div>
-                        </div>
-                      )}
+                  </div>
+                  
+                  <div 
+                    className={`${styles.reviewOption} ${reviewDecision.isCorrect === false ? styles.selected : ''}`}
+                    onClick={() => handleReviewDecisionChange('isCorrect', false)}
+                  >
+                    <div className={`${styles.reviewOptionIcon} ${styles.incorrect}`}>
+                      <FiAlertCircle />
                     </div>
-
-                    {stepStatus[1].notes && (
-                      <div className="review-section">
-                        <h3><FiMessageSquare /> Document Verification Notes</h3>
-                        <div className="verification-notes">{stepStatus[1].notes}</div>
-                      </div>
-                    )}
-
-                    <div className="review-section">
-                      <h3><FiLayers /> Documents Status</h3>
-                      <div className="document-status-list">
-                        {documentChecklist.map(doc => (
-                          <div key={doc.id} className="document-status-item">
-                            <span className="document-name">{doc.name}</span>
-                            <span className={`document-verified ${doc.verified ? 'is-verified' : 'not-verified'}`}>
-                              {doc.verified ? <><FiCheckCircle /> Verified</> : <><FiX /> Not Verified</>}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="review-decision">
-                      <h3><FiCheckSquare /> Review Decision</h3>
-                      
-                      <div className="decision-options">
-                        <div className="decision-option">
-                          <input 
-                            type="radio" 
-                            id="correct" 
-                            name="review-decision" 
-                            checked={reviewDecision.isCorrect === true}
-                            onChange={() => handleReviewDecisionChange('isCorrect', true)}
-                          />
-                          <label htmlFor="correct">Information is correct and complete</label>
-                        </div>
-                        <div className="decision-option">
-                          <input 
-                            type="radio" 
-                            id="incorrect" 
-                            name="review-decision" 
-                            checked={reviewDecision.isCorrect === false}
-                            onChange={() => handleReviewDecisionChange('isCorrect', false)}
-                          />
-                          <label htmlFor="incorrect">Issues identified</label>
-                        </div>
-                      </div>
-                      
-                      {reviewDecision.isCorrect === false && (
-                        <div className="issues-container">
-                          <label>Issues Identified:</label>
-                          <textarea 
-                            placeholder="Describe the issues identified..."
-                            value={reviewDecision.issuesIdentified}
-                            onChange={(e) => handleReviewDecisionChange('issuesIdentified', e.target.value)}
-                            rows={3}
-                          />
-                          
-                          <label>Recommendations:</label>
-                          <textarea 
-                            placeholder="Provide recommendations..."
-                            value={reviewDecision.recommendations}
-                            onChange={(e) => handleReviewDecisionChange('recommendations', e.target.value)}
-                            rows={3}
-                          />
-                        </div>
-                      )}
+                    <div className={styles.reviewOptionLabel}>Issues Identified</div>
+                    <div className={styles.reviewOptionDesc}>
+                      There are issues or inconsistencies in the submitted return
                     </div>
                   </div>
                 </div>
+                
+                {reviewDecision.isCorrect === false && (
+                  <div className={styles.assessmentForm}>
+                    <div className={`${styles.assessmentField} ${styles.fullWidth}`}>
+                      <label>Issues Identified</label>
+                      <textarea
+                        placeholder="Describe the issues identified in the return..."
+                        value={reviewDecision.issuesIdentified}
+                        onChange={(e) => handleReviewDecisionChange('issuesIdentified', e.target.value)}
+                        rows={4}
+                      ></textarea>
+                    </div>
+                    <div className={`${styles.assessmentField} ${styles.fullWidth}`}>
+                      <label>Recommendations</label>
+                      <textarea
+                        placeholder="Provide recommendations for addressing the issues..."
+                        value={reviewDecision.recommendations}
+                        onChange={(e) => handleReviewDecisionChange('recommendations', e.target.value)}
+                        rows={4}
+                      ></textarea>
+                    </div>
+                  </div>
+                )}
               </div>
-            )}
+            </div>
+          )}
 
-            {/* Step 4: Final Decision */}
-            {currentStep === 4 && (
-              <div className="step-container">
-                <div className="step-header">
-                  <h2>
-                    <FiCheckCircle /> Final Decision
-                    <span className="step-subtitle">
-                      Approve, reject, or request more information for this tax return
-                    </span>
-                  </h2>
+          {/* Step 4: Final Decision */}
+          {currentStep === 4 && (
+            <div className={styles.stepContent}>
+              <div className={styles.card}>
+                <div className={styles.cardHeader}>
+                  <div className={styles.cardIcon}>
+                    <FiClipboard />
+                  </div>
+                  <h3 className={styles.cardTitle}>Final Decision</h3>
                 </div>
-
-                <div className="decision-summary">
-                  <div className="decision-section">
-                    <h3><FiInfo /> Processing Summary</h3>
-                    
-                    <div className="process-summary-content">
-                      <div className="summary-line">
-                        <strong>Document Verification:</strong> 
-                        <span className={`status-indicator ${stepStatus[1].validated ? 'validated' : 'not-validated'}`}>
-                          {stepStatus[1].validated ? 'Completed' : 'Incomplete'}
-                        </span>
-                      </div>
-                      
-                      <div className="summary-line">
-                        <strong>Financial Assessment:</strong> 
-                        <span className={`status-indicator ${stepStatus[2].validated ? 'validated' : 'not-validated'}`}>
-                          {stepStatus[2].validated ? 'Completed' : 'Incomplete'}
-                        </span>
-                      </div>
-                      
-                      <div className="summary-line">
-                        <strong>Review Decision:</strong> 
-                        <span className="decision-value">
-                          {reviewDecision.isCorrect === true 
-                            ? 'Information correct and complete' 
-                            : reviewDecision.isCorrect === false
-                              ? 'Issues identified'
-                              : 'No decision made'}
-                        </span>
-                      </div>
-                      
-                      {reviewDecision.isCorrect === false && (
-                        <>
-                          <div className="summary-issues">
-                            <strong>Issues:</strong> {reviewDecision.issuesIdentified}
-                          </div>
-                          <div className="summary-recommendations">
-                            <strong>Recommendations:</strong> {reviewDecision.recommendations}
-                          </div>
-                        </>
-                      )}
+                
+                <div className={styles.decisionOptions}>
+                  <div 
+                    className={styles.decisionOption}
+                    onClick={() => handleFinalDecision('Verified')}
+                  >
+                    <div className={`${styles.decisionOptionIcon} ${styles.verify}`}>
+                      <FiCheckCircle />
+                    </div>
+                    <div className={styles.decisionOptionLabel}>Verify Return</div>
+                    <div className={styles.decisionOptionDesc}>
+                      Accept and verify the return as complete and accurate
                     </div>
                   </div>
-
-                  <div className="final-decision-section">
-                    <h3>Make Final Decision</h3>
-                    
-                    <div className="decision-notes">
-                      <label>Decision Notes:</label>
-                      <textarea 
-                        placeholder="Enter any final notes about this decision..."
+                  
+                  <div 
+                    className={styles.decisionOption}
+                    onClick={() => handleFinalDecision('Rejected')}
+                  >
+                    <div className={`${styles.decisionOptionIcon} ${styles.reject}`}>
+                      <FiXCircle />
+                    </div>
+                    <div className={styles.decisionOptionLabel}>Reject Return</div>
+                    <div className={styles.decisionOptionDesc}>
+                      Reject the return due to issues that need to be corrected
+                    </div>
+                  </div>
+                  
+                  <div 
+                    className={styles.decisionOption}
+                    onClick={() => setFinalDecision({
+                      ...finalDecision,
+                      decision: 'Additional Information Requested'
+                    })}
+                  >
+                    <div className={`${styles.decisionOptionIcon} ${styles.request}`}>
+                      <FiInfo />
+                    </div>
+                    <div className={styles.decisionOptionLabel}>Request Information</div>
+                    <div className={styles.decisionOptionDesc}>
+                      Request additional information before making a final decision
+                    </div>
+                  </div>
+                </div>
+                
+                {finalDecision.decision === 'Additional Information Requested' && (
+                  <div className={styles.assessmentForm}>
+                    <div className={`${styles.assessmentField} ${styles.fullWidth}`}>
+                      <label>Additional Information Required</label>
+                      <textarea
+                        placeholder="Specify what additional information is needed..."
                         value={finalDecision.notes}
-                        onChange={(e) => setFinalDecision(prev => ({ ...prev, notes: e.target.value }))}
-                        rows={3}
-                      />
-                    </div>
-                    
-                    <div className="decision-buttons">
-                      <button 
-                        className="approve-button"
-                        onClick={() => handleFinalDecision('Approved')}
-                        disabled={!stepStatus[1].validated || !stepStatus[2].validated || reviewDecision.isCorrect === null}
-                      >
-                        <FiCheckCircle /> Approve Return
-                      </button>
-                      
-                      <button 
-                        className="request-info-button"
-                        onClick={() => handleFinalDecision('More Information Requested')}
-                      >
-                        <FiInfo /> Request More Information
-                      </button>
-                      
-                      <button 
-                        className="reject-button"
-                        onClick={() => handleFinalDecision('Rejected')}
-                      >
-                        <FiX /> Reject Return
-                      </button>
+                        onChange={(e) => setFinalDecision({...finalDecision, notes: e.target.value})}
+                        rows={4}
+                      ></textarea>
                     </div>
                   </div>
-                </div>
+                )}
               </div>
-            )}
-          </div>
+            </div>
+          )}
 
-          {/* Step Navigation */}
-          <div className="step-navigation">
-            <button 
-              className="prev-button"
-              onClick={handlePrevStep}
-              disabled={currentStep === 1}
-            >
-              <FiArrowLeft /> Previous Step
-            </button>
+          {/* Navigation buttons */}
+          <div className={styles.actionButtons}>
+            {currentStep > 1 && (
+              <button 
+                className={styles.prevButton}
+                onClick={handlePrevStep}
+              >
+                <FiArrowLeft /> Previous Step
+              </button>
+            )}
             
             {currentStep < totalSteps && (
               <button 
-                className="next-button"
+                className={styles.nextButton}
                 onClick={handleNextStep}
-                disabled={
-                  (currentStep === 1 && documentChecklist.filter(d => d.required).some(d => !d.verified)) ||
-                  (currentStep === 2 && !stepStatus[2].validated) ||
-                  (currentStep === 3 && reviewDecision.isCorrect === null)
-                }
               >
                 Next Step <FiArrowRight />
               </button>
             )}
           </div>
-        </div>
+        </>
       ) : (
-        <div className="empty-state">
-          <div className="empty-state-icon">
-            <FiFileText />
+        <div className={styles.card}>
+          <div className={styles.errorMessage}>
+            Return not found or an error occurred.
           </div>
-          <div className="empty-state-title">Return not found</div>
-          <p className="empty-state-text">The tax return you're looking for doesn't exist or has been removed.</p>
-          <button className="view-button" onClick={handleBack}>Back to Returns</button>
         </div>
       )}
-
-      {/* Add document preview modal */}
-      {showDocumentPreview && previewDocument && (
-        <div className="document-preview-modal">
-          <div className="document-preview-content">
-            <div className="preview-header">
-              <h3><FiFileText /> {previewDocument.name}</h3>
-              <button className="close-preview-button" onClick={closeDocumentPreview}>
-                <FiXCircle />
+      
+      {/* Document Preview Modal */}
+      {showDocumentPreview && (
+        <div className={styles.documentPreviewModal}>
+          <div className={styles.documentPreviewContent}>
+            <div className={styles.previewHeader}>
+              <h3>
+                <FiFileText /> {previewDocument}
+              </h3>
+              <button 
+                className={styles.closePreviewButton}
+                onClick={closeDocumentPreview}
+              >
+                <FiX />
               </button>
             </div>
-            <div className="preview-body">
-              {/* Display based on document type */}
-              {previewDocument.type === 'pdf' ? (
-                <div className="pdf-preview">
-                  <FiFileText className="preview-placeholder-icon" />
-                  <p>PDF Document: {previewDocument.name}</p>
-                  <p>Size: {previewDocument.size}</p>
-                  <p>Uploaded: {formatDateTime(previewDocument.dateUploaded)}</p>
-                  <button className="download-preview-button">
-                    <FiDownload /> Download to view full document
-                  </button>
-                </div>
-              ) : previewDocument.type === 'xlsx' ? (
-                <div className="excel-preview">
-                  <FiFileText className="preview-placeholder-icon" />
-                  <p>Excel Document: {previewDocument.name}</p>
-                  <p>Size: {previewDocument.size}</p>
-                  <p>Uploaded: {formatDateTime(previewDocument.dateUploaded)}</p>
-                  <button className="download-preview-button">
-                    <FiDownload /> Download to view full document
-                  </button>
-                </div>
-              ) : (
-                <div className="generic-preview">
-                  <FiFileText className="preview-placeholder-icon" />
-                  <p>Document: {previewDocument.name}</p>
-                  <p>Size: {previewDocument.size}</p>
-                  <p>Uploaded: {formatDateTime(previewDocument.dateUploaded)}</p>
-                  <button className="download-preview-button">
-                    <FiDownload /> Download to view full document
-                  </button>
-                </div>
-              )}
+            <div className={styles.previewBody}>
+              <div className={styles.previewPlaceholder}>
+                <FiFileText />
+                <p>Document preview not available in this demo</p>
+              </div>
             </div>
           </div>
         </div>

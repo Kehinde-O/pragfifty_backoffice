@@ -1,0 +1,576 @@
+/* UserActivity Module Styles */
+.container {
+  padding: 2.5rem;
+  background-color: #f8fafc;
+  min-height: calc(100vh - 70px);
+}
+
+/* Page Header */
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+  position: relative;
+}
+
+.pageTitle {
+  font-size: 1.875rem;
+  color: #1e293b;
+  display: flex;
+  align-items: center;
+  margin: 0;
+  font-weight: 700;
+  position: relative;
+}
+
+.pageTitle::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  width: 50px;
+  height: 4px;
+  background: linear-gradient(90deg, #10b981, #34d399);
+  border-radius: 2px;
+}
+
+.headerIcon {
+  margin-right: 0.875rem;
+  color: #10b981;
+  font-size: 1.5rem;
+}
+
+/* Header Actions */
+.headerActions {
+  display: flex;
+  gap: 1.25rem;
+  align-items: center;
+  margin: 0 0 1.75rem 0;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.searchBox {
+  position: relative;
+  flex: 1;
+  min-width: 300px;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #64748b;
+  pointer-events: none;
+  font-size: 1.1rem;
+}
+
+.searchInput {
+  width: 100%;
+  height: 50px;
+  line-height: 50px;
+  padding: 0 1rem 0 3rem;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 1rem;
+  background-color: #fff;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.searchInput:focus {
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+  outline: none;
+}
+
+.exportButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0 1.5rem;
+  background-color: #10b981;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  height: 50px;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+}
+
+.exportButton:hover {
+  background-color: #059669;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.25);
+}
+
+/* Filter Controls */
+.filterControls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.filterDropdown {
+  position: relative;
+  min-width: 200px;
+}
+
+.filterSelect {
+  appearance: none;
+  width: 100%;
+  height: 45px;
+  padding: 0 1rem;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  background-color: white;
+  font-size: 0.95rem;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding-right: 2.5rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1rem;
+}
+
+.filterSelect:focus {
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+  outline: none;
+}
+
+/* Activity Metrics */
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.metricCard {
+  background: linear-gradient(135deg, #ffffff, #f8fafc);
+  border-radius: 16px;
+  padding: 1.75rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+  display: flex;
+  align-items: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid rgba(226, 232, 240, 0.7);
+}
+
+.metricCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.metricIcon {
+  width: 54px;
+  height: 54px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1.25rem;
+  flex-shrink: 0;
+  font-size: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.loginIcon {
+  background-color: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+}
+
+.logoutIcon {
+  background-color: rgba(59, 130, 246, 0.12);
+  color: #3b82f6;
+}
+
+.profileIcon {
+  background-color: rgba(249, 115, 22, 0.12);
+  color: #f97316;
+}
+
+.totalIcon {
+  background-color: rgba(139, 92, 246, 0.12);
+  color: #8b5cf6;
+}
+
+.metricCard:hover .metricIcon {
+  transform: scale(1.1);
+}
+
+.metricContent {
+  flex: 1;
+}
+
+.metricLabel {
+  font-size: 1rem;
+  color: #64748b;
+  margin: 0 0 0.5rem 0;
+  font-weight: 500;
+}
+
+.metricValue {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+  color: #1e293b;
+  line-height: 1.2;
+}
+
+/* Activity Table */
+.tableContainer {
+  background-color: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+  margin-bottom: 2rem;
+  border: 1px solid #f1f5f9;
+}
+
+.table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.tableHead {
+  background-color: #f8fafc;
+}
+
+.tableHeader {
+  text-align: left;
+  padding: 1.25rem 1rem;
+  color: #475569;
+  font-weight: 600;
+  border-bottom: 1px solid #e2e8f0;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.tableData {
+  padding: 1.25rem 1rem;
+  border-bottom: 1px solid #f1f5f9;
+  color: #334155;
+  vertical-align: middle;
+}
+
+.tableRow:hover .tableData {
+  background-color: #f8fafc;
+}
+
+.tableRow:last-child .tableData {
+  border-bottom: none;
+}
+
+/* Activity Badge Styles */
+.activityBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 0.875rem;
+  border-radius: 50px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: white;
+  white-space: nowrap;
+}
+
+.badgeLogin {
+  background-color: #10b981;
+  color: white;
+}
+
+.badgeLogout {
+  background-color: #6b7280;
+  color: white;
+}
+
+.badgePasswordChange {
+  background-color: #f59e0b;
+  color: white;
+}
+
+.badgeUpdateProfile {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.badgeCreateRecord {
+  background-color: #8b5cf6;
+  color: white;
+}
+
+.badgeExportReport {
+  background-color: #ec4899;
+  color: white;
+}
+
+/* Loading & Empty States */
+.loadingIndicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  color: #64748b;
+  gap: 1.5rem;
+  text-align: center;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+  font-size: 2rem;
+  color: #10b981;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  color: #64748b;
+  gap: 1rem;
+  text-align: center;
+  padding: 2rem;
+}
+
+.emptyIcon {
+  font-size: 3rem;
+  color: #cbd5e1;
+}
+
+.emptyTitle {
+  font-size: 1.25rem;
+  color: #475569;
+  margin: 0;
+}
+
+.emptyMessage {
+  font-size: 0.9375rem;
+  color: #64748b;
+  margin: 0;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 1rem;
+  border-top: 1px solid #e2e8f0;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.paginationInfo {
+  color: #64748b;
+  font-size: 0.9375rem;
+}
+
+.paginationControls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pageNav {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pageNav:hover:not(.disabled) {
+  background-color: #f1f5f9;
+  color: #10b981;
+  border-color: #10b981;
+  transform: translateY(-2px);
+}
+
+.pageNav.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.pageNumbers {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pageNumber {
+  min-width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.875rem;
+  padding: 0 0.75rem;
+}
+
+.pageNumber:hover:not(.active) {
+  background-color: #f1f5f9;
+  color: #10b981;
+  border-color: #10b981;
+  transform: translateY(-2px);
+}
+
+.pageNumber.active {
+  background-color: #10b981;
+  border-color: #10b981;
+  color: white;
+  font-weight: 600;
+}
+
+/* User Info and Avatar */
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+}
+
+.userAvatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background-color: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: #475569;
+  border: 2px solid #e2e8f0;
+  font-size: 1rem;
+}
+
+.userName {
+  font-weight: 600;
+  color: #1e293b;
+  font-size: 0.9375rem;
+  margin-bottom: 0.25rem;
+}
+
+.userId {
+  font-size: 0.8125rem;
+  color: #64748b;
+}
+
+.deviceInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #475569;
+  font-size: 0.9375rem;
+}
+
+.deviceIcon {
+  color: #64748b;
+}
+
+/* Responsive Styles */
+@media (max-width: 1024px) {
+  .headerActions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .searchBox {
+    width: 100%;
+  }
+  
+  .filterControls {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1.5rem 1rem;
+  }
+  
+  .pageHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .metricCard {
+    padding: 1.25rem;
+  }
+  
+  .exportButton {
+    width: 100%;
+  }
+  
+  .tableContainer {
+    overflow-x: auto;
+  }
+  
+  .table {
+    min-width: 800px;
+  }
+  
+  .pagination {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .paginationInfo {
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+}
+
+.screenReaderOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+} 

@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { 
   FiFileText, FiSearch, FiDownload, FiCheck, FiArrowLeft, FiArrowRight,
-  FiClock, FiCheckCircle, FiAlertCircle, FiEye, FiPlayCircle
+  FiClock, FiCheckCircle, FiAlertCircle, FiEye, FiPlayCircle, FiChevronUp, FiChevronDown
 } from 'react-icons/fi';
-import './TaxpayerReturns.css';
+import styles from './TaxpayerReturns.module.css';
 import { useNavigate } from 'react-router-dom';
 
 const TaxpayerReturns = () => {
@@ -129,6 +129,17 @@ const TaxpayerReturns = () => {
     console.log('Exporting data for', filteredReturns.length, 'returns');
     // Implementation would export data
   };
+  
+  const handleSort = (key) => {
+    let direction = 'asc';
+    if (sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    } else if (sortConfig.key === key && sortConfig.direction === 'desc') {
+      key = '';
+      direction = '';
+    }
+    setSortConfig({ key, direction });
+  };
 
   // Filter returns based on current filters
   const filteredReturns = useMemo(() => {
@@ -168,57 +179,64 @@ const TaxpayerReturns = () => {
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
-    <div className="taxpayer-returns-container">
-      <h1><FiFileText /> Tax Returns Management</h1>
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <h1 className={styles.title}>
+          Tax Returns Management
+          <div className={styles.titleIconContainer}>
+            <FiFileText />
+          </div>
+        </h1>
+        <p className={styles.subtitle}>View and manage all tax returns submitted by taxpayers</p>
+      </div>
       
       {/* Stats Dashboard */}
-      <div className="returns-stats">
-        <div className="stat-card total">
-          <div className="stat-title">Total Returns</div>
-          <div className="stat-value">{stats.total}</div>
-          <div className="stat-icon" style={{ backgroundColor: '#f0fdfa', color: '#0d9488' }}>
-            <FiFileText className="btn-icon-md" />
-          </div>
+      <div className={styles.statsRow}>
+        <div className={`${styles.statCard} ${styles.totalStat}`}>
+          <div className={styles.statTitle}>Total Returns</div>
+          <div className={styles.statValue}>{stats.total}</div>
+          <div className={styles.statSubtext}>All tax returns in the system</div>
+          <FiFileText className={styles.statIcon} />
         </div>
-        <div className="stat-card pending">
-          <div className="stat-title">Pending</div>
-          <div className="stat-value">{stats.pending}</div>
-          <div className="stat-icon" style={{ backgroundColor: '#fffbeb', color: '#d97706' }}>
-            <FiClock className="btn-icon-md" />
-          </div>
+        <div className={`${styles.statCard} ${styles.pendingStat}`}>
+          <div className={styles.statTitle}>Pending</div>
+          <div className={styles.statValue}>{stats.pending}</div>
+          <div className={styles.statSubtext}>Returns awaiting verification</div>
+          <FiClock className={styles.statIcon} />
         </div>
-        <div className="stat-card verified">
-          <div className="stat-title">Verified</div>
-          <div className="stat-value">{stats.verified}</div>
-          <div className="stat-icon" style={{ backgroundColor: '#eff6ff', color: '#2563eb' }}>
-            <FiCheckCircle className="btn-icon-md" />
-          </div>
+        <div className={`${styles.statCard} ${styles.verifiedStat}`}>
+          <div className={styles.statTitle}>Verified</div>
+          <div className={styles.statValue}>{stats.verified}</div>
+          <div className={styles.statSubtext}>Successfully verified returns</div>
+          <FiCheckCircle className={styles.statIcon} />
         </div>
-        <div className="stat-card rejected">
-          <div className="stat-title">Rejected</div>
-          <div className="stat-value">{stats.rejected}</div>
-          <div className="stat-icon" style={{ backgroundColor: '#fef2f2', color: '#dc2626' }}>
-            <FiAlertCircle className="btn-icon-md" />
-          </div>
+        <div className={`${styles.statCard} ${styles.rejectedStat}`}>
+          <div className={styles.statTitle}>Rejected</div>
+          <div className={styles.statValue}>{stats.rejected}</div>
+          <div className={styles.statSubtext}>Returns with issues</div>
+          <FiAlertCircle className={styles.statIcon} />
         </div>
       </div>
       
-      <div className="returns-card">
-        <div className="returns-header">
-          <h2>Tax Returns List</h2>
-          <div className="returns-actions">
-            <div className="search-control">
+      <div className={styles.tableCard}>
+        <div className={styles.tableHeader}>
+          <h2 className={styles.tableTitle}>
+            <FiFileText className={styles.tableIcon} /> Tax Returns List
+          </h2>
+          <div className={styles.filterContainer}>
+            <div className={styles.searchBox}>
+              <FiSearch className={styles.searchIcon} />
               <input
+                className={styles.searchInput}
                 type="text"
-                placeholder="Search returns..."
+                placeholder="Search by taxpayer or return number..."
                 value={searchTerm}
                 onChange={handleSearchChange}
               />
-              <FiSearch className="btn-icon-sm" />
             </div>
             
             <select 
-              className="filter-select"
+              className={styles.filterSelect}
               value={statusFilter}
               onChange={(e) => handleFilterChange('status', e.target.value)}
             >
@@ -229,7 +247,7 @@ const TaxpayerReturns = () => {
             </select>
             
             <select 
-              className="filter-select"
+              className={styles.filterSelect}
               value={yearFilter}
               onChange={(e) => handleFilterChange('year', e.target.value)}
             >
@@ -239,125 +257,203 @@ const TaxpayerReturns = () => {
               <option value="2020">2020</option>
             </select>
             
-            <button className="export-button" onClick={handleExportData}>
-              <FiDownload className="btn-icon-sm" /> Export
+            <button className={styles.exportButton} onClick={handleExportData}>
+              <FiDownload /> Export
             </button>
           </div>
         </div>
         
         {loading ? (
-          <div className="loading-section">
-            <div className="spinner"></div>
+          <div className={styles.loadingState}>
+            <div className={styles.spinner}></div>
             <p>Loading tax returns...</p>
           </div>
-        ) : filteredReturns.length > 0 ? (
+        ) : currentItems.length === 0 ? (
+          <div className={styles.emptyState}>
+            <FiFileText className={styles.emptyStateIcon} />
+            <h3 className={styles.emptyStateTitle}>No tax returns found</h3>
+            <p className={styles.emptyStateText}>
+              {searchTerm || statusFilter !== 'all' || yearFilter !== 'all' 
+                ? 'Try adjusting your search or filter criteria.'
+                : 'There are no tax returns in the system yet.'}
+            </p>
+            {(searchTerm || statusFilter !== 'all' || yearFilter !== 'all') && (
+              <button className={styles.filterButton} onClick={clearFilters}>
+                Clear all filters
+              </button>
+            )}
+          </div>
+        ) : (
           <>
-            <div className="returns-table-container">
-              <table className="data-table returns-table">
+            <div className={styles.tableContainer}>
+              <table className={styles.dataTable}>
                 <thead>
                   <tr>
-                    <th className="checkbox-cell">
+                    <th className={styles.checkboxCell}>
                       <input 
                         type="checkbox" 
-                        className="checkbox-input"
+                        className={styles.checkbox}
                         checked={selectAll}
                         onChange={handleSelectAll}
                       />
                     </th>
-                    <th>Return #</th>
-                    <th>Taxpayer</th>
-                    <th>Year</th>
-                    <th>Type</th>
-                    <th>Submission Date</th>
-                    <th>Status</th>
-                    <th>Actions</th>
+                    <th 
+                      className={styles.sortableHeaderCell} 
+                      onClick={() => handleSort('returnNumber')}
+                    >
+                      <div className={styles.headerCellContent}>
+                        Return #
+                        {sortConfig.key === 'returnNumber' && (
+                          sortConfig.direction === 'asc' 
+                            ? <FiChevronUp className={`${styles.sortIcon} ${styles.sortIconActive}`} />
+                            : <FiChevronDown className={`${styles.sortIcon} ${styles.sortIconActive}`} />
+                        )}
+                      </div>
+                    </th>
+                    <th 
+                      className={styles.sortableHeaderCell}
+                      onClick={() => handleSort('taxpayer')}
+                    >
+                      <div className={styles.headerCellContent}>
+                        Taxpayer
+                        {sortConfig.key === 'taxpayer' && (
+                          sortConfig.direction === 'asc' 
+                            ? <FiChevronUp className={`${styles.sortIcon} ${styles.sortIconActive}`} />
+                            : <FiChevronDown className={`${styles.sortIcon} ${styles.sortIconActive}`} />
+                        )}
+                      </div>
+                    </th>
+                    <th className={styles.tableHeaderCell}>Type</th>
+                    <th 
+                      className={styles.sortableHeaderCell}
+                      onClick={() => handleSort('year')}
+                    >
+                      <div className={styles.headerCellContent}>
+                        Year
+                        {sortConfig.key === 'year' && (
+                          sortConfig.direction === 'asc' 
+                            ? <FiChevronUp className={`${styles.sortIcon} ${styles.sortIconActive}`} />
+                            : <FiChevronDown className={`${styles.sortIcon} ${styles.sortIconActive}`} />
+                        )}
+                      </div>
+                    </th>
+                    <th 
+                      className={styles.sortableHeaderCell}
+                      onClick={() => handleSort('submissionDate')}
+                    >
+                      <div className={styles.headerCellContent}>
+                        Submitted
+                        {sortConfig.key === 'submissionDate' && (
+                          sortConfig.direction === 'asc' 
+                            ? <FiChevronUp className={`${styles.sortIcon} ${styles.sortIconActive}`} />
+                            : <FiChevronDown className={`${styles.sortIcon} ${styles.sortIconActive}`} />
+                        )}
+                      </div>
+                    </th>
+                    <th 
+                      className={styles.sortableHeaderCell}
+                      onClick={() => handleSort('status')}
+                    >
+                      <div className={styles.headerCellContent}>
+                        Status
+                        {sortConfig.key === 'status' && (
+                          sortConfig.direction === 'asc' 
+                            ? <FiChevronUp className={`${styles.sortIcon} ${styles.sortIconActive}`} />
+                            : <FiChevronDown className={`${styles.sortIcon} ${styles.sortIconActive}`} />
+                        )}
+                      </div>
+                    </th>
+                    <th className={styles.tableHeaderCell}>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {currentItems.map(item => {
-                    const isSelected = selectedReturns.includes(item.id);
-                    return (
-                      <tr key={item.id} className={isSelected ? 'selected' : ''}>
-                        <td className="checkbox-cell">
-                          <input 
-                            type="checkbox" 
-                            className="checkbox-input"
-                            checked={isSelected}
-                            onChange={() => handleSelectReturn(item.id)}
-                          />
-                        </td>
-                        <td>{item.returnNumber}</td>
-                        <td>{item.taxpayer}</td>
-                        <td>{item.year}</td>
-                        <td>{item.type}</td>
-                        <td>{formatDateTime(item.submissionDate)}</td>
-                        <td>
-                          <span className={`status-badge status-${item.status.toLowerCase()}`}>
-                            {item.status === 'Pending' && <FiClock className="btn-icon-sm" />}
-                            {item.status === 'Verified' && <FiCheckCircle className="btn-icon-sm" />}
-                            {item.status === 'Rejected' && <FiAlertCircle className="btn-icon-sm" />}
-                            {item.status}
-                          </span>
-                        </td>
-                        <td className="action-buttons">
-                          <div style={{ display: 'flex', flexDirection: 'row', gap: '0.5rem', flexWrap: 'wrap' }}>
-                            <button className="view-button" aria-label="View Details" onClick={() => handleViewDetails(item)}>
-                              <FiEye className="btn-icon-sm" /> View Details
+                  {currentItems.map(item => (
+                    <tr 
+                      key={item.id} 
+                      className={`${styles.tableRow} ${selectedReturns.includes(item.id) ? styles.selectedRow : ''}`}
+                    >
+                      <td className={styles.checkboxCell}>
+                        <input 
+                          type="checkbox" 
+                          className={styles.checkbox}
+                          checked={selectedReturns.includes(item.id)}
+                          onChange={() => handleSelectReturn(item.id)}
+                        />
+                      </td>
+                      <td className={styles.tableCell}>{item.returnNumber}</td>
+                      <td className={styles.tableCell}>{item.taxpayer}</td>
+                      <td className={styles.tableCell}>{item.type}</td>
+                      <td className={styles.tableCell}>{item.year}</td>
+                      <td className={styles.tableCell}>{formatDateTime(item.submissionDate)}</td>
+                      <td className={styles.tableCell}>
+                        <span className={`${styles.statusBadge} ${
+                          item.status === 'Pending' ? styles.pendingBadge : 
+                          item.status === 'Verified' ? styles.verifiedBadge : 
+                          styles.rejectedBadge
+                        }`}>
+                          {item.status === 'Pending' && <FiClock />}
+                          {item.status === 'Verified' && <FiCheckCircle />}
+                          {item.status === 'Rejected' && <FiAlertCircle />}
+                          {item.status}
+                        </span>
+                      </td>
+                      <td className={styles.tableCell}>
+                        <div className={styles.actionButtons}>
+                          <button 
+                            className={styles.viewButton}
+                            onClick={() => handleViewDetails(item)}
+                          >
+                            <FiEye /> View
+                          </button>
+                          {item.status !== 'Verified' && (
+                            <button 
+                              className={styles.processButton}
+                              onClick={() => handleProcessReturn(item)}
+                            >
+                              <FiPlayCircle /> Process
                             </button>
-                            {item.status !== 'Verified' && (
-                              <button className="process-button" aria-label="Process Return" onClick={() => handleProcessReturn(item)}>
-                                <FiPlayCircle className="btn-icon-sm" /> Process
-                              </button>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
             
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="pagination">
+            <div className={styles.paginationContainer}>
+              <div className={styles.paginationInfo}>
+                Showing {indexOfFirstItem + 1} to {Math.min(indexOfLastItem, sortedReturns.length)} of {sortedReturns.length} entries
+              </div>
+              <div className={styles.paginationControls}>
                 <button 
-                  className="page-button" 
-                  onClick={() => paginate(currentPage - 1)}
+                  className={styles.pageButton}
+                  onClick={() => paginate(1)}
                   disabled={currentPage === 1}
                 >
-                  <FiArrowLeft className="btn-icon-sm" />
+                  <FiArrowLeft className={styles.pageButtonIcon} />
                 </button>
                 
-                {Array.from({ length: totalPages }).map((_, index) => (
+                {[...Array(totalPages)].map((_, i) => (
                   <button
-                    key={index}
-                    className={`page-button ${currentPage === index + 1 ? 'active' : ''}`}
-                    onClick={() => paginate(index + 1)}
+                    key={i + 1}
+                    className={`${styles.pageButton} ${currentPage === i + 1 ? styles.pageButtonActive : ''}`}
+                    onClick={() => paginate(i + 1)}
                   >
-                    {index + 1}
+                    {i + 1}
                   </button>
                 ))}
                 
                 <button 
-                  className="page-button" 
-                  onClick={() => paginate(currentPage + 1)}
+                  className={styles.pageButton}
+                  onClick={() => paginate(totalPages)}
                   disabled={currentPage === totalPages}
                 >
-                  <FiArrowRight className="btn-icon-sm" />
+                  <FiArrowRight className={styles.pageButtonIcon} />
                 </button>
               </div>
-            )}
-          </>
-        ) : (
-          <div className="empty-state">
-            <div className="empty-state-icon">
-              <FiFileText />
             </div>
-            <div className="empty-state-title">No tax returns found</div>
-            <p className="empty-state-text">Try adjusting your filters or search terms</p>
-            <button className="view-button" onClick={clearFilters}>Clear All Filters</button>
-          </div>
+          </>
         )}
       </div>
     </div>

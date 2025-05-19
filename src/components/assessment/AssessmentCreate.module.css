@@ -1,0 +1,597 @@
+/* AssessmentCreate.module.css */
+.createContainer {
+  padding: 1.5rem;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Page Header */
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.pageHeader h1 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+  display: flex;
+  align-items: center;
+}
+
+.pageHeaderIcon {
+  margin-right: 0.75rem;
+  color: #0891b2; /* Cyan-600 */
+}
+
+.backButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  background-color: white;
+  color: #475569;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.backButton:hover {
+  border-color: #cbd5e1;
+  background-color: #f8fafc;
+}
+
+/* Form Stepper */
+.stepper {
+  display: flex;
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.stepper::before {
+  content: '';
+  position: absolute;
+  top: 24px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: #e2e8f0;
+  z-index: 1;
+}
+
+.step {
+  flex: 1;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+}
+
+.stepIcon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: white;
+  border: 2px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 0.5rem;
+  color: #64748b;
+  transition: all 0.2s ease-in-out;
+}
+
+.stepActive .stepIcon {
+  background-color: #0891b2; /* Cyan-600 */
+  border-color: #0891b2; /* Cyan-600 */
+  color: white;
+}
+
+.stepCompleted .stepIcon {
+  background-color: #10b981; /* Emerald-500 */
+  border-color: #10b981; /* Emerald-500 */
+  color: white;
+}
+
+.stepLabel {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #64748b;
+}
+
+.stepActive .stepLabel {
+  color: #0891b2; /* Cyan-600 */
+  font-weight: 600;
+}
+
+.stepCompleted .stepLabel {
+  color: #10b981; /* Emerald-500 */
+}
+
+/* Card Styles */
+.card {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.cardHeader h2 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cardIcon {
+  color: #0891b2; /* Cyan-600 */
+}
+
+/* Form Styling */
+.formSection {
+  margin-bottom: 2rem;
+}
+
+.formSectionTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 1rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.formRow {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 1rem;
+}
+
+.formLabel {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #1e293b;
+}
+
+.formRequired {
+  color: #ef4444; /* Red-500 */
+  margin-left: 0.25rem;
+}
+
+.formLabelHint {
+  font-size: 0.75rem;
+  font-weight: normal;
+  color: #64748b;
+}
+
+.formInput,
+.formSelect,
+.formTextarea {
+  width: 100%;
+  padding: 0.625rem 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  color: #1e293b;
+}
+
+.formInput:focus,
+.formSelect:focus,
+.formTextarea:focus {
+  outline: none;
+  border-color: #0891b2; /* Cyan-600 */
+  box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.1);
+}
+
+.formInputError {
+  border-color: #ef4444; /* Red-500 */
+}
+
+.formInputError:focus {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.formError {
+  font-size: 0.75rem;
+  color: #ef4444; /* Red-500 */
+  margin-top: 0.25rem;
+}
+
+.formTextarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.formFileUpload {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0.625rem 0.75rem;
+  border: 1px dashed #e2e8f0;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  color: #64748b;
+  background-color: #f8fafc;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.formFileUpload:hover {
+  background-color: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.formFileUpload input[type="file"] {
+  display: none;
+}
+
+.formFileLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+  cursor: pointer;
+}
+
+.formRadioGroup,
+.formCheckboxGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.formRadio,
+.formCheckbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.formRadio input,
+.formCheckbox input {
+  cursor: pointer;
+}
+
+/* Item Table */
+.itemsTable {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  margin-bottom: 1rem;
+}
+
+.itemsTable th {
+  background-color: #f8fafc;
+  padding: 0.75rem 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #64748b;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.itemsTable td {
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  color: #1e293b;
+  border-bottom: 1px solid #e2e8f0;
+  vertical-align: middle;
+}
+
+.itemActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.itemActionButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  border: none;
+  background-color: transparent;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.itemActionButton:hover {
+  background-color: #f1f5f9;
+}
+
+.deleteButton {
+  color: #ef4444; /* Red-500 */
+}
+
+.deleteButton:hover {
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
+.addItemButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: 1px dashed #cbd5e1;
+  border-radius: 6px;
+  background-color: #f8fafc;
+  color: #0891b2; /* Cyan-600 */
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.addItemButton:hover {
+  background-color: #f1f5f9;
+  border-color: #0891b2; /* Cyan-600 */
+}
+
+/* Calculations */
+.calculationItem {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+}
+
+.calculationItem:not(:last-child) {
+  border-bottom: 1px dashed #e2e8f0;
+}
+
+.calculationLabel {
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
+.calculationValue {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #1e293b;
+}
+
+.total {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+/* Taxpayer Search Results */
+.searchResults {
+  margin-top: 1rem;
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+}
+
+.searchResultItem {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e2e8f0;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.searchResultItem:last-child {
+  border-bottom: none;
+}
+
+.searchResultItem:hover {
+  background-color: #f8fafc;
+}
+
+.searchResultName {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #1e293b;
+  margin-bottom: 0.25rem;
+}
+
+.searchResultDetails {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+/* Form Actions */
+.formActions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2rem;
+}
+
+.formActionButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.buttonPrimary {
+  background-color: #0891b2; /* Cyan-600 */
+  color: white;
+  border: none;
+}
+
+.buttonPrimary:hover {
+  background-color: #0e7490; /* Cyan-700 */
+}
+
+.buttonSecondary {
+  background-color: white;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+}
+
+.buttonSecondary:hover {
+  background-color: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.buttonDanger {
+  background-color: white;
+  color: #ef4444; /* Red-500 */
+  border: 1px solid #ef4444; /* Red-500 */
+}
+
+.buttonDanger:hover {
+  background-color: rgba(239, 68, 68, 0.05);
+}
+
+/* Summary Section */
+.summarySection {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.summaryTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 1rem 0;
+}
+
+.summaryRow {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.summaryItem {
+  display: flex;
+  justify-content: space-between;
+}
+
+.summaryLabel {
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
+.summaryValue {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #1e293b;
+  text-align: right;
+}
+
+/* Loading indicator */
+.loadingOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.loadingIndicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  gap: 1rem;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.loadingIndicator p {
+  color: #64748b;
+  font-size: 0.875rem;
+}
+
+.spinning {
+  animation: spin 1s linear infinite;
+  color: #0891b2; /* Cyan-600 */
+  font-size: 1.5rem;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .formActions {
+    flex-direction: column-reverse;
+    gap: 0.75rem;
+  }
+  
+  .formActionButton {
+    width: 100%;
+  }
+  
+  .stepper {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .stepper::before {
+    display: none;
+  }
+  
+  .step {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .stepIcon {
+    margin: 0;
+  }
+} 

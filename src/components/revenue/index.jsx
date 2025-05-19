@@ -1,33 +1,14 @@
 import React from 'react';
+import RevenueHeadsComponent from './RevenueHeads';
+import StateRevenueHeadsComponent from './StateRevenueHeads';
+import LgaRevenueHeadsComponent from './LgaRevenueHeads';
+import RevenueItemsComponent from './RevenueItems';
 
-// Create placeholder components
-const RevenueHeads = () => (
-  <div className="revenue-heads">
-    <h2>Revenue Heads</h2>
-    <p>This is a placeholder for the Revenue Heads component</p>
-  </div>
-);
-
-const StateRevenueHeads = () => (
-  <div className="state-revenue-heads">
-    <h2>State Revenue Heads</h2>
-    <p>This is a placeholder for the State Revenue Heads component</p>
-  </div>
-);
-
-const LgaRevenueHeads = () => (
-  <div className="lga-revenue-heads">
-    <h2>LGA Revenue Heads</h2>
-    <p>This is a placeholder for the LGA Revenue Heads component</p>
-  </div>
-);
-
-const RevenueItems = () => (
-  <div className="revenue-items">
-    <h2>Revenue Items</h2>
-    <p>This is a placeholder for the Revenue Items component</p>
-  </div>
-);
+// Export the actual components
+const RevenueHeads = RevenueHeadsComponent;
+const StateRevenueHeads = StateRevenueHeadsComponent;
+const LgaRevenueHeads = LgaRevenueHeadsComponent;
+const RevenueItems = RevenueItemsComponent;
 
 export {
   RevenueHeads,

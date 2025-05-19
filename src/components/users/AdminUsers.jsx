@@ -5,9 +5,10 @@ import {
   FiUsers, FiUserCheck, FiUserX, FiFilter, FiCalendar,
   FiChevronLeft, FiChevronRight, FiInfo, FiMoreVertical,
   FiEye, FiKey, FiAlertTriangle, FiSliders, FiChevronsLeft,
-  FiChevronsRight, FiActivity, FiLogIn, FiXCircle
+  FiChevronsRight, FiActivity, FiLogIn, FiXCircle, FiChevronUp, FiChevronDown
 } from 'react-icons/fi';
-import './AdminUsers.css';
+import styles from './AdminUsers.module.css';
+import { Card, StatsCard } from '../common/ui';
 
 const AdminUsers = () => {
   // State for admin users
@@ -27,7 +28,7 @@ const AdminUsers = () => {
   
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [itemsPerPage] = useState(5);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -88,24 +89,6 @@ const AdminUsers = () => {
       setSelectedUsers(selectedUsers.filter(userId => userId !== id));
     } else {
       setSelectedUsers([...selectedUsers, id]);
-    }
-  };
-
-  // Bulk actions
-  const handleBulkAction = (action) => {
-    if (action === 'activate') {
-      setAdmins(admins.map(admin => 
-        selectedUsers.includes(admin.id) ? { ...admin, status: 'active' } : admin
-      ));
-    } else if (action === 'deactivate') {
-      setAdmins(admins.map(admin => 
-        selectedUsers.includes(admin.id) ? { ...admin, status: 'inactive' } : admin
-      ));
-    } else if (action === 'delete') {
-      if (window.confirm(`Are you sure you want to delete ${selectedUsers.length} users?`)) {
-        setAdmins(admins.filter(admin => !selectedUsers.includes(admin.id)));
-        setSelectedUsers([]);
-      }
     }
   };
 
@@ -231,12 +214,6 @@ const AdminUsers = () => {
     setCurrentPage(totalPages);
   };
   
-  // Handle items per page change
-  const handleItemsPerPageChange = (e) => {
-    setItemsPerPage(Number(e.target.value));
-    setCurrentPage(1); // Reset to first page when changing items per page
-  };
-
   // Add new admin user
   const handleAddAdmin = (e) => {
     e.preventDefault();
@@ -310,12 +287,6 @@ const AdminUsers = () => {
     // In a real app, this might navigate to a user detail page or open a modal
   };
 
-  // Reset user password (placeholder function)
-  const resetUserPassword = (admin) => {
-    alert(`Password reset initiated for ${admin.name}`);
-    // In a real app, this would trigger a password reset flow
-  };
-
   // Close modal
   const closeModal = () => {
     setShowAddModal(false);
@@ -342,663 +313,540 @@ const AdminUsers = () => {
   
   // Get unique roles and count
   const roles = [...new Set(admins.map(admin => admin.role))];
-  const roleData = roles.map(role => ({
-    name: role,
-    count: admins.filter(admin => admin.role === role).length
-  }));
-
-  // Recent login stats (placeholder data - in a real app, this would be calculated)
-  const loginStats = {
-    today: 2,
-    thisWeek: 5,
-    thisMonth: 12
-  };
   
   return (
-    <div className="admin-users-container">
-      <div className="page-header">
-        <h1><FiUsers className="page-header-icon" /> Admin Users Management</h1>
+    <div className={styles.dashboard}>
+      <div className={styles.dashboardHeader}>
+        <h1 className={styles.dashboardTitle}>
+          <FiUsers className={styles.headerIcon} /> Admin Users Management
+        </h1>
+        <div className={styles.dashboardActions}>
+          <button className={styles.addButton} onClick={() => setShowAddModal(true)}>
+            <FiPlus /> Add New User
+          </button>
+        </div>
       </div>
       
       {/* User Statistics Section */}
       {!loading && (
-        <div className="user-stats">
-          <div className="stat-card">
-            <div className="stat-icon total-icon">
-              <FiUsers />
-            </div>
-            <div className="stat-content">
-              <h3>Total Admin Users</h3>
-              <p className="stat-value">{totalAdmins}</p>
-            </div>
-          </div>
+        <div className={styles.statsGrid}>
+          <StatsCard 
+            title="Total Admin Users"
+            value={totalAdmins}
+            icon={<FiUsers />}
+            color="primary"
+          />
           
-          <div className="stat-card">
-            <div className="stat-icon active-icon">
-              <FiUserCheck />
-            </div>
-            <div className="stat-content">
-              <h3>Active Users</h3>
-              <p className="stat-value">{activeAdmins}</p>
-            </div>
-          </div>
+          <StatsCard 
+            title="Active Users"
+            value={activeAdmins}
+            icon={<FiUserCheck />}
+            color="success"
+            change={activeAdmins > 0 ? Math.round((activeAdmins / totalAdmins) * 100) : 0}
+            trend="neutral"
+          />
           
-          <div className="stat-card">
-            <div className="stat-icon inactive-icon">
-              <FiUserX />
-            </div>
-            <div className="stat-content">
-              <h3>Inactive Users</h3>
-              <p className="stat-value">{inactiveAdmins}</p>
-            </div>
-          </div>
+          <StatsCard 
+            title="Inactive Users"
+            value={inactiveAdmins}
+            icon={<FiUserX />}
+            color="danger"
+            change={inactiveAdmins > 0 ? Math.round((inactiveAdmins / totalAdmins) * 100) : 0}
+            trend="neutral"
+          />
           
-          <div className="stat-card">
-            <div className="stat-icon role-icon">
-              <FiUserPlus />
-            </div>
-            <div className="stat-content">
-              <h3>User Roles</h3>
-              <p className="stat-value">{roles.length}</p>
-            </div>
-          </div>
+          <StatsCard 
+            title="User Roles"
+            value={roles.length}
+            icon={<FiUser />}
+            color="info"
+          />
         </div>
       )}
 
       {/* Search and Filter Controls */}
-      <div className="header-actions">
-        <div className="search-box">
-          <FiSearch className="search-icon" />
-          <input 
-            type="text" 
-            placeholder="Search users by name, email or role..." 
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-        
-        <div className="filter-dropdown">
-          <FiFilter />
-          <select 
-            value={filterOption}
-            onChange={(e) => setFilterOption(e.target.value)}
-            aria-label="Filter users"
-          >
-            <option value="all">All Users</option>
-            <option value="active">Active Users</option>
-            <option value="inactive">Inactive Users</option>
-          </select>
-        </div>
-        
-        <div className="advanced-filter-button">
-          <button onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}>
-            <FiSliders /> Advanced Filters
-          </button>
-        </div>
-        
-        <button className="add-button" onClick={() => setShowAddModal(true)}>
-          <FiPlus /> Add New User
-        </button>
-      </div>
-
-      {/* Advanced Filters Panel */}
-      {showAdvancedFilters && (
-        <div className="advanced-filters-panel">
-          <div className="filter-row">
-            <div className="filter-group">
-              <label>Role</label>
-              <select 
-                value={advancedFilters.role}
-                onChange={(e) => handleAdvancedFilterChange('role', e.target.value)}
-              >
-                <option value="">Any Role</option>
-                {roles.map(role => (
-                  <option key={role} value={role}>{role}</option>
-                ))}
-              </select>
-            </div>
-            
-            <div className="filter-group">
-              <label>Last Login</label>
-              <select 
-                value={advancedFilters.lastLogin}
-                onChange={(e) => handleAdvancedFilterChange('lastLogin', e.target.value)}
-              >
-                <option value="">Any time</option>
-                <option value="7days">Last 7 days</option>
-                <option value="30days">Last 30 days</option>
-                <option value="older">More than 30 days ago</option>
-              </select>
-            </div>
-            
-            <div className="filter-group">
-              <label>Date Added</label>
-              <div className="date-range">
-                <input 
-                  type="date" 
-                  placeholder="From" 
-                  value={advancedFilters.dateAdded.from}
-                  onChange={(e) => handleAdvancedFilterChange('dateAdded.from', e.target.value)}
-                />
-                <input 
-                  type="date" 
-                  placeholder="To" 
-                  value={advancedFilters.dateAdded.to}
-                  onChange={(e) => handleAdvancedFilterChange('dateAdded.to', e.target.value)}
-                />
-              </div>
-            </div>
+      <Card className={styles.filterCard} elevation="sm">
+        <div className={styles.headerActions}>
+          <div className={styles.searchBox}>
+            <FiSearch className={styles.searchIcon} />
+            <input 
+              type="text" 
+              className={styles.searchInput}
+              placeholder="Search users by name, email or role..." 
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
           </div>
           
-          <div className="filter-actions">
-            <button className="reset-button" onClick={resetAdvancedFilters}>
-              Reset Filters
-            </button>
-            <button className="apply-button" onClick={applyAdvancedFilters}>
-              Apply Filters
+          <div className={styles.filterControls}>
+            <select 
+              className={styles.filterSelect}
+              value={filterOption}
+              onChange={(e) => setFilterOption(e.target.value)}
+              aria-label="Filter users"
+            >
+              <option value="all">All Users</option>
+              <option value="active">Active Users</option>
+              <option value="inactive">Inactive Users</option>
+            </select>
+            
+            <button 
+              className={styles.filterButton}
+              onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+            >
+              <FiSliders /> Advanced Filters
             </button>
           </div>
         </div>
-      )}
 
-      {/* Table Actions */}
-      {!loading && filteredAdmins.length > 0 && (
-        <div className="table-actions">
-          <div className="bulk-actions">
-            <input 
-              type="checkbox" 
-              id="select-all" 
-              className="select-all-checkbox"
-              checked={selectAll}
-              onChange={handleSelectAll}
-            />
-            <label htmlFor="select-all" className="sr-only">Select all users</label>
-            
-            {selectedUsers.length > 0 && (
-              <div className="bulk-action-dropdown">
-                <button className="bulk-action-button">
-                  Actions ({selectedUsers.length}) <FiChevronRight />
-                </button>
-                <div className="bulk-action-menu">
-                  <button 
-                    className="bulk-menu-item"
-                    onClick={() => handleBulkAction('activate')}
-                  >
-                    <FiUserCheck /> Set Active
-                  </button>
-                  <button 
-                    className="bulk-menu-item"
-                    onClick={() => handleBulkAction('deactivate')}
-                  >
-                    <FiUserX /> Set Inactive
-                  </button>
-                  <button 
-                    className="bulk-menu-item danger"
-                    onClick={() => handleBulkAction('delete')}
-                  >
-                    <FiTrash2 /> Delete Selected
-                  </button>
+        {/* Advanced Filters Panel */}
+        {showAdvancedFilters && (
+          <div className={styles.advancedFiltersPanel}>
+            <div className={styles.filterRow}>
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Role</label>
+                <select 
+                  className={styles.formInput}
+                  value={advancedFilters.role}
+                  onChange={(e) => handleAdvancedFilterChange('role', e.target.value)}
+                >
+                  <option value="">Any Role</option>
+                  {roles.map(role => (
+                    <option key={role} value={role}>{role}</option>
+                  ))}
+                </select>
+              </div>
+              
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Last Login</label>
+                <select 
+                  className={styles.formInput}
+                  value={advancedFilters.lastLogin}
+                  onChange={(e) => handleAdvancedFilterChange('lastLogin', e.target.value)}
+                >
+                  <option value="">Any time</option>
+                  <option value="7days">Last 7 days</option>
+                  <option value="30days">Last 30 days</option>
+                  <option value="older">More than 30 days ago</option>
+                </select>
+              </div>
+              
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Date Added</label>
+                <div className={styles.dateRange}>
+                  <input 
+                    type="date" 
+                    className={styles.formInput}
+                    placeholder="From" 
+                    value={advancedFilters.dateAdded.from}
+                    onChange={(e) => handleAdvancedFilterChange('dateAdded.from', e.target.value)}
+                  />
+                  <input 
+                    type="date" 
+                    className={styles.formInput}
+                    placeholder="To" 
+                    value={advancedFilters.dateAdded.to}
+                    onChange={(e) => handleAdvancedFilterChange('dateAdded.to', e.target.value)}
+                  />
                 </div>
               </div>
-            )}
+            </div>
+            
+            <div className={styles.modalFooter}>
+              <button className={styles.cancelButton} onClick={resetAdvancedFilters}>
+                Reset Filters
+              </button>
+              <button className={styles.saveButton} onClick={applyAdvancedFilters}>
+                Apply Filters
+              </button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </Card>
 
       {/* Users Table */}
-      <div className="users-table-container">
+      <Card 
+        className={styles.tableCard}
+        elevation="md"
+        accent="primary"
+      >
         {loading ? (
-          <div className="skeleton-loader">
-            <div className="skeleton-header"></div>
-            <div className="skeleton-row"></div>
-            <div className="skeleton-row"></div>
-            <div className="skeleton-row"></div>
-            <div className="skeleton-row"></div>
-            <div className="skeleton-row"></div>
+          <div className={styles.loadingIndicator}>
+            <FiRefreshCw className={styles.spinner} />
+            <p>Loading admin users...</p>
           </div>
         ) : filteredAdmins.length === 0 ? (
-          <div className="empty-state">
-            <div className="empty-icon">
-              <FiUsers size={48} />
-            </div>
-            <h3>No Users Found</h3>
-            <p>No users match your current filter criteria</p>
-            <button 
-              className="btn-secondary" 
-              onClick={() => {
-                setSearchTerm('');
-                setFilterOption('all');
-                resetAdvancedFilters();
-              }}
-            >
-              Clear All Filters
-            </button>
+          <div className={styles.emptyState}>
+            <FiUsers className={styles.emptyIcon} />
+            <h3 className={styles.emptyTitle}>No users found</h3>
+            <p className={styles.emptyMessage}>Try adjusting your search or filter criteria</p>
           </div>
         ) : (
           <>
-            <table className="users-table">
-              <thead>
+            <table className={styles.table}>
+              <thead className={styles.tableHead}>
                 <tr>
-                  <th style={{ width: '40px' }}>
+                  <th className={styles.tableHeader}>
                     <input 
-                      type="checkbox" 
+                      type="checkbox"
+                      className={styles.checkbox}
                       checked={selectAll}
                       onChange={handleSelectAll}
                     />
                   </th>
                   <th 
-                    className="sortable-header"
+                    className={`${styles.tableHeader} ${styles.sortable}`}
                     onClick={() => handleSort('name')}
                   >
                     Name
                     {sortField === 'name' && (
-                      <span className="sort-icon">
-                        {sortDirection === 'asc' ? '↑' : '↓'}
+                      <span className={styles.sortIcon}>
+                        {sortDirection === 'asc' ? <FiChevronUp /> : <FiChevronDown />}
                       </span>
                     )}
                   </th>
                   <th 
-                    className="sortable-header"
+                    className={`${styles.tableHeader} ${styles.sortable}`}
                     onClick={() => handleSort('email')}
                   >
                     Email
                     {sortField === 'email' && (
-                      <span className="sort-icon">
-                        {sortDirection === 'asc' ? '↑' : '↓'}
+                      <span className={styles.sortIcon}>
+                        {sortDirection === 'asc' ? <FiChevronUp /> : <FiChevronDown />}
                       </span>
                     )}
                   </th>
                   <th 
-                    className="sortable-header"
+                    className={`${styles.tableHeader} ${styles.sortable}`}
                     onClick={() => handleSort('role')}
                   >
                     Role
                     {sortField === 'role' && (
-                      <span className="sort-icon">
-                        {sortDirection === 'asc' ? '↑' : '↓'}
+                      <span className={styles.sortIcon}>
+                        {sortDirection === 'asc' ? <FiChevronUp /> : <FiChevronDown />}
                       </span>
                     )}
                   </th>
                   <th 
-                    className="sortable-header"
+                    className={`${styles.tableHeader} ${styles.sortable}`}
                     onClick={() => handleSort('status')}
                   >
                     Status
                     {sortField === 'status' && (
-                      <span className="sort-icon">
-                        {sortDirection === 'asc' ? '↑' : '↓'}
+                      <span className={styles.sortIcon}>
+                        {sortDirection === 'asc' ? <FiChevronUp /> : <FiChevronDown />}
                       </span>
                     )}
                   </th>
                   <th 
-                    className="sortable-header"
+                    className={`${styles.tableHeader} ${styles.sortable}`}
                     onClick={() => handleSort('lastLogin')}
                   >
                     Last Login
                     {sortField === 'lastLogin' && (
-                      <span className="sort-icon">
-                        {sortDirection === 'asc' ? '↑' : '↓'}
+                      <span className={styles.sortIcon}>
+                        {sortDirection === 'asc' ? <FiChevronUp /> : <FiChevronDown />}
                       </span>
                     )}
                   </th>
-                  <th>Actions</th>
+                  <th className={styles.tableHeader}>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {currentItems.map(admin => (
-                  <tr key={admin.id}>
-                    <td>
+                  <tr key={admin.id} className={styles.tableRow}>
+                    <td className={styles.tableData}>
                       <input 
-                        type="checkbox" 
+                        type="checkbox"
+                        className={styles.checkbox}
                         checked={selectedUsers.includes(admin.id)}
                         onChange={() => handleSelectUser(admin.id)}
                       />
                     </td>
-                    <td>{admin.name}</td>
-                    <td>{admin.email}</td>
-                    <td>{admin.role}</td>
-                    <td>
-                      <span className={`status-badge ${admin.status}`}>
-                        <span className="status-dot"></span>
+                    <td className={styles.tableData}>{admin.name}</td>
+                    <td className={styles.tableData}>{admin.email}</td>
+                    <td className={styles.tableData}>{admin.role}</td>
+                    <td className={styles.tableData}>
+                      <span 
+                        className={`${styles.statusBadge} ${
+                          admin.status === 'active' ? styles.statusActive : styles.statusInactive
+                        }`}
+                      >
+                        <span className={styles.statusDot} />
                         {admin.status === 'active' ? 'Active' : 'Inactive'}
                       </span>
                     </td>
-                    <td>
-                      <span className="date-display">
-                        <FiCalendar className="date-icon" />
-                        {formatDate(admin.lastLogin)}
-                      </span>
-                    </td>
-                    <td className="action-cell">
-                      <div className="action-dropdown">
-                        <button className="action-dropdown-toggle">
-                          <FiMoreVertical />
+                    <td className={styles.tableData}>{formatDate(admin.lastLogin)}</td>
+                    <td className={`${styles.tableData} ${styles.actionCell}`}>
+                      <div className={styles.actionButtons}>
+                        <button 
+                          className={`${styles.actionButton} ${styles.viewButton}`}
+                          onClick={() => viewUserDetails(admin)}
+                          aria-label={`View details for ${admin.name}`}
+                        >
+                          <FiEye />
                         </button>
-                        <div className="action-dropdown-menu">
-                          <button 
-                            className="action-menu-item" 
-                            onClick={() => startEditing(admin)}
-                          >
-                            <FiEdit2 /> Edit User
-                          </button>
-                          <button 
-                            className="action-menu-item" 
-                            onClick={() => viewUserDetails(admin)}
-                          >
-                            <FiEye /> View Details
-                          </button>
-                          <button 
-                            className="action-menu-item" 
-                            onClick={() => resetUserPassword(admin)}
-                          >
-                            <FiKey /> Reset Password
-                          </button>
-                          <button 
-                            className="action-menu-item danger" 
-                            onClick={() => handleDeleteAdmin(admin.id)}
-                          >
-                            <FiTrash2 /> Delete User
-                          </button>
-                        </div>
+                        <button 
+                          className={`${styles.actionButton} ${styles.editButton}`}
+                          onClick={() => startEditing(admin)}
+                          aria-label={`Edit ${admin.name}`}
+                        >
+                          <FiEdit2 />
+                        </button>
+                        <button 
+                          className={`${styles.actionButton} ${styles.deleteButton}`}
+                          onClick={() => handleDeleteAdmin(admin.id)}
+                          aria-label={`Delete ${admin.name}`}
+                        >
+                          <FiTrash2 />
+                        </button>
                       </div>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
-            
+
             {/* Pagination */}
-            <div className="pagination-wrapper">
-              <div className="pagination-info">
-                <FiInfo size={14} />
-                <span>
-                  Showing {indexOfFirstItem + 1} to {Math.min(indexOfLastItem, filteredAdmins.length)} of {filteredAdmins.length} users
-                </span>
+            <div className={styles.pagination}>
+              <div className={styles.paginationInfo}>
+                Showing {indexOfFirstItem + 1} to {Math.min(indexOfLastItem, filteredAdmins.length)} of {filteredAdmins.length} users
               </div>
               
-              <div className="pagination-controls">
-                <div className="items-per-page">
-                  <label>Show:</label>
-                  <select 
-                    value={itemsPerPage} 
-                    onChange={handleItemsPerPageChange}
-                    className="items-select"
-                  >
-                    <option value={5}>5</option>
-                    <option value={10}>10</option>
-                    <option value={25}>25</option>
-                    <option value={50}>50</option>
-                  </select>
+              <div className={styles.paginationControls}>
+                <button 
+                  className={`${styles.pageNav} ${currentPage === 1 ? styles.disabled : ''}`}
+                  onClick={firstPage}
+                  disabled={currentPage === 1}
+                  aria-label="Go to first page"
+                >
+                  <FiChevronsLeft />
+                </button>
+                <button 
+                  className={`${styles.pageNav} ${currentPage === 1 ? styles.disabled : ''}`}
+                  onClick={prevPage}
+                  disabled={currentPage === 1}
+                  aria-label="Go to previous page"
+                >
+                  <FiChevronLeft />
+                </button>
+                
+                <div className={styles.pageNumbers}>
+                  {getPaginationGroup().map(number => (
+                    <button
+                      key={number}
+                      className={`${styles.pageNumber} ${currentPage === number ? styles.active : ''}`}
+                      onClick={() => paginate(number)}
+                      aria-label={`Go to page ${number}`}
+                      aria-current={currentPage === number ? 'page' : undefined}
+                    >
+                      {number}
+                    </button>
+                  ))}
                 </div>
                 
-                <div className="page-navigation">
-                  <button 
-                    className={`page-nav-button ${currentPage === 1 ? 'disabled' : ''}`}
-                    onClick={firstPage}
-                    disabled={currentPage === 1}
-                    title="First Page"
-                  >
-                    <FiChevronsLeft />
-                  </button>
-                  <button 
-                    className={`page-nav-button ${currentPage === 1 ? 'disabled' : ''}`}
-                    onClick={prevPage}
-                    disabled={currentPage === 1}
-                    title="Previous Page"
-                  >
-                    <FiChevronLeft />
-                  </button>
-                  
-                  <div className="pagination-pages">
-                    {getPaginationGroup().map(num => (
-                      <button
-                        key={num}
-                        onClick={() => paginate(num)}
-                        className={`page-number ${currentPage === num ? 'active' : ''}`}
-                      >
-                        {num}
-                      </button>
-                    ))}
-                  </div>
-                  
-                  <button 
-                    className={`page-nav-button ${currentPage === totalPages ? 'disabled' : ''}`}
-                    onClick={nextPage}
-                    disabled={currentPage === totalPages || totalPages === 0}
-                    title="Next Page"
-                  >
-                    <FiChevronRight />
-                  </button>
-                  <button 
-                    className={`page-nav-button ${currentPage === totalPages ? 'disabled' : ''}`}
-                    onClick={lastPage}
-                    disabled={currentPage === totalPages || totalPages === 0}
-                    title="Last Page"
-                  >
-                    <FiChevronsRight />
-                  </button>
-                </div>
+                <button 
+                  className={`${styles.pageNav} ${currentPage === totalPages ? styles.disabled : ''}`}
+                  onClick={nextPage}
+                  disabled={currentPage === totalPages}
+                  aria-label="Go to next page"
+                >
+                  <FiChevronRight />
+                </button>
+                <button 
+                  className={`${styles.pageNav} ${currentPage === totalPages ? styles.disabled : ''}`}
+                  onClick={lastPage}
+                  disabled={currentPage === totalPages}
+                  aria-label="Go to last page"
+                >
+                  <FiChevronsRight />
+                </button>
               </div>
             </div>
           </>
         )}
-      </div>
-
-      {/* User Activity Section */}
-      {!loading && filteredAdmins.length > 0 && (
-        <div className="user-activity-section">
-          <h3 className="section-title">
-            <FiActivity /> User Insights
-          </h3>
-          
-          <div className="activity-cards">
-            <div className="activity-card">
-              <div className="activity-icon login-icon">
-                <FiLogIn />
-              </div>
-              <div className="activity-content">
-                <h4>Login Activity</h4>
-                <div className="activity-stats">
-                  <div className="stat-item">
-                    <span className="stat-value">{loginStats.today}</span>
-                    <span className="stat-label">Today</span>
-                  </div>
-                  <div className="stat-item">
-                    <span className="stat-value">{loginStats.thisWeek}</span>
-                    <span className="stat-label">This Week</span>
-                  </div>
-                  <div className="stat-item">
-                    <span className="stat-value">{loginStats.thisMonth}</span>
-                    <span className="stat-label">This Month</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="activity-card">
-              <div className="activity-icon role-icon">
-                <FiUsers />
-              </div>
-              <div className="activity-content">
-                <h4>Role Distribution</h4>
-                <div className="role-distribution">
-                  {roleData.map(role => (
-                    <div key={role.name} className="role-item">
-                      <span className="role-name">{role.name}</span>
-                      <div className="role-bar-container">
-                        <div 
-                          className="role-bar" 
-                          style={{ 
-                            width: `${(role.count / totalAdmins) * 100}%` 
-                          }}
-                        ></div>
-                      </div>
-                      <span className="role-count">{role.count}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      </Card>
 
       {/* Add/Edit User Modal */}
       {(showAddModal || editingAdmin) && (
-        <div className="modal-backdrop">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h2>
-                {editingAdmin ? (
-                  <>
-                    <FiEdit2 className="modal-icon" />
-                    Edit User: {editingAdmin.name}
-                  </>
-                ) : (
-                  <>
-                    <FiUserPlus className="modal-icon" />
-                    Add New User
-                  </>
-                )}
+        <div className={styles.modalOverlay}>
+          <Card className={styles.modalContent}>
+            <div className={styles.modalHeader}>
+              <h2 className={styles.modalTitle}>
+                {editingAdmin ? 'Edit User' : 'Add New User'}
               </h2>
-              <button className="modal-close" onClick={closeModal}>
+              <button 
+                className={styles.modalClose}
+                onClick={closeModal}
+                aria-label="Close modal"
+              >
                 <FiX />
               </button>
             </div>
             
-            <div className="modal-body">
+            <div className={styles.modalBody}>
               <form onSubmit={editingAdmin ? handleEditAdmin : handleAddAdmin}>
-                <div className="form-row">
-                  <div className="form-group">
-                    <label htmlFor="name">Full Name</label>
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel} htmlFor="name">Full Name</label>
+                  <input 
+                    id="name"
+                    type="text" 
+                    name="name" 
+                    value={formData.name} 
+                    onChange={handleInputChange}
+                    placeholder="Enter full name"
+                    required
+                    className={styles.formInput}
+                  />
+                  <span className={styles.formHint}>Enter user's complete name as it appears on official documents</span>
+                </div>
+                
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel} htmlFor="email">Email Address</label>
+                  <div className={styles.inputWithIcon}>
                     <input 
-                      id="name"
-                      type="text" 
-                      name="name" 
-                      value={formData.name} 
+                      id="email"
+                      type="email" 
+                      name="email" 
+                      value={formData.email} 
                       onChange={handleInputChange}
-                      placeholder="Enter full name"
+                      placeholder="Enter email address"
                       required
-                      className="form-control"
+                      className={styles.formInput}
                     />
-                    <small className="form-hint">Enter user's complete name as it appears on official documents</small>
+                    <FiMail className={styles.inputIcon} />
                   </div>
+                  <span className={styles.formHint}>This email will be used for login and notifications</span>
                 </div>
                 
-                <div className="form-row">
-                  <div className="form-group">
-                    <label htmlFor="email">Email Address</label>
-                    <div className="email-input-container">
-                      <FiMail className="email-icon" />
-                      <input 
-                        id="email"
-                        type="email" 
-                        name="email" 
-                        value={formData.email} 
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel} htmlFor="role">User Role</label>
+                  <div className={styles.selectWrapper}>
+                    <select 
+                      id="role"
+                      name="role" 
+                      value={formData.role} 
+                      onChange={handleInputChange}
+                      className={styles.formSelect}
+                    >
+                      <option value="Administrator">Administrator</option>
+                      <option value="Finance Officer">Finance Officer</option>
+                      <option value="Audit Manager">Audit Manager</option>
+                      <option value="System Administrator">System Administrator</option>
+                      <option value="Support Staff">Support Staff</option>
+                    </select>
+                    <FiChevronDown className={styles.selectIcon} />
+                  </div>
+                  <span className={styles.formHint}>Determines user permissions in the system</span>
+                </div>
+                
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Status</label>
+                  <div className={styles.radioGroup}>
+                    <div className={styles.radioOption}>
+                      <input
+                        type="radio"
+                        id="status-active"
+                        name="status"
+                        value="active"
+                        checked={formData.status === 'active'}
                         onChange={handleInputChange}
-                        placeholder="Enter email address"
-                        required
-                        className="form-control"
+                        className={styles.radioInput}
                       />
+                      <label htmlFor="status-active" className={styles.radioLabel}>
+                        <div className={styles.radioButton}>
+                          <div className={styles.radioDot}></div>
+                        </div>
+                        <div className={styles.radioContent}>
+                          <span className={styles.radioTitle}>Active</span>
+                          <span className={styles.radioDescription}>User can access the system</span>
+                        </div>
+                      </label>
                     </div>
-                    <small className="form-hint">This email will be used for login and notifications</small>
-                  </div>
-                </div>
-                
-                <div className="form-row">
-                  <div className="form-group">
-                    <label htmlFor="role">User Role</label>
-                    <div className="select-container">
-                      <select 
-                        id="role"
-                        name="role" 
-                        value={formData.role} 
+                    
+                    <div className={styles.radioOption}>
+                      <input
+                        type="radio"
+                        id="status-inactive"
+                        name="status"
+                        value="inactive"
+                        checked={formData.status === 'inactive'}
                         onChange={handleInputChange}
-                        className="form-control"
-                      >
-                        <option value="Administrator">Administrator</option>
-                        <option value="Finance Officer">Finance Officer</option>
-                        <option value="Audit Manager">Audit Manager</option>
-                        <option value="System Administrator">System Administrator</option>
-                        <option value="Support Staff">Support Staff</option>
-                      </select>
+                        className={styles.radioInput}
+                      />
+                      <label htmlFor="status-inactive" className={styles.radioLabel}>
+                        <div className={styles.radioButton}>
+                          <div className={styles.radioDot}></div>
+                        </div>
+                        <div className={styles.radioContent}>
+                          <span className={styles.radioTitle}>Inactive</span>
+                          <span className={styles.radioDescription}>User cannot access the system</span>
+                        </div>
+                      </label>
                     </div>
-                    <small className="form-hint">Determines user permissions in the system</small>
                   </div>
                 </div>
                 
-                <div className="form-row">
-                  <div className="form-group">
-                    <label>Status</label>
-                    <div className="status-options">
-                      <div className="status-option">
-                        <input
-                          type="radio"
-                          id="status-active"
-                          name="status"
-                          value="active"
-                          checked={formData.status === 'active'}
-                          onChange={handleInputChange}
-                        />
-                        <label htmlFor="status-active" className="status-option-label">
-                          <FiCheckCircle className="status-icon active" />
-                          <span>Active</span>
-                        </label>
-                      </div>
-                      
-                      <div className="status-option">
-                        <input
-                          type="radio"
-                          id="status-inactive"
-                          name="status"
-                          value="inactive"
-                          checked={formData.status === 'inactive'}
-                          onChange={handleInputChange}
-                        />
-                        <label htmlFor="status-inactive" className="status-option-label">
-                          <FiXCircle className="status-icon inactive" />
-                          <span>Inactive</span>
-                        </label>
-                      </div>
-                    </div>
-                    <small className="form-hint">Inactive users cannot log in to the system</small>
-                  </div>
-                </div>
-                
-                <div className="modal-footer">
-                  <button type="button" className="btn-cancel" onClick={closeModal}>
+                <div className={styles.modalFooter}>
+                  <button type="button" className={styles.cancelButton} onClick={closeModal}>
                     Cancel
                   </button>
-                  <button type="submit" className="btn-primary">
-                    <FiCheck /> {editingAdmin ? 'Update User' : 'Add User'}
+                  <button type="submit" className={styles.saveButton}>
+                    {editingAdmin ? 'Update User' : 'Add User'}
                   </button>
                 </div>
               </form>
             </div>
-          </div>
+          </Card>
         </div>
       )}
 
       {/* Delete Confirmation Modal */}
-      {showDeleteModal && userToDelete && (
-        <div className="delete-modal-backdrop">
-          <div className="delete-modal">
-            <div className="delete-modal-icon">
-              <FiAlertTriangle size={48} />
+      {showDeleteModal && (
+        <div className={styles.modalOverlay}>
+          <Card className={`${styles.modalContent} ${styles.deleteModal}`} accent="danger">
+            <div className={styles.modalHeader}>
+              <h2 className={styles.modalTitle}>Confirm Delete</h2>
+              <button 
+                className={styles.modalClose}
+                onClick={cancelDelete}
+                aria-label="Close modal"
+              >
+                <FiX />
+              </button>
             </div>
-            <h3>Delete User</h3>
-            <p>Are you sure you want to delete <strong>{userToDelete.name}</strong>?</p>
-            <p className="delete-warning">This action cannot be undone. All data associated with this user will be permanently removed.</p>
             
-            <div className="delete-actions">
-              <button className="btn-cancel" onClick={cancelDelete}>
+            <div className={styles.modalBody}>
+              <div style={{ textAlign: 'center' }}>
+                <FiAlertTriangle className={styles.deleteModalIcon} />
+                <h3 className={styles.deleteModalTitle}>Delete User?</h3>
+                <p className={styles.deleteModalText}>
+                  Are you sure you want to delete the user "{userToDelete?.name}"? 
+                  This action cannot be undone.
+                </p>
+                <div className={styles.deleteWarning}>
+                  <FiInfo /> User's data will be permanently removed from the system
+                </div>
+              </div>
+            </div>
+            
+            <div className={styles.modalFooter}>
+              <button 
+                className={styles.cancelButton}
+                onClick={cancelDelete}
+                type="button"
+              >
                 Cancel
               </button>
-              <button className="btn-danger" onClick={confirmDelete}>
+              <button 
+                className={styles.deleteButton}
+                onClick={confirmDelete}
+                type="button"
+              >
                 Delete User
               </button>
             </div>
-          </div>
+          </Card>
         </div>
       )}
     </div>

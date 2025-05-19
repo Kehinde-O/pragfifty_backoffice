@@ -1,0 +1,447 @@
+/* AssessmentApproval.module.css */
+.approvalContainer {
+  padding: 1.5rem;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Page Header */
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.pageHeader h1 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+  display: flex;
+  align-items: center;
+}
+
+.pageHeaderIcon {
+  margin-right: 0.75rem;
+  color: #0891b2; /* Cyan-600 */
+}
+
+.backButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  background-color: white;
+  color: #475569;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.backButton:hover {
+  border-color: #cbd5e1;
+  background-color: #f8fafc;
+}
+
+/* Grid Layout */
+.gridContainer {
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 992px) {
+  .gridContainer {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Card Styles */
+.card {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.cardHeader h2 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cardIcon {
+  color: #0891b2; /* Cyan-600 */
+}
+
+.infoList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.infoItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.infoLabel {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #64748b;
+}
+
+.infoValue {
+  font-size: 0.875rem;
+  color: #1e293b;
+}
+
+.infoRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 576px) {
+  .infoRow {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Status Badge */
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.statusDraft {
+  background-color: rgba(100, 116, 139, 0.1);
+  color: #64748b; /* Slate-500 */
+}
+
+.statusPending {
+  background-color: rgba(245, 158, 11, 0.1);
+  color: #f59e0b; /* Amber-500 */
+}
+
+.statusApproved {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: #10b981; /* Emerald-500 */
+}
+
+.statusIssued {
+  background-color: rgba(14, 165, 233, 0.1);
+  color: #0ea5e9; /* Sky-500 */
+}
+
+.statusPaid {
+  background-color: rgba(139, 92, 246, 0.1);
+  color: #8b5cf6; /* Violet-500 */
+}
+
+.statusRejected {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #ef4444; /* Red-500 */
+}
+
+/* Assessment Items Table */
+.itemsTable {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  margin-bottom: 1rem;
+}
+
+.itemsTable th {
+  background-color: #f8fafc;
+  padding: 0.75rem 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #64748b;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.itemsTable td {
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  color: #1e293b;
+  border-bottom: 1px solid #e2e8f0;
+  vertical-align: middle;
+}
+
+.itemsTable tr:last-child td {
+  border-bottom: none;
+}
+
+/* Approval Workflow */
+.workflowCard {
+  position: sticky;
+  top: 1.5rem;
+}
+
+.approvalWorkflow {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.approvalStep {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  transition: all 0.15s ease-in-out;
+}
+
+.approvalStepActive {
+  border-color: #0891b2; /* Cyan-600 */
+  background-color: rgba(8, 145, 178, 0.05);
+}
+
+.approvalStepCompleted {
+  border-color: #10b981; /* Emerald-500 */
+  background-color: rgba(16, 185, 129, 0.05);
+}
+
+.approvalStepRejected {
+  border-color: #ef4444; /* Red-500 */
+  background-color: rgba(239, 68, 68, 0.05);
+}
+
+.approvalStepIcon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f1f5f9;
+  color: #64748b;
+}
+
+.approvalStepIconActive {
+  background-color: #0891b2; /* Cyan-600 */
+  color: white;
+}
+
+.approvalStepIconCompleted {
+  background-color: #10b981; /* Emerald-500 */
+  color: white;
+}
+
+.approvalStepIconRejected {
+  background-color: #ef4444; /* Red-500 */
+  color: white;
+}
+
+.approvalStepContent {
+  flex: 1;
+}
+
+.approvalStepHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.approvalStepTitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.approvalStepDate {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.approvalStepUser {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin-bottom: 0.5rem;
+}
+
+.approvalStepActions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.approvalStepDesc {
+  font-size: 0.875rem;
+  color: #475569;
+  margin-bottom: 0.5rem;
+}
+
+/* Form Elements */
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 1rem;
+}
+
+.formLabel {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #1e293b;
+}
+
+.formTextarea {
+  width: 100%;
+  padding: 0.625rem 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  color: #1e293b;
+  min-height: 80px;
+  resize: vertical;
+}
+
+.formTextarea:focus {
+  outline: none;
+  border-color: #0891b2; /* Cyan-600 */
+  box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.1);
+}
+
+/* Action Buttons */
+.actionButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  text-decoration: none;
+}
+
+.buttonPrimary {
+  background-color: #0891b2; /* Cyan-600 */
+  color: white;
+  border: none;
+}
+
+.buttonPrimary:hover {
+  background-color: #0e7490; /* Cyan-700 */
+}
+
+.buttonSuccess {
+  background-color: #10b981; /* Emerald-500 */
+  color: white;
+  border: none;
+}
+
+.buttonSuccess:hover {
+  background-color: #059669; /* Emerald-600 */
+}
+
+.buttonDanger {
+  background-color: #ef4444; /* Red-500 */
+  color: white;
+  border: none;
+}
+
+.buttonDanger:hover {
+  background-color: #dc2626; /* Red-600 */
+}
+
+.buttonSecondary {
+  background-color: white;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+}
+
+.buttonSecondary:hover {
+  background-color: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+/* Calculations */
+.calculationItem {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+}
+
+.calculationItem:not(:last-child) {
+  border-bottom: 1px dashed #e2e8f0;
+}
+
+.calculationLabel {
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
+.calculationValue {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #1e293b;
+}
+
+.total {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+/* Loading indicator */
+.loadingIndicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  gap: 1rem;
+}
+
+.loadingIndicator p {
+  color: #64748b;
+  font-size: 0.875rem;
+}
+
+.spinning {
+  animation: spin 1s linear infinite;
+  color: #0891b2; /* Cyan-600 */
+  font-size: 1.5rem;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+} 
